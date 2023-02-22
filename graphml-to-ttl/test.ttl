@@ -1,0 +1,40 @@
+# @Author(s): Eric Top
+@prefix ccd: <http://geographicknowledge.de/vocab/CoreConceptData.rdf#> .
+@prefix cct: <https://github.com/quangis/cct#> .
+@prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .
+@prefix dbo: <https://dbpedia.org/ontology/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix repo: <https://example.com/#> .
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
+
+repo:test a wf:Workflow ;
+    wf:edge data:n1,
+        data:n3 ;
+    wf:source data:Data5 ;
+    dct:subject "This is a subject" ;
+    rdfs:comment "How do you join and buffer?" ;
+    dbo:abstract """In this workflow a join and buffer are
+performed""" .
+
+data:Data1 a ccd:This_is_a_CCD_signature_and_is_not_a_string ;
+    rdfs:comment "This is a comment" .
+
+data:Data2 a ccd:This_is_another_CCD_signature_and_is_not_a_string ;
+    a ccd:This_is_a_CCD_signature_and_is_not_a_string .
+
+data:n1 wf:applicationOf tools:Buffer ;
+    wf:input1 data:Data3 ;
+    wf:input2 data:Data5 ;
+    wf:output data:Data4 ;
+    cct:expression "This is a cct:expression" .
+
+data:n3 wf:applicationOf tools:Join ;
+    wf:input1 data:Data2 ;
+    wf:input2 data:Data1 ;
+    wf:output data:Data3 ;
+    rdfs:comment "This is also a comment" ;
+    cct:expression "This is a cct:expression",
+        "This is another cct:expression" .
+

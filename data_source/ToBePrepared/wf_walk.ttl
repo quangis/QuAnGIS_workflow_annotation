@@ -1,0 +1,184 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix xml: <http://www.w3.org/XML/1998/namespace>.
+@prefix dbo: <https://dbpedia.org/ontology/>.
+@prefix dct: <http://purl.org/dc/terms/>.
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#>.
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#>.
+# @prefix tools: <http://geographicknowledge.de/vocab/GISTools.rdf#>.
+@prefix repo: <https://example.com/#>.
+
+# [SC] data prefix
+@prefix cbs: <https://www.cbs.nl/nl-nl/maatwerk/2017/31/kerncijfers-wijken-en-buurten-2017>.
+
+@prefix AmstBuurt: <https://maps.amsterdam.nl/open_geodata/?k=198>.
+@prefix AmstLand: <https://maps.amsterdam.nl/open_geodata/?k=152>.
+@prefix Households: <https://www.cbs.nl/nl-nl/maatwerk/2017/31/kerncijfers-wijken-en-buurten-2017>.
+@prefix AmstStreets: <https://maps.amsterdam.nl/open_geodata/?k=275>.
+#@prefix Residences: <https://utrecht.dataplatform.nl/#/data/f65b6161-11b7-47a7-b061-d2a619a285c4?totalViews=40>.
+
+
+
+
+# @author: Eric Top, Simon Scheider
+
+
+
+repo:WasteAmsterdam_Near a wf:Workflow;
+    rdfs:comment "What is the walkability of Amsterdam?"@en;
+    dct:subject "";
+    dbo:abstract ". ";
+    wf:source AmstBuurt:Buurt;
+    wf:source AmstLand:Land;      #Geocoded location point of 2350 Pine St, San Francisco, where an incident occurred.
+    wf:source Households:households;
+    wf:source AmstStreets:Streets;
+    wf:edge _:wf1_1.
+
+
+# Workflow nodes
+# # # Assign household counts to each neighbourhood region
+_:wf1_1 wf:applicationOf tools:CopyFeatures;
+	wf:input1 AmstBuurt:Buurt;
+    rdfs:comment "Copy vector polygons representing buurten of Amsterdam to local file"; 
+    wf:output _:Buurten.
+    
+_:wf1_2 wf:applicationOf tools:CopyFeatures;
+	wf:input1 AmstBuurt:Buurt;
+	wf:input2 Households:Households;
+    rdfs:comment "Join household count data to the buurten attribute table"; 
+    wf:output _:BuurtenHHTemp.
+    
+_:wf1_3 wf:applicationOf tools:AddField;
+	wf:input1 _:BuurtenHHTemp;
+    rdfs:comment "Copy household count data to an attribute in the buurten attribute table"; 	
+	wf:output _:BuurtenHHTemp2.
+	
+_:wf1_4 wf:applicationOf tools:CalculateField;
+	wf:input1 _:BuurtenHHTemp2;
+    rdfs:comment "Copy household count data to an attribute in the buurten attribute table"; 	
+	wf:output _:BuurtenHH.
+	
+# # # Create a separate layer for each landuse category
+_:wf1_5 wf:applicationOf tools:SelectLayerByAttribute;
+	wf:input1 AmstLand:Land;
+	rdfs:comment "Select residential area";
+	wf:output _:LivingArea.
+
+_:wf1_6 wf:applicationOf tools:SelectLayerByAttribute;
+	wf:input1 AmstLand:Land;
+	rdfs:comment "Select retail area";
+	wf:output _:RetailLanduse.
+	
+_:wf1_7 wf:applicationOf tools:SelectLayerByAttribute;
+	wf:input1 AmstLand:Land;
+	rdfs:comment "Select Office area";
+	wf:output _:OfficeLanduse.
+	
+_:wf1_8 wf:applicationOf tools:SelectLayerByAttribute;
+	wf:input1 AmstLand:Land;
+	rdfs:comment "Select Institution area";
+	wf:output _:InstitutionLanduse.
+	
+_:wf1_9 wf:applicationOf tools:SelectLayerByAttribute;
+	wf:input1 AmstLand:Land;
+	rdfs:comment "Select recreational area";
+	wf:output _:RecreationLanduse.
+	
+# # # Calculate residential density
+_:wf1_11 wf:applicationOf tools:AddField;
+	wf:input1 _:BuurtenHHRA;
+	rdfs:comment "Add and calculate a residential density attribute";
+	wf:output _:BuurtenHHRA2.
+	
+_:wf1_12 wf:applicationOf tools:CalculateField;
+	wf:input1 _:BuurtenHHRA2;
+    rdfs:comment "Add and calculate a residential density attribute"; 	
+	wf:output _:BuurtenResDens.
+	
+# # # Summarize each landuse category by neighbourhoods
+_:wf1_10 wf:applicationOf tools:SummarizeWithin;
+	wf:input1 _:BuurtenHH;
+	wf:input2 _:LivingArea;
+	rdfs:comment "Sum residential area size in each neighbourhood";
+	wf:output _:BuurtenHHRA.
+	
+_:wf1_13 wf:applicationOf tools:SummarizeWithin;
+	wf:input1 _:BuurtenResDens;
+	wf:input2 _:RetailLanduse;
+	rdfs:comment "Sum retail area size in each neighbourhood";
+	wf:output _:BRdRaRe.
+	
+_:wf1_14 wf:applicationOf tools:SummarizeWithin;
+	wf:input1 _:BRdRaRe;
+	wf:input2 _:OfficeLanduse;
+	rdfs:comment "Sum office area size in each neighbourhood";
+	wf:output _:BRdRaReOf.
+	
+_:wf1_15 wf:applicationOf tools:SummarizeWithin;
+	wf:input1 _:BRdRaReOf;
+	wf:input2 _:InstitutionLanduse;
+	rdfs:comment "Sum institution area size in each neighbourhood";
+	wf:output _:BRdRaReOfIn.
+	
+_:wf1_16 wf:applicationOf tools:SummarizeWithin;
+	wf:input1 _:BRdRaReOfIn;
+	wf:input2 _:RecreationalLanduse;
+	rdfs:comment "Sum recreation area size in each neighbourhood";
+	wf:output _:BRdRaReOfInRec.
+	
+# # # Calculate landuse Mix
+_:wf1_17 wf:applicationOf tools:AddField;
+	wf:input1 _:BRdRaReOfInRec;
+	rdfs:comment "Add and calculate a residential density attribute";
+	wf:output _:BRdRaReOfInRec2.
+	
+_:wf1_18 wf:applicationOf tools:CalculateField;
+	wf:input1 _:BRdRaReOfInRec2;
+    rdfs:comment "Add and calculate a residential density attribute"; 	
+	wf:output _:BRdRaReOfInRec3.
+	
+# # # Select only true intersections with 3 or more streets
+_:wf1_19 wf:applicationOf tools:SelectLayerByAttribute;
+	wf:input1 AmstStreets:Streets;
+	rdfs:comment "Select only true intersections with 3 or more streets (Edge count > 2)";
+	wf:output _:true_intersection.
+	
+# # # Calculate Connectivity
+_:wf1_20 wf:applicationOf tools:SummarizeWithin;
+	wf:input1 _:true_intersection;
+	wf:input2 _:BRdRaReOfInRec3;
+	rdfs:comment "Count the number of street intersections in each neighbourhood";
+	wf:output _:BRdRaReOfInRecInter.
+	
+_:wf1_21 wf:applicationOf tools:AddGeometryAttributes;
+	wf:input1 _:BRdRaReOfInRecInter;
+	rdfs:comment "Calculate the area of each neighbourhood";
+	wf:output _:BRdRaReOfInRecInter2.
+	
+_:wf1_22 wf:applicationOf tools:AddField;
+	wf:input1 _:BRdRaReOfInRecInter2;
+	rdfs:comment "Calculate an intersection density per neighbourhood";
+	wf:output _:BRdRaReOfInRecInter3.
+	
+_:wf1_23 wf:applicationOf tools:CalculateField;
+	wf:input1 _:BRdRaReOfInRecInter3;
+    rdfs:comment "Calculate an intersection density per neighbourhood"; 	
+	wf:output _:BRdRaReOfInRecInter4.
+	
+# # # Calculate Walkability
+_:wf1_24 wf:applicationOf tools:AddField;
+	wf:input1 _:BRdRaReOfInRecInter4;
+	rdfs:comment "Calculate the values of a walkability index";
+	wf:output _:BRdRaReOfInRecInter5.
+	
+_:wf1_25 wf:applicationOf tools:CalculateField;
+	wf:input1 _:BRdRaReOfInRecInter5;
+	rdfs:comment "Calculate the values of a walkability index";
+	wf:output _:Walkability.
+	
+# [SC] added triplets   
+#bag:verblijfsobject
+#    rdfs:comment ""@en;
+#    rdfs:label ""@en.
+

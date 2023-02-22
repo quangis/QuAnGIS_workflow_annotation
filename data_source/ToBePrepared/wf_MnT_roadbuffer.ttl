@@ -1,0 +1,112 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix xml: <http://www.w3.org/XML/1998/namespace>.
+@prefix dbo: <https://dbpedia.org/ontology/>.
+@prefix dct: <http://purl.org/dc/terms/>.
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#>.
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#>.
+# @prefix tools: <http://geographicknowledge.de/vocab/GISTools.rdf#>.
+@prefix repo: <https://example.com/#>.
+
+# @author: Eric Top
+
+
+
+repo:MnT_roadbuffer a wf:Workflow;
+    rdfs:comment "What is the number of people of each population center within 1000 meters of the A2 highway within 1000 meters of the A2 highway?"@en;
+    dct:subject "";
+    dbo:abstract ". ";
+    wf:source _:admin_areas; #The administrative areas of the Netherlands at municipal, provincial and national level as vector polygons.
+    wf:source _:A2;          #A vector line segments representing the A2 road in the Netherlands.
+    wf:source _:pop_centers; #Vector polygons showing where population centers are in the Netherlands
+    wf:edge _:n1, _:n2, _:n3, _:n4, _:n5, _:n6, _:n7, _:n8, _:n9, _:n10, _:n11, _:n12, _:n13, _:n14, _:n15.
+
+
+# Workflow nodes
+
+# Branch 1  
+_:n1 wf:applicationOf tools:ExportFeatures;
+	wf:input1 _:admin_areas;       
+    rdfs:comment "Extract provinces from administrative areas of NL"; 
+    wf:output _:provinces.
+    
+_:n2 wf:applicationOf tools:SelectLayerByLocation;
+	wf:input1 _:provinces;       
+	wf:input2 _:A2;
+    rdfs:comment "Select provinces near the A2 highway"; 
+    wf:output _:provinces_select.
+    
+_:n3 wf:applicationOf tools:ExportFeatures;
+	wf:input1 _:provinces_select;
+    rdfs:comment "Export selected provinces (provinces near the A2 highway) to new layer"; 
+    wf:output _:provinces_near_A2.    
+    
+_:n4 wf:applicationOf tools:SelectLayerByLocation;
+	wf:input1 _:provinces_near_A2;       
+	wf:input2 _:pop_centers;
+    rdfs:comment "Select provinces near the A2 highway near population centers"; 
+    wf:output _:pop_centers_select.    
+    
+_:n5 wf:applicationOf tools:ExportFeatures;
+	wf:input1 _:pop_centers_select;       
+    rdfs:comment "Export selected provinces near the A2 highway (near population centers) to new layer"; 
+    wf:output _:pop_centers_near_A2.
+    
+_:n6 wf:applicationOf tools:AddField;
+	wf:input1 _:pop_centers_near_A2;       
+    rdfs:comment "Add field for population density"; 
+    wf:output _:pop_centers_near_A2_addfield.
+    
+_:n7 wf:applicationOf tools:AddField;
+	wf:input1 _:pop_centers_near_A2_addfield;       
+    rdfs:comment "Add field for area size"; 
+    wf:output _:pop_centers_near_A2_addfield_addfield.
+    
+_:n8 wf:applicationOf tools:CalculateGeometryAttributes;
+	wf:input1 _:pop_centers_near_A2_addfield_addfield;       
+    rdfs:comment "Calculate the area size of each population center"; 
+    wf:output _:pop_centers_near_A2_geom_attr.
+    
+_:n9 wf:applicationOf tools:CalculateField;
+	wf:input1 _:pop_centers_near_A2_geom_attr;       
+    rdfs:comment "Calculate the population density of each population center"; 
+    wf:output _:pop_centers_near_A2_geom_attr_pop_dens.
+    
+# Branch 2    
+_:n10 wf:applicationOf tools:Buffer;
+	wf:input1 _:A2;
+	rdfs:comment "Generate a buffer of 1000 meters around each A2 highway line segment"; 
+    wf:output _:A2_buffers.
+    
+_:n11 wf:applicationOf tools:Dissolve;
+	wf:input1 _:A2_buffers;
+	rdfs:comment "Dissolve the 1000 meter buffers around the A2 highway line segments"; 
+    wf:output _:A2_buffer.
+
+
+# Merged final branch
+    
+_:n12 wf:applicationOf tools:Clip;
+	wf:input1 _:pop_centers_near_A2_geom_attr_pop_dens;
+	wf:input2 _:A2_buffer;	
+    rdfs:comment "Clip the pop centers by the A2_buffer"; 
+    wf:output _:popclip.    
+
+_:n13 wf:applicationOf tools:CalculateGeometryAttributes;
+	wf:input1 _:popclip;	
+    rdfs:comment "Calculate the area size of each clipped part of the population centers"; 
+    wf:output _:popclip_geom_attr.  
+
+_:n14 wf:applicationOf tools:AddField;
+	wf:input1 _:popclip_geom_attr;	
+    rdfs:comment "Add a field for storing the estimated population"; 
+    wf:output _:popclip_geom_attr_addfield.  
+    
+_:n15 wf:applicationOf tools:CalculateField;
+	wf:input1 _:popclip_geom_attr_addfield;	
+    rdfs:comment "Calculate the estimated population count for each cut segment of the population centers"; 
+    wf:output _:popclip_final.  
+ 
+
+

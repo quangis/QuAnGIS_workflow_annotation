@@ -1,0 +1,113 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix xml: <http://www.w3.org/XML/1998/namespace>.
+@prefix dbo: <https://dbpedia.org/ontology/>.
+@prefix dct: <http://purl.org/dc/terms/>.
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#>.
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#>.
+# @prefix tools: <http://geographicknowledge.de/vocab/GISTools.rdf#>.
+@prefix repo: <https://example.com/#>.
+
+# [SC] data prefix
+@prefix rfdataM: <https://learn.arcgis.com/en/projects/monitor-malaria-epidemics/#>.
+
+
+
+# @author: Eric Top, Simon Scheider
+
+
+
+# Workflow amounts of temperature in Utrecht
+# Workflow metadata (result and data sources)
+repo:MalariaCongo a wf:Workflow;
+    rdfs:comment "What areas have the highest malaria incidence rate in the Democratic Republic of the Congo between 2010-2015?"@en;
+    dct:subject "";
+    dbo:abstract " You are a member of the Ministry of Public Health for the Democratic Republic of the Congo assigned to monitor progress on eradicating malaria and reporting on the United Nations Sustainable Development Goal (SDG) #3 Good Health and Well-Being. To gather intelligence on where prevention and aid are most needed, and to calculate the incidence rate per 1,000 for SDG reporting, you'll use Esri's Living Atlas layers and the Malaria Atlas Project's incidence reports to map the spatial and temporal distribution from 2000-2015.";
+    wf:source rfdataM:adminRegions; #Vector polygons of all administrative regions (e.g. province in NL) in the world.
+    wf:source rfdataM:population;        #Raster with estimate of the populations in the world in 2016
+    wf:source rfdataM:adminIncidence;    #Excel table with yearly incidence rates of malaria between 2000 and 2015 in administrative regions.
+    wf:edge _:wf2_1, _:wf2_2, _:wf2_3, _:wf2_4, _:wf2_5.
+
+# Workflow nodes
+
+# Incidence rate of malaria in the administrative regions of DRC
+
+_:wf2_1 wf:applicationOf tools:FC2FC;
+    wf:input1 rfdataM:adminRegions;
+    rdfs:comment "extract the data of the Democratic Republic of the Congo";
+    wf:output _:adminDRC1.
+
+_:wf2_2  wf:applicationOf tools:Dissolve; #Check
+    wf:input1 _:adminDRC1; 
+    rdfs:comment "dissolve admin polygons by name";
+    wf:output _:adminDRC2.
+
+_:wf2_3 wf:applicationOf tools:ZonalStatisticsAsTable;
+    wf:input2 _:adminDRC2;
+    wf:input1 rfdataM:population;
+    rdfs:comment "sum raster of population values inside Congo administrative polygons. Join standalone table with DRC admin data.";
+    wf:output _:popAdminDRC.
+
+_:wf2_4 wf:applicationOf tools:ExcelToTable;
+    wf:input1 rfdataM:adminIncidence;
+    rdfs:comment "Import data from an excel file";
+    wf:output _:adminIncidence2.
+    
+_:wf2_5 wf:applicationOf tools:JoinField;
+    wf:input1 _:popAdminDRC;
+    wf:input2 _:adminDRC2;
+    rdfs:comment "Join population data to region object";
+    wf:output _:popAdminDRC2.
+    
+_:wf2_6 wf:applicationOf tools:AddJoin;
+    wf:input1 _:popAdminDRC2;
+    wf:input2 _:adminIncidence2;
+    rdfs:comment "Join incidence data to region object";
+    wf:output _:popAdminDRC3.
+    
+_:wf2_7 wf:applicationOf tools:AddFields;
+    wf:input1 _:popAdminDRC3;
+    rdfs:comment "Add columns for storing incidence rates";
+    wf:output _:popAdminDRC4.
+    
+_:wf2_8 wf:applicationOf tools:CalculateFields;
+    wf:input1 _:popAdminDRC4;
+    rdfs:comment "Calculate incidence rates for each of multiple years";
+    wf:output _:popAdminDRCIncidenceRates.
+
+
+
+
+# [SC] added triplets (Needs update)
+rfdataM:adminRegions
+    rdfs:comment "Vector polygons of all administrative regions (e.g. province in NL) in the world."@en;
+    rdfs:label "Administrative areas world"@en.
+
+rfdataM:population
+    rdfs:comment "Raster with estimate of the populations in the world in 2016"@en;
+    rdfs:label "World population"@en.
+
+rfdataM:adminIncidence
+    rdfs:comment "Excel table with yearly incidence rates of malaria between 2000 and 2015 in administrative regions."@en;
+    rdfs:label "Malaria incidents"@en.
+
+_:adminDRC1
+    rdfs:comment "Vector polygons of all administrative regions in the Democratic Republic of Congo (DRC)"@en;
+    rdfs:label "Admin. areas DRC"@en.
+
+_:adminDRC2
+    rdfs:comment "Vector polygons of all administrative regions in the Democratic Republic of Congo (DRC) dissolved by name to check for spurious region borders"@en;
+    rdfs:label "Admin. areas DRC (Dissolved)"@en.
+
+_:popAdminDRC
+    rdfs:comment "A table with one row containing a sum of population counts in the Democratic Republic of Congo (DRC)"@en;
+    rdfs:label "Summed population DRC"@en.
+
+_:adminDRC4
+    rdfs:comment "Vector polygons of all administrative regions in the Democratic Republic of Congo (DRC) with total population counts and malaria incidence rates for 2000, 2005, 2010 and 2015 as attributes."@en;
+    rdfs:label "Admin. areas DRC with pop. sum and malaria incident counts"@en.
+
+_:adminDRC6
+    rdfs:comment "Vector polygons of all administrative regions in the Democratic Republic of Congo (DRC) with malaria incidence rates for 2000, 2005, 2010 and 2015."@en;
+    rdfs:label "Admin. areas DRC with pop. sum and malaria rates"@en.

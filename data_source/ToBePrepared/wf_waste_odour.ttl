@@ -1,0 +1,116 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix xml: <http://www.w3.org/XML/1998/namespace>.
+@prefix dbo: <https://dbpedia.org/ontology/>.
+@prefix dct: <http://purl.org/dc/terms/>.
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#>.
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#>.
+# @prefix tools: <http://geographicknowledge.de/vocab/GISTools.rdf#>.
+@prefix repo: <https://example.com/#>.
+
+# [SC] data prefix
+@prefix bag: <https://www.cbs.nl/nl-nl/deelnemers-enquetes/decentrale-overheden/vastgoed-overheden/basisregistraties-adressen-en-gebouwen--bag-->.
+
+@prefix mapsAmst: <https://maps.amsterdam.nl/>.
+
+
+
+
+# @author: Eric Top, Simon Scheider
+
+
+
+repo:WasteAmsterdam_Near a wf:Workflow;
+    rdfs:comment "What is the total walking time to the nearest waste disposal places from each household in the Amsterdam city centre?"@en;
+    dct:subject "";
+    dbo:abstract ". ";
+    wf:source bag:verblijfsobject; #Point locations of dwellings in the Netherlands.
+    wf:source mapsAmst:oldcontainers;      #Geocoded location point of 2350 Pine St, San Francisco, where an incident occurred.
+    wf:source _:newcontainers;
+    wf:source _:AmstCentrum;
+    wf:edge _:wf1_1, _:wf1_a1, _:wf1_a2,_:wf1_a3,_:wf1_a4,_:wf1_a5, _:wf1_a6, _:wf1_b1, _:wf1_b2,_:wf1_b3,_:wf1_b4,_:wf1_b5, _:wf1_b6.
+
+
+# Workflow nodes
+
+#New containers
+_:wf1_a1 wf:applicationOf tools:AddField;
+	wf:input1 _:newcontainers;       
+    rdfs:comment "Add field with 4 in all rows"; 
+    wf:output _:newcontainers2.
+    
+_:wf1_a2 wf:applicationOf tools:CalculateField;
+    wf:input1 _:newcontainers2;
+    rdfs:comment "Add field with 4 in all rows";
+    wf:output _:newcontainers3.
+    
+_:wf1_a3 wf:applicationOf tools:KernelDensity; 
+    wf:input1 _:newcontainers3;
+    rdfs:comment "Calculate container kernel density to approximate container availability";
+    wf:output _:newcontainerdensity.
+    
+_:wf1_a4 wf:applicationOf tools:ZonalStatisticsAsTable; 
+    wf:input1 _:newcontainerdensity;
+    wf:input2 _:AmstCentrum;
+    rdfs:comment "Sum disposal densities";
+    wf:output _:newzonalstats.
+    
+_:wf1_a5 wf:applicationOf tools:AlterField; 
+    wf:input1 _:newzonalstats;
+    rdfs:comment "Change alias for sum";
+    wf:output _:newzonalstats2.
+    
+_:wf1_a6 wf:applicationOf tools:JoinField; 
+    wf:input1 _:newzonalstats2;
+    wf:input2 _:AmstCentrum;
+    rdfs:comment "Join new container zonal stats data with the amsterdam centrum data";
+    wf:output _:newzonalstats3.
+    
+#Old containers
+_:wf1_b1 wf:applicationOf tools:AddField;
+	wf:input1 _:oldcontainers;       
+    rdfs:comment "Add field with 1 in all rows"; 
+    wf:output _:oldcontainers2.
+    
+_:wf1_b2 wf:applicationOf tools:CalculateField;
+    wf:input1 _:oldcontainers2;
+    rdfs:comment "Add field with 1 in all rows";
+    wf:output _:oldcontainers3.
+    
+_:wf1_b3 wf:applicationOf tools:KernelDensity;
+    wf:input1 _:oldcontainers3;
+    rdfs:comment "Calculate container kernel density to approximate container availability";
+    wf:output _:oldcontainerdensity.
+    
+_:wf1_b4 wf:applicationOf tools:ZonalStatisticsAsTable;
+    wf:input1 _:oldcontainerdensity;
+    wf:input2 _:AmstCentrum;
+    rdfs:comment "Sum disposal densities";
+    wf:output _:oldzonalstats.
+    
+_:wf1_b5 wf:applicationOf tools:AlterField;
+    wf:input1 _:oldzonalstats;
+    rdfs:comment "Change alias for sum";
+    wf:output _:oldzonalstats2.
+ 
+_:wf1_b6 wf:applicationOf tools:JoinField;
+    wf:input1 _:oldzonalstats2;
+    wf:input2 _:AmstCentrum;
+    rdfs:comment "Join old container zonal stats data with the amsterdam centrum data";
+    wf:output _:oldzonalstats3. 
+    
+# Final join
+_:wf1_1 wf:applicationOf tools:JoinField;
+    wf:input1 _:oldzonalstats3;
+    wf:input2 _:newzonalstats3;
+    rdfs:comment "Join old zonal statistics with new zonal statistics";
+    wf:output _:oldandnewzonalstatistics.
+    
+# [SC] added triplets   
+bag:verblijfsobject
+    rdfs:comment ""@en;
+    rdfs:label ""@en.
+ 
+
+

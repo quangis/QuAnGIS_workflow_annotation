@@ -1,0 +1,90 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix xml: <http://www.w3.org/XML/1998/namespace>.
+@prefix dbo: <https://dbpedia.org/ontology/>.
+@prefix dct: <http://purl.org/dc/terms/>.
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#>.
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#>.
+# @prefix tools: <http://geographicknowledge.de/vocab/GISTools.rdf#>.
+@prefix repo: <https://example.com/#>.
+
+# [SC] data prefix
+@prefix cbs: <https://www.cbs.nl/nl-nl/maatwerk/2017/31/kerncijfers-wijken-en-buurten-2017>.
+
+@prefix AmstBuurt: <https://maps.amsterdam.nl/open_geodata/?k=198>.
+@prefix CrimeData: <https://data.politie.nl/#/Politie/nl/dataset/47018NED/table?ts=1597849633123>.
+#@prefix Residences: <https://utrecht.dataplatform.nl/#/data/f65b6161-11b7-47a7-b061-d2a619a285c4?totalViews=40>.
+
+
+
+
+# @author: Eric Top, Simon Scheider
+
+
+
+repo:WasteAmsterdam_Near a wf:Workflow;
+    rdfs:comment "What is the exposure to crime in neighborhoods of Amsterdam?"@en;
+    dct:subject "";
+    dbo:abstract ". ";
+    wf:source AmstBuurt:Buurt;
+    wf:source CrimeData:Crimes;
+    wf:source _:Routes; 
+    wf:edge _:wf1_1, _:wf1_2,_:wf1_3,_:wf1_4,_:wf1_5,_:wf1_6,_:wf1_7,_:wf1_8,_:wf1_9.
+
+
+# Workflow nodes
+# # # CrimeExposure
+_:wf1_1 wf:applicationOf tools:JoinField;
+	wf:input1 AmstBuurt:Buurt;
+	wf:input2 CrimeData:Crimes;
+    rdfs:comment "Join crime data to vector polygons representing buurten of Amsterdam to local file"; 
+    wf:output _:AmBuurt.
+    
+_:wf1_2 wf:applicationOf tools:CopyFeatures;
+	wf:input1 _:AmBuurt;
+	rdfs:comment "Copy the features.";
+	wf:output _:AmBuurtCrime.
+
+_:wf1_3 wf:applicationOf tools:AddField;
+	wf:input1 _:AmBuurtCrime;
+	rdfs:comment "Copy the crime counts of Amsterdam neighborhoods to a new field";
+	wf:output _:AmBuurtCrime2.
+
+_:wf1_4 wf:applicationOf tools:CalculateGeometry;  
+	wf:input1 _:AmBuurtCrime2;
+	rdfs:comment "Calculate geometry attributes of the Amsterdam buurten";
+	wf:output _:AmBuurtCrime3.
+	
+_:wf1_5 wf:applicationOf tools:AddField;
+	wf:input1 _:AmBuurtCrime3;
+	rdfs:comment "Copy the crime counts of Amsterdam neighborhoods to a new field";
+	wf:output _:AmBuurtCrime4.
+	
+_:wf1_6 wf:applicationOf tools:CalculateField;
+	wf:input1 _:AmBuurtCrime4;
+	rdfs:comment "Copy the crime counts of Amsterdam neighborhoods to a new field";
+	wf:output _:AmBuurtCrimeDens.
+	
+_:wf1_7 wf:applicationOf tools:CalculateField;
+	wf:input1 _:AmBuurtCrime2;
+	rdfs:comment "Calculate the density of crimes for each neighborhood in Amsterdam";
+	wf:output _:AmBuurtCrimeDens. 
+	
+_:wf1_8 wf:applicationOf tools:Intersect; 
+	wf:input1 _:AmBuurtCrimeDens;
+	wf:input2 _:Routes;
+	rdfs:comment "Intersects the routes with the crime density regions to get segments with crime density attributes";
+	wf:output _:CriDenRoute.
+	
+_:wf1_9 wf:applicationOf tools:SummaryStatistics;
+	wf:input1 _:CriDenRoute;
+	rdfs:comment "Averages the densities of the segments";
+	wf:output _:CriDenRoute2.
+
+	
+# [SC] added triplets   
+#bag:verblijfsobject
+#    rdfs:comment ""@en;
+#    rdfs:label ""@en.
+

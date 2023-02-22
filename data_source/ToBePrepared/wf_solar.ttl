@@ -1,0 +1,172 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix xml: <http://www.w3.org/XML/1998/namespace>.
+@prefix dbo: <https://dbpedia.org/ontology/>.
+@prefix dct: <http://purl.org/dc/terms/>.
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#>.
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#>.
+# @prefix tools: <http://geographicknowledge.de/vocab/GISTools.rdf#>.
+@prefix repo: <https://example.com/#>.
+
+# [SC] data prefix
+@prefix rfdataS: <https://learn.arcgis.com/en/projects/estimate-solar-power-potential/#>.
+
+
+
+# @author: Eric Top, Simon Scheider
+
+
+
+# Workflow Solar Power Potential
+# Workflow metadata (result and data sources)
+repo:SolarPowerPotentialGloverPark a wf:Workflow;
+    rdfs:comment "How much solar radiation does each rooftop in Glover Park, Washington, D.C., receive throughout the year?"@en;
+    dct:subject "";
+    dbo:abstract "Your nonprofit organization recently launched a pilot program to encourage the residents of the Glover Park neighborhood in Washington, D.C., to install solar panels on their roofs. The goal is for the solar panels to produce a large part of the electric power consumed by each household.In this lesson, you will use ArcGIS Pro to determine how much solar radiation each rooftop in the neighborhood receives throughout the year. Then, you will estimate how much electric power each rooftop (and the neighborhood as a whole) could generate if every suitable building was equipped with solar panels.";
+    wf:source rfdataS:dsm; #Neighborhood of Glover Park as a digital surface model (Raster)
+    wf:source rfdataS:solarRad; #Solar radiation per areal unit in Glover Park
+    wf:source rfdataS:buildings; #Polygonal outline of every building in the Glover Park neighborhood (Vector)
+    wf:edge _:wf1_1, _:wf1_2, _:wf1_4, _:wf1_5, _:wf1_6, _:wf1_7, _:wf1_8, _:wf1_9, _:wf1_11, _:wf1_13, _:wf1_15.
+
+# Workflow nodes
+
+_:wf1_1 wf:applicationOf tools:Aspect;
+    wf:input1 rfdataS:dsm;
+    rdfs:comment "calculate aspects in Glover";
+    wf:output _:aspectDsm.
+
+_:wf1_2 wf:applicationOf tools:Slope;
+    wf:input1 rfdataS:dsm;
+    rdfs:comment "calculate slopes in Glover";
+    wf:output _:slopeDsm.
+
+_:wf1_4 wf:applicationOf tools:RasterCalculator;
+    wf:input1 rfdataS:solarRad;
+    rdfs:comment "watt-hours to kilowatt hours (divide by 1000)";
+    wf:output _:solarRad2.
+
+_:wf1_5 wf:applicationOf tools:Con;
+    wf:input1 _:slopeDsm;
+    wf:input2 _:solarRad2;
+    rdfs:comment "get solar radiation where slope VALUE < 45 degrees";
+    wf:output _:solarRad3.
+
+_:wf1_6 wf:applicationOf tools:Con;
+    wf:input1 _:solarRad3;
+    rdfs:comment "get solar_rad where VALUE > 800 KWH";
+    wf:output _:solarRad4.
+
+_:wf1_7 wf:applicationOf tools:Con;
+    wf:input1 _:slopeDsm;
+    wf:input2 _:solarRad4;
+    rdfs:comment "get solar ratiation for flat locations (where slope VALUE < 10 degrees)";
+    wf:output _:solarRad5.
+
+_:wf1_8 wf:applicationOf tools:Con;
+    wf:input1 _:aspectDsm;
+    wf:input2 _:solarRad4;
+    wf:input3 _:solarRad5;
+    rdfs:comment "get solar radiation where aspect where VALUE >= 225 degrees and VALUE <= 3375 degrees, for flat locations otherwise";
+    wf:output _:solarRad6.
+
+_:wf1_9 wf:applicationOf tools:ZonalStatisticsAsTable;
+    wf:input2 rfdataS:buildings;
+    wf:input1 _:solarRad6;
+    rdfs:comment "calculate average solar radiation for each building";
+    wf:output _:solarBuildings.
+    
+_:wf1_10 wf:applicationOf tools:AddJoin;
+    wf:input2 rfdataS:buildings;
+    wf:input1 _:solarBuildings;
+    rdfs:comment "calculate average solar radiation for each building";
+    wf:output _:solarBuildings2.
+
+_:wf1_11 wf:applicationOf tools:SelectLayerByAttribute;
+    wf:input1 _:solarBuildings2;
+    rdfs:comment "select buildings where solar radiation is greater than 30 KWH";
+    wf:output _:solarBuildings3.
+    
+_:wf1_12 wf:applicationOf tools:FC2FC;
+    wf:input1 _:solarBuildings3;
+    rdfs:comment "Create new layer from selection";
+    wf:output _:solarBuildings4.
+
+_:wf1_13 wf:applicationOf tools:AddField;
+    wf:input1 _:solarBuildings4;
+    rdfs:comment "calculate field for total amount of solar radiation received per year by each building's usable area."; # <(!AREA! * !MEAN!) / 1000>
+    wf:output _:solarBuildings5.
+    
+_:wf1_14 wf:applicationOf tools:CalculateField;
+    wf:input1 _:solarBuildings5;
+    rdfs:comment "calculate field for total amount of solar radiation received per year by each building's usable area."; # <(!AREA! * !MEAN!) / 1000>
+    wf:output _:solarBuildings6.
+
+_:wf1_15 wf:applicationOf tools:AddField;
+    wf:input1 _:solarBuildings6;
+    rdfs:comment "Calculate field for electric power production potential";  # <!Usable_SR_MWh! * 0.15 * 0.86>
+    wf:output _:solarBuildings7.
+    
+_:wf1_15 wf:applicationOf tools:CalculateField;
+    wf:input1 _:solarBuildings7;
+    rdfs:comment "Calculate field for electric power production potential";  # <!Usable_SR_MWh! * 0.15 * 0.86>
+    wf:output _:solarBuildings8.
+
+
+
+# [SC] added triplets   
+rfdataS:dsm
+    rdfs:comment "Neighborhood of Glover Park as a digital surface model (Raster)"@en;
+    rdfs:label "Surface model"@en.
+
+rfdataS:solarRad
+    rdfs:comment "Solar radiation per areal unit in Glover Park"@en;
+    rdfs:label "Solar radiation (w/h)"@en.
+
+rfdataS:buildings
+    rdfs:comment "Polygonal outline of every building in the Glover Park neighborhood (Vector)"@en;
+    rdfs:label "Buildings"@en.
+
+_:aspectDsm
+    rdfs:comment "A raster across the neighborhood of Glover Park with aspect (Orientation towards cardinal direction) values for each cell"@en;
+    rdfs:label "Aspect raster"@en.
+
+_:slopeDsm
+    rdfs:comment "A raster across the neighborhood of Glover Park with slope (Inclination) values for each cell"@en;
+    rdfs:label "Slope raster"@en.
+
+_:solarRad2
+    rdfs:comment "Raster with solar radiation values in kilowatt/hour for each raster cell"@en;
+    rdfs:label "Solar radiation (kw/h)"@en.
+
+_:solarRad3
+    rdfs:comment "Raster with solar radiation values in kilowatt/hour for each raster cell with a slope of less than 45 degrees"@en;
+    rdfs:label "Solar radiation (Slope<45°)"@en.
+
+_:solarRad4
+    rdfs:comment "Raster with solar radiation values in kilowatt/hour for each raster cell where the solar radiation is above 800 kilowatt per hour"@en;
+    rdfs:label "Solar radiation (>800kw/h)"@en.
+
+_:solarRad5
+    rdfs:comment "Raster with solar radiation values in kilowatt/hour for each raster cell with a slope of less than 10 degrees"@en;
+    rdfs:label "Solar radiation (Slope<10°)"@en.
+
+_:solarRad6
+    rdfs:comment "Raster with solar radiation values in kilowatt/hour for each raster cell with north-facing cells removed"@en;
+    rdfs:label "Solar radiation (No North)"@en.
+
+_:solarBuildings
+    rdfs:comment "Buildings with average solar radiation in kilowatt/hour per m² for each building in Glover Park"@en;
+    rdfs:label "Solar radiation per building"@en.
+
+_:solarBuildings3
+    rdfs:comment "Buildings in Glover Park with a high average radiation in kilowatt/hour per m² surface."@en;
+    rdfs:label "High radiation buildings (kw/h)"@en.
+
+_:solarBuildings5
+    rdfs:comment "Buildings in Glover Park with a high solar radiation in megawatt/year"@en;
+    rdfs:label "High radiation buildings (mw/y)"@en.
+
+_:solarBuildings7
+    rdfs:comment "Values indicating per building the potential for energy production by solar panels in megawatt/year"@en;
+    rdfs:label "Solar panel potential"@en.

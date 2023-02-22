@@ -1,0 +1,95 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix xml: <http://www.w3.org/XML/1998/namespace>.
+@prefix dbo: <https://dbpedia.org/ontology/>.
+@prefix dct: <http://purl.org/dc/terms/>.
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#>.
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#>.
+# @prefix tools: <http://geographicknowledge.de/vocab/GISTools.rdf#>.
+@prefix repo: <https://example.com/#>.
+
+# [SC] data prefix
+@prefix cbs: <https://www.cbs.nl/nl-nl/maatwerk/2017/31/kerncijfers-wijken-en-buurten-2017>.
+
+@prefix AmstBuurt: <https://maps.amsterdam.nl/open_geodata/?k=198>.
+@prefix CrimeData: <https://data.politie.nl/#/Politie/nl/dataset/47018NED/table?ts=1597849633123>.
+#@prefix Residences: <https://utrecht.dataplatform.nl/#/data/f65b6161-11b7-47a7-b061-d2a619a285c4?totalViews=40>.
+
+
+
+
+# @author: Eric Top, Simon Scheider
+
+
+
+repo:WasteAmsterdam_Near a wf:Workflow;
+    rdfs:comment ""@en;
+    dct:subject "";
+    dbo:abstract ". ";
+    wf:source _:functionMix;
+    wf:source _:Sport;
+    wf:source _:Supermarket;
+    wf:source _:Routes; 
+    wf:edge _:wf1_1, _:wf1_2,_:wf1_3,_:wf1_4,_:wf1_5,_:wf1_6,_:wf1_7,_:wf1_8,_:wf1_9.
+
+
+# Workflow nodes
+# # # CrimeExposure
+
+    
+_:wf1_1 wf:applicationOf tools:FC2FC;
+	wf:input1 _:FunctionMix;
+    rdfs:comment "Get regions allocated to residential"; 
+    wf:output _:House.
+    
+_:wf1_2 wf:applicationOf tools:FeatureToPoint; #https://pro.arcgis.com/en/pro-app/2.9/tool-reference/data-management/feature-to-point.htm
+    wf:input1 _:House2;
+    rdfs:comment "Convert features to points"; 
+    wf:output _:House3.
+    
+_:wf1_3 wf:applicationOf tools:CreateRandomPoints; #https://pro.arcgis.com/en/pro-app/2.9/tool-reference/data-management/create-random-points.htm
+    wf:input1 _:House3;
+    rdfs:comment "Generate a random point on the map"; 
+    wf:output _:House4.
+    
+_:wf1_4 wf:applicationOf tools:FC2FC;
+	wf:input1 _:FunctionMix;
+    rdfs:comment "Get regions allocated to work"; 
+    wf:output _:Work.
+    
+_:wf1_5 wf:applicationOf tools:FeatureToPoint;
+    wf:input1 _:Work;
+    rdfs:comment "Convert features to points"; 
+    wf:output _:Work2.
+    
+_:wf1_6 wf:applicationOf tools:CreateRandomPoints; 
+    wf:input1 _:Work2;
+    rdfs:comment "Convert features to points"; 
+    wf:output _:Work3.
+    
+_:wf1_7 wf:applicationOf tools:CreateRandomPoints; 
+    wf:input1 _:Sport;
+    rdfs:comment "Convert features to points"; 
+    wf:output _:Sport2.
+    
+_:wf1_8 wf:applicationOf tools:CreateRandomPoints; 
+    wf:input1 _:Supermarket;
+    rdfs:comment "Convert features to points"; 
+    wf:output _:Supermarket2.
+    
+_:wf1_9 wf:applicationOf tools:Merge;
+    wf:input1 _:Work3;
+    wf:input2 _:Sport2;
+    wf:input3 _:Supermarket2;
+    rdfs:comment "Merge work, sport, and supermarket point datasets";
+    wf:output _:WorkSportMarket.
+    
+
+
+	
+# [SC] added triplets   
+#bag:verblijfsobject
+#    rdfs:comment ""@en;
+#    rdfs:label ""@en.
+
