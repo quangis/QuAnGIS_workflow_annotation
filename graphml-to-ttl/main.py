@@ -1,7 +1,7 @@
 import networkx as nx
 from rdflib import Graph, Namespace, RDF, RDFS, URIRef, BNode
 from rdflib.term import Literal
-
+import os
 
 class Action:
     def __init__(self, action_node=None, inputs=None, outputs=None, comments=None, expressions=None, labels=None):
@@ -266,21 +266,25 @@ class Workflow:
         with open(file, "w") as f:
             f.write(new)
 
+# Export all .graphml files to .ttl files
+for file in os.listdir('../data_source/'):
+    filename_parts = os.path.splitext(file)
 
-# Initialize workflow object
-wf = Workflow()
+    # Check if the file is a .graphml file
+    if os.path.splitext(file)[1] == ".graphml":
 
-# Extract actions from nodes and edges in a DAG
-networkx_dag = nx.read_graphml('wfMnT_neighborhoods.graphml')
-wf.update_metadata_from_networkx_dag(networkx_dag)
-wf.import_data_from_networkx_dag(networkx_dag)
+        # Initialize workflow object
+        wf = Workflow()
 
-wf.export_to_RDF('wfMnT_neighborhoods.ttl')
+        # Import file into networkx
+        networkx_dag = nx.read_graphml('../data_source/' + file)
 
+        # Convert metadata to rdflib.graph workflow metadata
+        wf.update_metadata_from_networkx_dag(networkx_dag)
 
+        # Convert data to rdflib.graph workflow action/artefact data
+        wf.import_data_from_networkx_dag(networkx_dag)
 
-
-
-
-
+        # Export to RDF .ttl format
+        wf.export_to_RDF('../data_source/' + filename_parts[0] + '.ttl')
 
