@@ -1,0 +1,134 @@
+# @Author(s): Eric Top
+@prefix ccd: <http://geographicknowledge.de/vocab/CoreConceptData.rdf#> .
+@prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .
+@prefix dbo: <https://dbpedia.org/ontology/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix repo: <https://example.com/#> .
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
+
+repo:wfMnT_neighborhoods a wf:Workflow ;
+    wf:edge data:wfMnT_neighborhoods_n0,
+        data:wfMnT_neighborhoods_n12,
+        data:wfMnT_neighborhoods_n16,
+        data:wfMnT_neighborhoods_n19,
+        data:wfMnT_neighborhoods_n22,
+        data:wfMnT_neighborhoods_n26,
+        data:wfMnT_neighborhoods_n3,
+        data:wfMnT_neighborhoods_n30,
+        data:wfMnT_neighborhoods_n33,
+        data:wfMnT_neighborhoods_n36,
+        data:wfMnT_neighborhoods_n39,
+        data:wfMnT_neighborhoods_n42,
+        data:wfMnT_neighborhoods_n45,
+        data:wfMnT_neighborhoods_n8 ;
+    dct:subject "" ;
+    rdfs:comment "What neighborhoods in Utrecht have an average WOZ below 200 and a percentage of 25 to 45 year-olds of 30% or more?" ;
+    dbo:abstract "." .
+
+data:wfMnT_neighborhoods_WOZ rdfs:comment "Table with average WOZ data per neigborhood" .
+
+data:wfMnT_neighborhoods_n0 wf:applicationOf tools:SelectLayerByAttribute ;
+    wf:input1 data:wfMnT_neighborhoods_neighborhoods ;
+    wf:output data:wfMnT_neighborhoods_neighborhoods_select ;
+    rdfs:comment "Select neighborhoods in the Utrecht municipality" .
+
+data:wfMnT_neighborhoods_n12 wf:applicationOf tools:ExportFeatures ;
+    wf:input1 data:wfMnT_neighborhoods_schools_select ;
+    wf:output data:wfMnT_neighborhoods_schools_Utrecht ;
+    rdfs:comment "Extract selected schools (in Utrecht municipality) to new layer file" .
+
+data:wfMnT_neighborhoods_n16 wf:applicationOf tools:SelectLayerByLocation ;
+    wf:input1 data:wfMnT_neighborhoods_neighborhoods_Utrecht ;
+    wf:input2 data:wfMnT_neighborhoods_schools_Utrecht ;
+    wf:output data:wfMnT_neighborhoods_neighborhoods_Utrecht_select ;
+    rdfs:comment "Select Utrecht neighborhoods that are within 100 meters of a school" .
+
+data:wfMnT_neighborhoods_n19 wf:applicationOf tools:ExportFeatures ;
+    wf:input1 data:wfMnT_neighborhoods_neighborhoods_Utrecht_select ;
+    wf:output data:wfMnT_neighborhoods_neighborhoods_Utrecht_near_schools ;
+    rdfs:comment "Extract selected Utrecht neighborhoods (that are within 100 meters of a school)" .
+
+data:wfMnT_neighborhoods_n22 wf:applicationOf tools:SelectLayerByAttribute ;
+    wf:input1 data:wfMnT_neighborhoods_WOZ ;
+    wf:output data:wfMnT_neighborhoods_WOZ_select ;
+    rdfs:comment "Select only cases where WOZ > 0" .
+
+data:wfMnT_neighborhoods_n26 wf:applicationOf tools:ExportTable ;
+    wf:input1 data:wfMnT_neighborhoods_WOZ_select ;
+    wf:output data:wfMnT_neighborhoods_WOZ_pos ;
+    rdfs:comment "Extract selected cases (only cases where WOZ > 0)" .
+
+data:wfMnT_neighborhoods_n3 wf:applicationOf tools:ExportFeatures ;
+    wf:input1 data:wfMnT_neighborhoods_neighborhoods_select ;
+    wf:output data:wfMnT_neighborhoods_neighborhoods_Utrecht ;
+    rdfs:comment "Extract selected neighborhoods (in Utrecht municipality) to new layer file" .
+
+data:wfMnT_neighborhoods_n30 wf:applicationOf tools:AddJoin ;
+    wf:input1 data:wfMnT_neighborhoods_neighborhoods_Utrecht_near_schools ;
+    wf:input2 data:wfMnT_neighborhoods_WOZ_pos ;
+    wf:output data:wfMnT_neighborhoods_neighborhoods_Utrecht_near_schools_WOZ_pos_join ;
+    rdfs:comment "Join the data of WOZ to the attribute table of the neighborhoods in Utrecht near schools based on neighborhood names" .
+
+data:wfMnT_neighborhoods_n33 wf:applicationOf tools:ExportFeatures ;
+    wf:input1 data:wfMnT_neighborhoods_neighborhoods_Utrecht_near_schools_WOZ_pos_join ;
+    wf:output data:wfMnT_neighborhoods_neighborhoods_Utrecht_WOZ ;
+    rdfs:comment "Export the joined data of WOZ to the attribute table of the neighborhoods in Utrecht near schools based on neighborhood names to a  new layer file" .
+
+data:wfMnT_neighborhoods_n36 wf:applicationOf tools:AddField ;
+    wf:input1 data:wfMnT_neighborhoods_neighborhoods_Utrecht_WOZ ;
+    wf:output data:wfMnT_neighborhoods_neighborhoods_Utrecht_WOZ_addfield ;
+    rdfs:comment "Add a field for the percentage of people between 25 and 45" .
+
+data:wfMnT_neighborhoods_n39 wf:applicationOf tools:CalculateField ;
+    wf:input1 data:wfMnT_neighborhoods_neighborhoods_Utrecht_WOZ_addfield ;
+    wf:output data:wfMnT_neighborhoods_neighborhoods_Utrecht_WOZ_perc ;
+    rdfs:comment "Calculate the percentage of people between 25 and 45 for each neighborhood near schools in Utrecht" .
+
+data:wfMnT_neighborhoods_n42 wf:applicationOf tools:SelectLayerByAttribute ;
+    wf:input1 data:wfMnT_neighborhoods_neighborhoods_Utrecht_WOZ_perc ;
+    wf:output data:wfMnT_neighborhoods_neighborhoods_Utrecht_WOZ_perc_select ;
+    rdfs:comment "Select only cases where the percentage of people between 25 and 45 is over 30% and the WOZ is less than 200" .
+
+data:wfMnT_neighborhoods_n45 wf:applicationOf tools:ExportFeatures ;
+    wf:input1 data:wfMnT_neighborhoods_neighborhoods_Utrecht_WOZ_perc_select ;
+    wf:output data:wfMnT_neighborhoods_suitable_neighborhoods ;
+    rdfs:comment "Export cases where the percentage of people between 25 and 45 is over 30% and the WOZ is less than 200" .
+
+data:wfMnT_neighborhoods_n8 wf:applicationOf tools:SelectLayerByLocation ;
+    wf:input1 data:wfMnT_neighborhoods_schools ;
+    wf:input2 data:wfMnT_neighborhoods_neighborhoods_Utrecht ;
+    wf:output data:wfMnT_neighborhoods_schools_select ;
+    rdfs:comment "Select schools that are within the Utrecht municipality" .
+
+data:wfMnT_neighborhoods_neighborhoods a ccd:Polygon ;
+    rdfs:comment "Vector polygons representing neighborhoods in the Netherlands" .
+
+data:wfMnT_neighborhoods_schools a ccd:Point ;
+    rdfs:comment "Vector points representing schools in the Netherlands" .
+
+data:wfMnT_neighborhoods_suitable_neighborhoods a ccd:Polygon .
+
+data:wfMnT_neighborhoods_neighborhoods_Utrecht_WOZ a ccd:Polygon .
+
+data:wfMnT_neighborhoods_neighborhoods_Utrecht_WOZ_addfield a ccd:Polygon .
+
+data:wfMnT_neighborhoods_neighborhoods_Utrecht_WOZ_perc a ccd:Polygon .
+
+data:wfMnT_neighborhoods_neighborhoods_Utrecht_WOZ_perc_select a ccd:Polygon .
+
+data:wfMnT_neighborhoods_neighborhoods_Utrecht_near_schools a ccd:Polygon .
+
+data:wfMnT_neighborhoods_neighborhoods_Utrecht_near_schools_WOZ_pos_join a ccd:Polygon .
+
+data:wfMnT_neighborhoods_neighborhoods_Utrecht_select a ccd:Polygon .
+
+data:wfMnT_neighborhoods_neighborhoods_select a ccd:Polygon .
+
+data:wfMnT_neighborhoods_schools_Utrecht a ccd:Point .
+
+data:wfMnT_neighborhoods_schools_select a ccd:Point .
+
+data:wfMnT_neighborhoods_neighborhoods_Utrecht a ccd:Polygon .
+

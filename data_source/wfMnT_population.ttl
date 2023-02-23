@@ -1,0 +1,112 @@
+# @Author(s): Eric Top
+@prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .
+@prefix dbo: <https://dbpedia.org/ontology/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix repo: <https://example.com/#> .
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
+
+repo:wfMnT_roadbuffer a wf:Workflow ;
+    wf:edge data:wfMnT_roadbuffer_n12,
+        data:wfMnT_roadbuffer_n14,
+        data:wfMnT_roadbuffer_n17,
+        data:wfMnT_roadbuffer_n21,
+        data:wfMnT_roadbuffer_n23,
+        data:wfMnT_roadbuffer_n27,
+        data:wfMnT_roadbuffer_n30,
+        data:wfMnT_roadbuffer_n34,
+        data:wfMnT_roadbuffer_n36,
+        data:wfMnT_roadbuffer_n37,
+        data:wfMnT_roadbuffer_n40,
+        data:wfMnT_roadbuffer_n46,
+        data:wfMnT_roadbuffer_n48,
+        data:wfMnT_roadbuffer_n50,
+        data:wfMnT_roadbuffer_n9 ;
+    dct:subject "" ;
+    rdfs:comment "What is the number of people of each population center within 1000 meters of the A2 highway within 1000 meters of the A2 highway?" ;
+    dbo:abstract "." .
+
+data:wfMnT_roadbuffer_admin_areas rdfs:comment "The administrative areas of the Netherlands at municipal, provincial, and national levels as vector polygons" .
+
+data:wfMnT_roadbuffer_n12 wf:applicationOf tools:SelectLayerByLocation ;
+    wf:input1 data:wfMnT_roadbuffer_A2_highway ;
+    wf:input2 data:wfMnT_roadbuffer_provinces ;
+    wf:output data:wfMnT_roadbuffer_provinces_select ;
+    rdfs:comment "Select provinces within 1000 meters of the A2 highway" .
+
+data:wfMnT_roadbuffer_n14 wf:applicationOf tools:ExportFeatures ;
+    wf:input1 data:wfMnT_roadbuffer_provinces_select ;
+    wf:output data:wfMnT_roadbuffer_provinces_near_A2 ;
+    rdfs:comment "Extract provinces within 1000 meters of the A2 highway" .
+
+data:wfMnT_roadbuffer_n17 wf:applicationOf tools:SelectLayerByLocation ;
+    wf:input1 data:wfMnT_roadbuffer_pop_centers ;
+    wf:input2 data:wfMnT_roadbuffer_provinces_near_A2 ;
+    wf:output data:wfMnT_roadbuffer_pop_centers_select ;
+    rdfs:comment "Select population centers in provinces near the A2 highway" .
+
+data:wfMnT_roadbuffer_n21 wf:applicationOf tools:ExportFeatures ;
+    wf:input1 data:wfMnT_roadbuffer_pop_centers_select ;
+    wf:output data:wfMnT_roadbuffer_pop_centers_near_A2 ;
+    rdfs:comment "Export selected population centers near the A2 highway to new layer" .
+
+data:wfMnT_roadbuffer_n23 wf:applicationOf tools:AddField ;
+    wf:input1 data:wfMnT_roadbuffer_pop_centers_near_A2 ;
+    wf:output data:wfMnT_roadbuffer_pop_centers_near_A2_addfield ;
+    rdfs:comment "Add field for population density" .
+
+data:wfMnT_roadbuffer_n27 wf:applicationOf tools:AddField ;
+    wf:input1 data:wfMnT_roadbuffer_pop_centers_near_A2_addfield ;
+    wf:output data:wfMnT_roadbuffer_pop_centers_near_A2_addfield_addfield ;
+    rdfs:comment "Add field for area size" .
+
+data:wfMnT_roadbuffer_n30 wf:applicationOf tools:CalculateGeometryAttributes ;
+    wf:input1 data:wfMnT_roadbuffer_pop_centers_near_A2_addfield_addfield ;
+    wf:output data:wfMnT_roadbuffer_pop_centers_near_A2_geom_attr ;
+    rdfs:comment "Calculate the area size of each population center" .
+
+data:wfMnT_roadbuffer_n34 wf:applicationOf tools:CalculateField ;
+    wf:input1 data:wfMnT_roadbuffer_pop_centers_near_A2_geom_attr ;
+    wf:output data:wfMnT_roadbuffer_pop_centers_near_A2_pop_dens ;
+    rdfs:comment "Calculate the population density of each population center" .
+
+data:wfMnT_roadbuffer_n36 wf:applicationOf tools:Clip ;
+    wf:input1 data:wfMnT_roadbuffer_pop_centers_near_A2_pop_dens ;
+    wf:input2 data:wfMnT_roadbuffer_A2_highway_buffer ;
+    wf:output data:wfMnT_roadbuffer_pop_clip ;
+    rdfs:comment "Clip the population centers using the A2_buffer" .
+
+data:wfMnT_roadbuffer_n37 wf:applicationOf tools:Buffer ;
+    wf:input1 data:wfMnT_roadbuffer_A2_highway ;
+    wf:output data:wfMnT_roadbuffer_A2_highway_buffers ;
+    rdfs:comment "Generate a buffer of 1000 meters around each A2 highway line segment" .
+
+data:wfMnT_roadbuffer_n40 wf:applicationOf tools:Dissolve ;
+    wf:input1 data:wfMnT_roadbuffer_A2_highway_buffers ;
+    wf:output data:wfMnT_roadbuffer_A2_highway_buffer ;
+    rdfs:comment "Dissolve the 1000 meter buffers around the A2 highway line segments" .
+
+data:wfMnT_roadbuffer_n46 wf:applicationOf tools:CalculateGeometryAttributes ;
+    wf:input1 data:wfMnT_roadbuffer_pop_clip ;
+    wf:output data:wfMnT_roadbuffer_pop_clip_geom_attr ;
+    rdfs:comment "Calculate the area size of each clip-segment of the population centers" .
+
+data:wfMnT_roadbuffer_n48 wf:applicationOf tools:AddField ;
+    wf:input1 data:wfMnT_roadbuffer_pop_clip_geom_attr ;
+    wf:output data:wfMnT_roadbuffer_pop_clip_geom_attr_addfield ;
+    rdfs:comment "Add a field for storing a population estimation" .
+
+data:wfMnT_roadbuffer_n50 wf:applicationOf tools:CalculateField ;
+    wf:input1 data:wfMnT_roadbuffer_pop_clip_geom_attr_addfield ;
+    rdfs:comment "Calculate the estimated populatoin count for each cut segment of the population centers" .
+
+data:wfMnT_roadbuffer_n9 wf:applicationOf tools:ExportFeatures ;
+    wf:input1 data:wfMnT_roadbuffer_admin_areas ;
+    wf:output data:wfMnT_roadbuffer_provinces ;
+    rdfs:comment "Extract provinces from administrative areas of NL" .
+
+data:wfMnT_roadbuffer_pop_centers rdfs:comment "Vector polygons showing where population centers are in the Netherlands" .
+
+data:wfMnT_roadbuffer_A2_highway rdfs:comment "Vector line segments representing the A2 highway in the Netherlands" .
+

@@ -1,0 +1,50 @@
+# @Author(s): Eric Top
+@prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .
+@prefix dbo: <https://dbpedia.org/ontology/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix repo: <https://example.com/#> .
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
+
+repo:wfhospitals_network a wf:Workflow ;
+    wf:edge data:wfhospitals_network_n10,
+        data:wfhospitals_network_n13,
+        data:wfhospitals_network_n18,
+        data:wfhospitals_network_n20,
+        data:wfhospitals_network_n3 ;
+    dct:subject "" ;
+    rdfs:comment "Which hospital is closest to the incidents within a two minutes drive?" ;
+    dbo:abstract "The closest facility solver finds one or more facilities that are closest to an incident based on travel time or travel distance and outputs the best routes as driving directions between the incidents and the chosen facilities. In this tutorial, you'll use this tool to find the closest hospital to an accident. Finding a closest facility can be associated with a local network dataset or a network service hosted in ArcGIS Online or ArcGIS Enterprise. " .
+
+data:wfhospitals_network_hospitals rdfs:comment "Point locations of hospitals in San Francisco" .
+
+data:wfhospitals_network_incident rdfs:comment "Geocoded location point of 2350 Pine St, San Francisco, where an incident occurred" .
+
+data:wfhospitals_network_n10 wf:applicationOf tools:BuildNetwork ;
+    wf:input1 data:wfhospitals_network_roads ;
+    wf:output data:wfhospitals_network_network ;
+    rdfs:comment "Convert a roads line dataset to a roads network dataset" .
+
+data:wfhospitals_network_n13 wf:applicationOf tools:AddLocations ;
+    wf:input1 data:wfhospitals_network_hospitals ;
+    wf:input2 data:wfhospitals_network_facility_analysis_layer ;
+    wf:output data:wfhospitals_network_facility_analysis_layer_loc .
+
+data:wfhospitals_network_n18 wf:applicationOf tools:AddLocations ;
+    wf:input1 data:wfhospitals_network_incident ;
+    wf:input2 data:wfhospitals_network_facility_analysis_layer_loc ;
+    wf:output data:wfhospitals_network_facility_analysis_layer_loc_loc .
+
+data:wfhospitals_network_n20 wf:applicationOf tools:Solve ;
+    wf:input1 data:wfhospitals_network_facility_analysis_layer_loc_loc ;
+    wf:output data:wfhospitals_network_objects_with_travel_times ;
+    rdfs:comment "Find the closest facilities (the accident location) for each origin (hospital)" .
+
+data:wfhospitals_network_n3 wf:applicationOf tools:MakeClosestFacilityAnalysis ;
+    wf:input1 data:wfhospitals_network_network ;
+    wf:output data:wfhospitals_network_facility_analysis_layer ;
+    rdfs:comment "Prepare a closest facility analysis layer over the San Francisco road network data" .
+
+data:wfhospitals_network_roads rdfs:comment "Road line network in San Francisco" .
+
