@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="739f2583-5881-4679-9038-f8f2e2553625" name="Changes" comment="adapted python to new folder structure" />
+    <list default="true" id="739f2583-5881-4679-9038-f8f2e2553625" name="Changes" comment="adapted python to new folder structure">
+      <change beforePath="$PROJECT_DIR$/../data_source/wfMnT_neighborhoods.ttl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../data_source/wfMnT_population.ttl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../data_source/wfmalaria.ttl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../data_source/wfsolar.ttl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../data_source/wfwalk.ttl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../data_source/wfwaste_disposal.ttl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../data_source/wfwaste_near.ttl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../data_source/wfwaste_odour.ttl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
