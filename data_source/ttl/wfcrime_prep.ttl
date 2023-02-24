@@ -1,0 +1,64 @@
+# @Author(s): Eric Top
+@prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .
+@prefix dbo: <https://dbpedia.org/ontology/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix repo: <https://example.com/#> .
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
+
+repo:wfcrime_route a wf:Workflow ;
+    wf:edge data:wfcrime_route_n0,
+        data:wfcrime_route_n10,
+        data:wfcrime_route_n12,
+        data:wfcrime_route_n15,
+        data:wfcrime_route_n16,
+        data:wfcrime_route_n17,
+        data:wfcrime_route_n20,
+        data:wfcrime_route_n23,
+        data:wfcrime_route_n24 ;
+    wf:source data:wfcrime_route_function_mix,
+        data:wfcrime_route_sport_area_points,
+        data:wfcrime_route_supermarket_area_points ;
+    dct:subject "Subject" ;
+    rdfs:comment "Question" ;
+    dbo:abstract "Abstract" .
+
+data:wfcrime_route_n0 wf:applicationOf tools:FeatureClassToFeatureClass ;
+    wf:input1 data:wfcrime_route_function_mix ;
+    wf:output data:wfcrime_route_house_area .
+
+data:wfcrime_route_n10 wf:applicationOf tools:FeatureToPoint ;
+    wf:input1 data:wfcrime_route_house_area ;
+    wf:output data:wfcrime_route_house_area_points .
+
+data:wfcrime_route_n12 wf:applicationOf tools:CreateRandomPoints ;
+    wf:input1 data:wfcrime_route_house_area_points ;
+    wf:output data:wfcrime_route_home .
+
+data:wfcrime_route_n15 wf:applicationOf tools:FeatureClassToFeatureClass ;
+    wf:input1 data:wfcrime_route_function_mix ;
+    wf:output data:wfcrime_route_office_area .
+
+data:wfcrime_route_n16 wf:applicationOf tools:FeatureToPoint ;
+    wf:input1 data:wfcrime_route_office_area ;
+    wf:output data:wfcrime_route_office_area_points .
+
+data:wfcrime_route_n17 wf:applicationOf tools:CreateRandomPoints ;
+    wf:input1 data:wfcrime_route_office_area_points ;
+    wf:output data:wfcrime_route_office .
+
+data:wfcrime_route_n20 wf:applicationOf tools:CreateRandomPoints ;
+    wf:input1 data:wfcrime_route_sport_area_points ;
+    wf:output data:wfcrime_route_sport .
+
+data:wfcrime_route_n23 wf:applicationOf tools:CreateRandomPoints ;
+    wf:input1 data:wfcrime_route_supermarket_area_points ;
+    wf:output data:wfcrime_route_supermarket .
+
+data:wfcrime_route_n24 wf:applicationOf tools:Merge ;
+    wf:input1 data:wfcrime_route_supermarket ;
+    wf:input2 data:wfcrime_route_office ;
+    wf:input3 data:wfcrime_route_sport ;
+    wf:output data:wfcrime_route_work_sport_store_locations .
+

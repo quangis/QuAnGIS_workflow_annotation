@@ -1,0 +1,126 @@
+# @Author(s): Eric Top
+@prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .
+@prefix dbo: <https://dbpedia.org/ontology/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix repo: <https://example.com/#> .
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
+
+repo:wffloods a wf:Workflow ;
+    wf:edge data:wffloods_n11,
+        data:wffloods_n13,
+        data:wffloods_n15,
+        data:wffloods_n17,
+        data:wffloods_n19,
+        data:wffloods_n22,
+        data:wffloods_n23,
+        data:wffloods_n26,
+        data:wffloods_n27,
+        data:wffloods_n29,
+        data:wffloods_n31,
+        data:wffloods_n33,
+        data:wffloods_n35,
+        data:wffloods_n36,
+        data:wffloods_n38,
+        data:wffloods_n6,
+        data:wffloods_n8 ;
+    dct:subject "" ;
+    rdfs:comment "Which areas are susceptible to flooding in Vermont during a predicted rainstorm?" ;
+    dbo:abstract " Stowe, a small Vermont town of nearly 5,000 residents, suffered considerably when the remnants of Hurricane Irene stuck the Green Mountain region in August 2011. The Little River overflowed and washed out roads, bridges, and culverts. Wanting to learn from the tragedy, Stowe officials discovered that they had precious little information involving flood prediction. They turned to hydrographs, which are line graphs determining how much water a stream will discharge during a rainstorm. In this lesson, you'll create those hydrographs." .
+
+data:wffloods_n11 wf:applicationOf tools:FlowAccumulation ;
+    wf:input1 data:wffloods_direction ;
+    wf:output data:wffloods_accumulation ;
+    rdfs:comment "Get accumulations of water flows in Stowe" .
+
+data:wffloods_n13 wf:applicationOf tools:RasterCalculator ;
+    wf:input1 data:wffloods_slope ;
+    wf:input2 data:wffloods_direction ;
+    wf:input3 data:wffloods_accumulation ;
+    wf:output data:wffloods_velocity ;
+    rdfs:comment "Calculate slope=area term (Maidment et al. equation) (sqrt(slope) * sqrt(accumulation))" .
+
+data:wffloods_n15 wf:applicationOf tools:Con ;
+    wf:input1 data:wffloods_velocity ;
+    wf:output data:wffloods_velocity_low_bound ;
+    rdfs:comment "Set a lower bound of water velocity in Stowe of 0.02" .
+
+data:wffloods_n17 wf:applicationOf tools:Con ;
+    wf:input1 data:wffloods_velocity_low_bound ;
+    wf:output data:wffloods_velocity_bounded ;
+    rdfs:comment "Set an upper bound of water velocity in Stowe of 2" .
+
+data:wffloods_n19 wf:applicationOf tools:RasterCalculator ;
+    wf:input1 data:wffloods_velocity_bounded ;
+    wf:output data:wffloods_weight ;
+    rdfs:comment "Create a weight (impedance) grid (1/velocity)" .
+
+data:wffloods_n22 wf:applicationOf tools:snap_pour_point ;
+    wf:input1 data:wffloods_pour_point ;
+    wf:input2 data:wffloods_accumulation ;
+    wf:output data:wffloods_snapped_point ;
+    rdfs:comment "Snap pour point to river (Distance traveled: 60m)" .
+
+data:wffloods_n23 wf:applicationOf tools:Watershed ;
+    wf:input1 data:wffloods_direction ;
+    wf:input2 data:wffloods_snapped_point ;
+    wf:output data:wffloods_watershed ;
+    rdfs:comment "Get the watershed in Stowe" .
+
+data:wffloods_n26 wf:applicationOf tools:ExtractByMask ;
+    wf:input1 data:wffloods_direction ;
+    wf:input2 data:wffloods_watershed ;
+    wf:output data:wffloods_flow_directions ;
+    rdfs:comment "Extract flow directions by watershed mask" .
+
+data:wffloods_n27 wf:applicationOf tools:FlowLength ;
+    wf:input1 data:wffloods_weight ;
+    wf:input2 data:wffloods_flow_directions ;
+    wf:output data:wffloods_time ;
+    rdfs:comment "Calculate the upstream or downstream distance, or weighted distance, along the flow path for each cell" .
+
+data:wffloods_n29 wf:applicationOf tools:Reclassify ;
+    wf:input1 data:wffloods_time ;
+    wf:output data:wffloods_isochrones ;
+    rdfs:comment "Reclassify flow time values to specific ranges (Isochrones raster)" .
+
+data:wffloods_n31 wf:applicationOf tools:TableToTable ;
+    wf:input1 data:wffloods_isochrones ;
+    wf:output data:wffloods_isochrones_converted ;
+    rdfs:comment "Syntactic table conversion step" .
+
+data:wffloods_n33 wf:applicationOf tools:AddField ;
+    wf:input1 data:wffloods_isochrones_converted ;
+    wf:output data:wffloods_isochrones_converted_addfield ;
+    rdfs:comment "Add field for converting cell count to surface area" .
+
+data:wffloods_n35 wf:applicationOf tools:CalculateField ;
+    wf:input1 data:wffloods_isochrones_converted_addfield ;
+    wf:output data:wffloods_isochrones_30_by_30 ;
+    rdfs:comment "Calculate surface area (cell count * 30 * 30)" .
+
+data:wffloods_n36 wf:applicationOf tools:CalculateField ;
+    wf:input1 data:wffloods_isochrones_30_by_30_addfield ;
+    wf:output data:wffloods_unit_hydrograph_data ;
+    rdfs:comment "Calculate the unit hydrograph" .
+
+data:wffloods_n38 wf:applicationOf tools:AddField ;
+    wf:input1 data:wffloods_isochrones_30_by_30 ;
+    wf:output data:wffloods_isochrones_30_by_30_addfield ;
+    rdfs:comment "Add a field for the unit hydrograph" .
+
+data:wffloods_n6 wf:applicationOf tools:Slope ;
+    wf:input1 data:wffloods_dem ;
+    wf:output data:wffloods_slope ;
+    rdfs:comment "Calculate slopes in Stowe" .
+
+data:wffloods_n8 wf:applicationOf tools:FlowDirection ;
+    wf:input1 data:wffloods_dem ;
+    wf:output data:wffloods_direction ;
+    rdfs:comment "Get directions of water flows in Stowe" .
+
+data:wffloods_pour_point rdfs:comment "A specific point of measurement for the unit hydrograph" .
+
+data:wffloods_dem rdfs:comment "A digital elevation model of Vermont in raster format" .
+

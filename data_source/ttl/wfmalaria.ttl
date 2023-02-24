@@ -1,0 +1,73 @@
+# @Author(s): Eric Top
+@prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .
+@prefix dbo: <https://dbpedia.org/ontology/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix repo: <https://example.com/#> .
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
+
+repo:wfmalaria a wf:Workflow ;
+    wf:edge data:wfmalaria_n12,
+        data:wfmalaria_n16,
+        data:wfmalaria_n17,
+        data:wfmalaria_n20,
+        data:wfmalaria_n23,
+        data:wfmalaria_n26,
+        data:wfmalaria_n3,
+        data:wfmalaria_n32 ;
+    dct:subject "" ;
+    rdfs:comment "What areas have the highest malaria incidence rate in the Democratic Republic of the Congo between 2010-2015?" ;
+    dbo:abstract "." .
+
+data:wfmalaria_admin_incidence rdfs:comment "Excel table with yearly incidence rates of malaria between 2000 and 2015 in administrative regions" .
+
+data:wfmalaria_admin_regions rdfs:comment "Vector polygons of all administrative regions in the world" .
+
+data:wfmalaria_n12 wf:applicationOf tools:Dissolve ;
+    wf:input1 data:wfmalaria_admin_regions_DRC ;
+    wf:output data:wfmalaria_admin_regions_DRC_dissolve ;
+    rdfs:comment "Dissolve administrative region polygons by name" .
+
+data:wfmalaria_n16 wf:applicationOf tools:ZonalStatisticsAsTable ;
+    wf:input1 data:wfmalaria_population ;
+    wf:input2 data:wfmalaria_admin_regions_DRC_dissolve ;
+    wf:output data:wfmalaria_pop_admin_DRC ;
+    rdfs:comment "Sum raster of population values inside Congo administrative polygons. Join standalone table with DRC admin data." .
+
+data:wfmalaria_n17 wf:applicationOf tools:ExcelToTable ;
+    wf:input1 data:wfmalaria_admin_incidence ;
+    wf:output data:wfmalaria_admin_incidence_table ;
+    rdfs:comment "Import data from the yearly incidence rate excel file" .
+
+data:wfmalaria_n20 wf:applicationOf tools:JoinField ;
+    wf:input1 data:wfmalaria_admin_regions_DRC_dissolve ;
+    wf:input2 data:wfmalaria_pop_admin_DRC ;
+    wf:output data:wfmalaria_admin_regions_DRC_pop ;
+    rdfs:comment "Join population data to region object" .
+
+data:wfmalaria_n23 wf:applicationOf tools:AddJoin ;
+    wf:input1 data:wfmalaria_admin_incidence_table ;
+    wf:input2 data:wfmalaria_admin_regions_DRC_pop ;
+    wf:output data:wfmalaria_admin_regions_DRC_pop_incidence ;
+    rdfs:comment "Join incidence data to region object" .
+
+data:wfmalaria_n26 wf:applicationOf tools:AddFields ;
+    wf:input1 data:wfmalaria_admin_regions_DRC_pop_incidence ;
+    wf:output data:wfmalaria_admin_regions_DRC_pop_incidence_addfields ;
+    rdfs:comment "Add columns for storing incidence rates" .
+
+data:wfmalaria_n3 wf:applicationOf tools:FeatureClassToFeatureClass ;
+    wf:input1 data:wfmalaria_admin_regions ;
+    wf:output data:wfmalaria_admin_regions_DRC ;
+    rdfs:comment "Extract the data of the Democratic Republic of the Congo" .
+
+data:wfmalaria_n32 wf:applicationOf tools:CalculateFields ;
+    wf:input1 data:wfmalaria_admin_regions_DRC_pop_incidence_addfields ;
+    wf:output data:wfmalaria_admin_regions_DRC_pop_incidence_addfields ;
+    rdfs:comment "Calculate incidence rates for each of multiple years" .
+
+data:wfmalaria_population rdfs:comment "Raster with estimate of the populations in the world in 2016" .
+
+data:wfmalaria_admin_regions_DRC_pop_incidence rdfs:comment "Join incidence data to region object" .
+
