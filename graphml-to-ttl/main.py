@@ -267,7 +267,9 @@ class Workflow:
             f.write(new)
 
 # Export all .graphml files to .ttl files
-for file in os.listdir('../data_source/graphml/'):
+indir = '../data_source/graphml/wfsemantics/'
+outdir = '../data_source/ttl/wfsemantics/'
+for file in os.listdir(indir):
     filename_parts = os.path.splitext(file)
 
     # Check if the file is a .graphml file
@@ -277,7 +279,7 @@ for file in os.listdir('../data_source/graphml/'):
         wf = Workflow()
 
         # Import file into networkx
-        networkx_dag = nx.read_graphml('../data_source/graphml/' + file)
+        networkx_dag = nx.read_graphml(indir + file)
 
         # Convert metadata to rdflib.graph workflow metadata
         wf.update_metadata_from_networkx_dag(networkx_dag)
@@ -286,5 +288,5 @@ for file in os.listdir('../data_source/graphml/'):
         wf.import_data_from_networkx_dag(networkx_dag)
 
         # Export to RDF .ttl format
-        wf.export_to_RDF('../data_source/ttl/' + filename_parts[0] + '.ttl')
+        wf.export_to_RDF(outdir + filename_parts[0] + '.ttl')
 
