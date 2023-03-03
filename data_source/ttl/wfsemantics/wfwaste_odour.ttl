@@ -1,0 +1,87 @@
+# @Author(s): Eric Top, Simon Scheider
+@prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .
+@prefix dbo: <https://dbpedia.org/ontology/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix repo: <https://example.com/#> .
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
+
+repo:wfwaste_odour a wf:Workflow ;
+    wf:edge data:wfwaste_odour_n0,
+        data:wfwaste_odour_n11,
+        data:wfwaste_odour_n13,
+        data:wfwaste_odour_n17,
+        data:wfwaste_odour_n20,
+        data:wfwaste_odour_n21,
+        data:wfwaste_odour_n22,
+        data:wfwaste_odour_n27,
+        data:wfwaste_odour_n29,
+        data:wfwaste_odour_n3,
+        data:wfwaste_odour_n4,
+        data:wfwaste_odour_n5,
+        data:wfwaste_odour_n9 ;
+    wf:source data:wfwaste_odour_Amsterdam_centrum,
+        data:wfwaste_odour_new_containers,
+        data:wfwaste_odour_old_containers ;
+    dct:subject "" ;
+    rdfs:comment "What is the total walking time to the nearest waste disposal places from each household in the Amsterdam city centre?" ;
+    dbo:abstract "." .
+
+data:wfwaste_odour_n0 wf:applicationOf tools:AddField ;
+    wf:input1 data:wfwaste_odour_new_containers ;
+    wf:output data:wfwaste_odour_new_containers2 .
+
+data:wfwaste_odour_n11 wf:applicationOf tools:JoinField ;
+    wf:input1 data:wfwaste_odour_new_zonal_stats2 ;
+    wf:input2 data:wfwaste_odour_Amsterdam_centrum ;
+    wf:output data:wfwaste_odour_new_zonal_stats3 .
+
+data:wfwaste_odour_n13 wf:applicationOf tools:JoinField ;
+    wf:input1 data:wfwaste_odour_new_zonal_stats3 ;
+    wf:input2 data:wfwaste_odour_old_zonal_stats3 ;
+    wf:output data:wfwaste_odour_joined_zonal_stats3 .
+
+data:wfwaste_odour_n17 wf:applicationOf tools:AddField ;
+    wf:input1 data:wfwaste_odour_old_containers ;
+    wf:output data:wfwaste_odour_old_containers2 .
+
+data:wfwaste_odour_n20 wf:applicationOf tools:CalculateField ;
+    wf:input1 data:wfwaste_odour_old_containers2 ;
+    wf:output data:wfwaste_odour_old_containers3 .
+
+data:wfwaste_odour_n21 wf:applicationOf tools:KernelDensity ;
+    wf:input1 data:wfwaste_odour_old_containers3 ;
+    wf:output data:wfwaste_odour_old_container_density .
+
+data:wfwaste_odour_n22 wf:applicationOf tools:ZonalStatisticsAsTable ;
+    wf:input1 data:wfwaste_odour_old_container_density ;
+    wf:input2 data:wfwaste_odour_Amsterdam_centrum ;
+    wf:output data:wfwaste_odour_old_zonal_stats .
+
+data:wfwaste_odour_n27 wf:applicationOf tools:AlterField ;
+    wf:input1 data:wfwaste_odour_old_zonal_stats ;
+    wf:output data:wfwaste_odour_old_zonal_stats2 .
+
+data:wfwaste_odour_n29 wf:applicationOf tools:JoinField ;
+    wf:input1 data:wfwaste_odour_Amsterdam_centrum ;
+    wf:input2 data:wfwaste_odour_old_zonal_stats2 ;
+    wf:output data:wfwaste_odour_old_zonal_stats3 .
+
+data:wfwaste_odour_n3 wf:applicationOf tools:CalculateField ;
+    wf:input1 data:wfwaste_odour_new_containers2 ;
+    wf:output data:wfwaste_odour_new_containers3 .
+
+data:wfwaste_odour_n4 wf:applicationOf tools:KernelDensity ;
+    wf:input1 data:wfwaste_odour_new_containers3 ;
+    wf:output data:wfwaste_odour_new_container_density .
+
+data:wfwaste_odour_n5 wf:applicationOf tools:ZonalStatisticsAsTable ;
+    wf:input1 data:wfwaste_odour_new_container_density ;
+    wf:input2 data:wfwaste_odour_Amsterdam_centrum ;
+    wf:output data:wfwaste_odour_new_zonal_stats .
+
+data:wfwaste_odour_n9 wf:applicationOf tools:AlterField ;
+    wf:input1 data:wfwaste_odour_new_zonal_stats ;
+    wf:output data:wfwaste_odour_new_zonal_stats2 .
+

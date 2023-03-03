@@ -1,0 +1,74 @@
+# @Author(s): Eric Top
+@prefix ccd: <http://geographicknowledge.de/vocab/CoreConceptData.rdf#> .
+@prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .
+@prefix dbo: <https://dbpedia.org/ontology/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix repo: <https://example.com/#> .
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
+
+repo:wfcrime_route a wf:Workflow ;
+    wf:edge data:wfcrime_route_n10,
+        data:wfcrime_route_n12,
+        data:wfcrime_route_n13,
+        data:wfcrime_route_n16,
+        data:wfcrime_route_n2,
+        data:wfcrime_route_n8 ;
+    dct:subject "Subject" ;
+    rdfs:comment "Question" ;
+    dbo:abstract "Abstract" .
+
+data:wfcrime_route_home a ccd:ObjectQ ;
+    a ccd:PointA ;
+    rdfs:comment "Point location of a home address" .
+
+data:wfcrime_route_n10 wf:applicationOf tools:MakeRouteAnalysisLayer ;
+    wf:input1 data:wfcrime_route_network ;
+    wf:output data:wfcrime_route_route_analysis_layer ;
+    rdfs:comment "Create a route analysis layer" .
+
+data:wfcrime_route_n12 wf:applicationOf tools:AddLocations ;
+    wf:input1 data:wfcrime_route_home ;
+    wf:input2 data:wfcrime_route_route_analysis_layer ;
+    wf:output data:wfcrime_route_route_analysis_layer_home ;
+    rdfs:comment "Add a home location to the route analysis layer" .
+
+data:wfcrime_route_n13 wf:applicationOf tools:AddLocations ;
+    wf:input1 data:wfcrime_route_work_sport_store_locations ;
+    wf:input2 data:wfcrime_route_route_analysis_layer_home ;
+    wf:output data:wfcrime_route_route_analysis_layer_all ;
+    rdfs:comment "Add a work, a sport, and a store location to the route analysis layer" .
+
+data:wfcrime_route_n16 wf:applicationOf tools:Solve ;
+    wf:input1 data:wfcrime_route_route_analysis_layer_all ;
+    wf:output data:wfcrime_route_route_analysis_layer_solved ;
+    rdfs:comment "Execute the route analysis" .
+
+data:wfcrime_route_n2 wf:applicationOf tools:CreateNetworkDataset ;
+    wf:input1 data:wfcrime_route_roads ;
+    wf:output data:wfcrime_route_network_dataset ;
+    rdfs:comment "Create a network dataset layer" .
+
+data:wfcrime_route_n8 wf:applicationOf tools:BuildNetwork ;
+    wf:input1 data:wfcrime_route_network_dataset ;
+    wf:output data:wfcrime_route_network ;
+    rdfs:comment "Build a representation of the Amsterdam road network" .
+
+data:wfcrime_route_roads a ccd:LineA ;
+    a ccd:RatioA ;
+    a ccd:ObjectQ ;
+    rdfs:comment "A line dataset representing roads in Amsterdam" .
+
+data:wfcrime_route_route_analysis_layer_solved a ccd:LineA ;
+    a ccd:ObjectQ ;
+    a ccd:NominalA .
+
+data:wfcrime_route_work_sport_store_locations a ccd:ObjectQ ;
+    a ccd:PointA ;
+    rdfs:comment "Points representing work, sport and store locations" .
+
+data:wfcrime_route_network a ccd:LineA ;
+    a ccd:RatioA ;
+    a ccd:NetworkQ .
+
