@@ -23,8 +23,8 @@ repo:wfcrime_route a wf:Workflow ;
     rdfs:comment "Question" ;
     dbo:abstract "Abstract" .
 
-data:wfcrime_route_home a ccd:PointA ;
-    a ccd:NominalA ;
+data:wfcrime_route_home a ccd:NominalA ;
+    a ccd:PointA ;
     a ccd:ObjectQ .
 
 data:wfcrime_route_n0 wf:applicationOf tools:FeatureClassToFeatureClass ;
@@ -51,10 +51,7 @@ data:wfcrime_route_n16 wf:applicationOf tools:FeatureToPoint ;
 
 data:wfcrime_route_n17 wf:applicationOf tools:CreateRandomPoints ;
     wf:input1 data:wfcrime_route_office_area_points ;
-    wf:output data:wfcrime_route_office ;
-    cct:expression "NominalA",
-        "ObjectQ",
-        "PointA" .
+    wf:output data:wfcrime_route_office .
 
 data:wfcrime_route_n20 wf:applicationOf tools:CreateRandomPoints ;
     wf:input1 data:wfcrime_route_sport_area_points ;
@@ -72,34 +69,38 @@ data:wfcrime_route_n24 wf:applicationOf tools:Merge ;
     wf:input3 data:wfcrime_route_sport ;
     wf:output data:wfcrime_route_work_sport_store_locations .
 
-data:wfcrime_route_sport_area_points a ccd:PointA ;
-    a ccd:ObjectQ ;
+data:wfcrime_route_sport_area_points a ccd:ObjectQ ;
+    a ccd:PointA ;
     a ccd:NominalA .
 
-data:wfcrime_route_supermarket_area_points a ccd:PointA ;
-    a ccd:ObjectQ ;
+data:wfcrime_route_supermarket_area_points a ccd:ObjectQ ;
+    a ccd:PointA ;
     a ccd:NominalA .
 
 data:wfcrime_route_work_sport_store_locations a ccd:NominalA ;
     a ccd:PointA ;
     a ccd:ObjectQ .
 
-data:wfcrime_route_function_mix a ccd:NominalA ;
-    a ccd:PlainVectorRegionA ;
+data:wfcrime_route_function_mix a ccd:PlainVectorRegionA ;
+    a ccd:NominalA ;
     a ccd:ObjectQ ;
     rdfs:comment "Buildings with functions" .
 
 data:wfcrime_route_house_area a ccd:ObjectQ ;
+    a ccd:PlainVectorRegionA ;
+    a ccd:NominalA .
+
+data:wfcrime_route_office a ccd:NominalA ;
+    a ccd:ObjectQ ;
+    a ccd:PointA .
+
+data:wfcrime_route_office_area a ccd:ObjectQ ;
     a ccd:NominalA ;
     a ccd:PlainVectorRegionA .
 
-data:wfcrime_route_office_area a ccd:PlainVectorRegionA ;
-    a ccd:ObjectQ ;
-    a ccd:NominalA .
-
 data:wfcrime_route_sport a ccd:PointA ;
-    a ccd:ObjectQ ;
-    a ccd:NominalA .
+    a ccd:NominalA ;
+    a ccd:ObjectQ .
 
 data:wfcrime_route_supermarket a ccd:NominalA ;
     a ccd:PointA ;

@@ -55,20 +55,20 @@ data:wfcrime_route_n8 wf:applicationOf tools:BuildNetwork ;
     wf:output data:wfcrime_route_network ;
     rdfs:comment "Build a representation of the Amsterdam road network" .
 
-data:wfcrime_route_roads a ccd:LineA ;
-    a ccd:ObjectQ ;
+data:wfcrime_route_roads a ccd:ObjectQ ;
     a ccd:RatioA ;
+    a ccd:LineA ;
     rdfs:comment "A line dataset representing roads in Amsterdam" .
 
-data:wfcrime_route_route_analysis_layer_solved a ccd:NominalA ;
-    a ccd:ObjectQ ;
-    a ccd:LineA .
+data:wfcrime_route_route_analysis_layer_solved a ccd:LineA ;
+    a ccd:NominalA ;
+    a ccd:ObjectQ .
 
-data:wfcrime_route_work_sport_store_locations a ccd:ObjectQ ;
-    a ccd:PointA ;
+data:wfcrime_route_work_sport_store_locations a ccd:PointA ;
+    a ccd:ObjectQ ;
     rdfs:comment "Points representing work, sport and store locations" .
 
-data:wfcrime_route_network a ccd:NetworkQ ;
-    a ccd:LineA ;
+data:wfcrime_route_network a ccd:LineA ;
+    a ccd:NetworkQ ;
     a ccd:RatioA .
 

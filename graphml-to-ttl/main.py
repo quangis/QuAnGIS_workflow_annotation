@@ -3,6 +3,12 @@ from rdflib import Graph, Namespace, RDF, RDFS, URIRef, BNode
 from rdflib.term import Literal
 import os
 
+#Libraries for parsing CCT expressions
+from cct import cct
+import transforge as tf
+
+
+
 class Action:
     def __init__(self, action_node=None, inputs=None, outputs=None, comments=None, expressions=None, labels=None):
         self.node = action_node
@@ -19,6 +25,10 @@ class Action:
         statement += "Comments: " + str(self.comments) + "\n"
         statement += "expressions: " + str(self.expressions) + "\n"
         return statement
+
+    # Method for testing syntax of CCT expressions
+    def ccttest(self,complex_string):
+        return cct.parse(complex_string, *(tf.Source() for _ in range(10)))
 
 
 class Artefact:
@@ -222,6 +232,9 @@ class Workflow:
             for expression in action.expressions:
                 p = self.namespaces['cct']['expression']
                 o = Literal(expression[1]['label'])
+                print(o)
+                #parse to check whether cct expression is correct
+                action.ccttest(o)
                 rdf_g.add((s, p, o))
 
             # Add labels
@@ -280,6 +293,7 @@ for file in os.listdir(indir):
 
         # Import file into networkx
         networkx_dag = nx.read_graphml(indir + file)
+        print("Now processing: "+file+"/")
 
         # Convert metadata to rdflib.graph workflow metadata
         wf.update_metadata_from_networkx_dag(networkx_dag)

@@ -36,8 +36,8 @@ repo:wffood a wf:Workflow ;
     rdfs:comment "Question" ;
     dbo:abstract "Abstract" .
 
-data:wffood_Amsterdam_buildings a ccd:ObjectQ ;
-    a ccd:VectorTessellationA ;
+data:wffood_Amsterdam_buildings a ccd:VectorTessellationA ;
+    a ccd:ObjectQ ;
     rdfs:comment "Vector polygon data of buildings with their functions as attributes" .
 
 data:wffood_n10 wf:applicationOf tools:FeatureClassToFeatureClass ;
@@ -117,7 +117,7 @@ data:wffood_n44 wf:applicationOf tools:SummaryStatistics ;
     wf:input1 data:wffood_NL_network_north_supermarkets_households_solved ;
     wf:output data:wffood_summary_north ;
     cct:expression """        1: ObjectInfo(Ratio);     
-            (avg (getamounts 1))          """ .
+            avg (getamounts 1)         """ .
 
 data:wffood_n46 wf:applicationOf tools:MakeClosestFacilityAnalysisLayer ;
     wf:input1 data:wffood_roads ;
@@ -141,26 +141,26 @@ data:wffood_n54 wf:applicationOf tools:SummaryStatistics ;
     wf:input1 data:wffood_NL_network_centrum_supermarkets_households_solved ;
     wf:output data:wffood_summary_centrum ;
     cct:expression """        1: ObjectInfo(Ratio);     
-            (avg (getamounts 1))          """ .
+            avg (getamounts 1)         """ .
 
 data:wffood_summary_centrum a ccd:RatioA .
 
 data:wffood_summary_north a ccd:RatioA .
 
-data:wffood_Amsterdam_boundaries a ccd:VectorTessellationA ;
-    a ccd:ObjectQ ;
+data:wffood_Amsterdam_boundaries a ccd:ObjectQ ;
+    a ccd:VectorTessellationA ;
     rdfs:comment "The boundaries of the Amsterdam district as vector polygons" .
 
 data:wffood_NL_network_centrum_supermarkets_households_solved a ccd:ObjectQ ;
-    a ccd:PointA ;
-    a ccd:RatioA .
+    a ccd:RatioA ;
+    a ccd:PointA .
 
 data:wffood_NL_network_north_supermarkets_households_solved a ccd:PointA ;
-    a ccd:RatioA ;
-    a ccd:ObjectQ .
+    a ccd:ObjectQ ;
+    a ccd:RatioA .
 
-data:wffood_households_centrum a ccd:ObjectQ ;
-    a ccd:PointA .
+data:wffood_households_centrum a ccd:PointA ;
+    a ccd:ObjectQ .
 
 data:wffood_households_north a ccd:ObjectQ ;
     a ccd:PointA .
@@ -173,11 +173,11 @@ data:wffood_supermarkets a ccd:ObjectQ ;
     a ccd:PointA ;
     rdfs:comment "Point locations representing supermarkets" .
 
-data:wffood_supermarkets_centrum a ccd:ObjectQ ;
-    a ccd:PointA .
+data:wffood_supermarkets_centrum a ccd:PointA ;
+    a ccd:ObjectQ .
 
-data:wffood_supermarkets_north a ccd:ObjectQ ;
-    a ccd:PointA .
+data:wffood_supermarkets_north a ccd:PointA ;
+    a ccd:ObjectQ .
 
 data:wffood_Amsterdam_centrum a ccd:PlainVectorRegionA ;
     a ccd:ObjectQ .
