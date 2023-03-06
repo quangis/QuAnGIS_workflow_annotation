@@ -10,20 +10,24 @@ import transforge as tf
 
 
 class Action:
-    def __init__(self, action_node=None, inputs=None, outputs=None, comments=None, expressions=None, labels=None):
+    def __init__(self, action_node=None, inputs=None, outputs=None, comments=None, expressions=None, labels=None,
+                 compositions=None):
         self.node = action_node
         self.inputs = inputs
         self.outputs = outputs
         self.comments = comments
         self.expressions = expressions
         self.labels = labels
+        self.compositions = compositions
 
     def __str__(self):
-        statement = "Action: " + str(self.action) + "\n"
+        statement = "Action: " + str(self.node) + "\n"
         statement += "Inputs: " + str(self.inputs) + "\n"
         statement += "Outputs: " + str(self.outputs) + "\n"
         statement += "Comments: " + str(self.comments) + "\n"
-        statement += "expressions: " + str(self.expressions) + "\n"
+        statement += "Expressions: " + str(self.expressions) + "\n"
+        statement += "Labels: " + str(self.labels) + "\n"
+        statement += "Compositions: " + str(self.compositions) + "\n"
         return statement
 
     # Method for testing syntax of CCT expressions
@@ -135,6 +139,7 @@ class Workflow:
                 comments = list()
                 expressions = list()
                 labels = list()
+                compositions = list()
                 for edge in dag.edges:
                     # Let edges incoming from parallelograms be inputs
                     if node[0] == edge[1] and dag.nodes[edge[0]]['shape_type'] == 'parallelogram':
@@ -149,16 +154,26 @@ class Workflow:
                         expressions.append((edge[0], dag.nodes[edge[0]]))
                     if node[0] == edge[1] and dag.nodes[edge[0]]['shape_type'] == 'hexagon':
                         labels.append((edge[0], dag.nodes[edge[0]]))
-                self.actions.add(Action(action, inputs, outputs, comments, expressions, labels))
+                    if node[0] == edge[1] and dag.nodes[edge[0]]['shape_type'] == 'star5':
+                        compositions.append((edge[0], dag.nodes[edge[0]]))
+                self.actions.add(Action(action, inputs, outputs, comments, expressions, labels, compositions))
 
-    def update_namespaces(self, namespace_dict):
-        self.namespaces.update(namespace_dict)
+    def process_compositions(self):
+
+        # Gather all composite actions to be composed from existing actions
+        compositions = list()
+
+        for action in self.actions.copy():
+            for composition in action.compositions:
+                compositions.append((composition, action))
+
+
 
     def export_to_RDF(self, file):
         rdf_g = Graph()
 
         # Blank node namespace
-        self.update_namespaces({'_': Namespace('#')})
+        self.namespaces.update({'_': Namespace('#')})
 
         # Add namespaces to file
         for prefix, namespace in self.namespaces.items():
@@ -279,28 +294,56 @@ class Workflow:
         with open(file, "w") as f:
             f.write(new)
 
+<<<<<<< Updated upstream
 # Export all .graphml files to .ttl files
 indir = '../data_source/graphml/wfsemantics/'
 outdir = '../data_source/ttl/wfsemantics/'
 for file in os.listdir(indir):
     filename_parts = os.path.splitext(file)
+=======
+def process_all():
+    # Export all .graphml files to .ttl files
+    for file in os.listdir('../data_source/graphml/'):
+        filename_parts = os.path.splitext(file)
 
-    # Check if the file is a .graphml file
-    if os.path.splitext(file)[1] == ".graphml":
+        # Check if the file is a .graphml file
+        if os.path.splitext(file)[1] == ".graphml":
 
-        # Initialize workflow object
-        wf = Workflow()
+            # Initialize workflow object
+            wf = Workflow()
+>>>>>>> Stashed changes
 
+            # Import file into networkx
+            networkx_dag = nx.read_graphml('../data_source/graphml/' + file)
+
+            # Convert metadata to rdflib.graph workflow metadata
+            wf.update_metadata_from_networkx_dag(networkx_dag)
+
+<<<<<<< Updated upstream
         # Import file into networkx
         networkx_dag = nx.read_graphml(indir + file)
         print("Now processing: "+file+"/")
+=======
+            # Convert data to rdflib.graph workflow action/artefact data
+            wf.import_data_from_networkx_dag(networkx_dag)
+>>>>>>> Stashed changes
 
-        # Convert metadata to rdflib.graph workflow metadata
-        wf.update_metadata_from_networkx_dag(networkx_dag)
+            # Export to RDF .ttl format
+            wf.export_to_RDF('../data_source/ttl/' + filename_parts[0] + '.ttl')
 
-        # Convert data to rdflib.graph workflow action/artefact data
-        wf.import_data_from_networkx_dag(networkx_dag)
+def main():
+    wf = Workflow()
+    networkx_dag = nx.read_graphml('../data_source/graphml/wfaccess.graphml')
+    wf.update_metadata_from_networkx_dag(networkx_dag)
+    wf.import_data_from_networkx_dag(networkx_dag)
+    wf.process_compositions()
 
+<<<<<<< Updated upstream
         # Export to RDF .ttl format
         wf.export_to_RDF(outdir + filename_parts[0] + '.ttl')
+=======
+    for action in wf.actions:
+        print(action.compositions)
+>>>>>>> Stashed changes
 
+main()
