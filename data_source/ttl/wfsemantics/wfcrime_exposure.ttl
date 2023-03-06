@@ -23,13 +23,13 @@ repo:wfcrime_route a wf:Workflow ;
     rdfs:comment "Question" ;
     dbo:abstract "Abstract" .
 
-data:wfcrime_route_buurt a ccd:ObjectQ ;
-    a ccd:VectorTessellationA ;
+data:wfcrime_route_buurt a ccd:VectorTessellationA ;
+    a ccd:ObjectQ ;
     rdfs:comment "Vector polygons representing neighborhoods in Amsterdam" .
 
-data:wfcrime_route_buurt_crime_density_avg a ccd:ObjectQ ;
-    a ccd:IRA ;
-    a ccd:LineA .
+data:wfcrime_route_buurt_crime_density_avg a ccd:LineA ;
+    a ccd:ObjectQ ;
+    a ccd:IRA .
 
 data:wfcrime_route_crimes a ccd:ObjectQ ;
     a ccd:CountA ;
@@ -87,16 +87,16 @@ data:wfcrime_route_n9 wf:applicationOf tools:CopyFeatures ;
     wf:output data:wfcrime_route_buurt_crime ;
     rdfs:comment "Copy the join to a new layer" .
 
-data:wfcrime_route_routes a ccd:NominalA ;
+data:wfcrime_route_routes a ccd:ObjectQ ;
     a ccd:LineA ;
-    a ccd:ObjectQ ;
+    a ccd:NominalA ;
     rdfs:comment "A custom-generated route through Amsterdam" .
 
-data:wfcrime_route_buurt_crime a ccd:VectorTessellationA ;
-    a ccd:ObjectQ ;
-    a ccd:CountA .
-
-data:wfcrime_route_buurt_crime_density a ccd:IRA ;
+data:wfcrime_route_buurt_crime a ccd:CountA ;
     a ccd:VectorTessellationA ;
     a ccd:ObjectQ .
+
+data:wfcrime_route_buurt_crime_density a ccd:VectorTessellationA ;
+    a ccd:ObjectQ ;
+    a ccd:IRA .
 

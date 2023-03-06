@@ -488,13 +488,12 @@
       </data>
     </node>
     <node id="n43">
-      <data key="d5"/>
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="134.71223564954676" width="129.67578125" x="394.9609375" y="-588.2122356495468"/>
+          <y:Geometry height="134.71223564954676" width="160.07421875" x="394.9609375" y="-588.2122356495468"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="106.908203125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="148.708984375" x="-9.5166015625" xml:space="preserve" y="13.902016262273378"> set_union(
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="106.908203125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="148.708984375" x="5.6826171875" xml:space="preserve" y="13.902016262273378"> set_union(
         3:ObjectInfo(Nom),
         set_union(
             1:ObjectInfo(Nom), 
@@ -1159,7 +1158,6 @@
       </data>
     </edge>
     <edge id="e62" source="n34" target="n19">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -1170,7 +1168,6 @@
       </data>
     </edge>
     <edge id="e63" source="n36" target="n19">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -1181,6 +1178,16 @@
       </data>
     </edge>
     <edge id="e64" source="n35" target="n19">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e65" source="n43" target="n24">
       <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>

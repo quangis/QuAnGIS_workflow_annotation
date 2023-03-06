@@ -24,8 +24,8 @@ repo:wfcrime_route a wf:Workflow ;
     dbo:abstract "Abstract" .
 
 data:wfcrime_route_home a ccd:NominalA ;
-    a ccd:PointA ;
-    a ccd:ObjectQ .
+    a ccd:ObjectQ ;
+    a ccd:PointA .
 
 data:wfcrime_route_n0 wf:applicationOf tools:FeatureClassToFeatureClass ;
     wf:input1 data:wfcrime_route_function_mix ;
@@ -67,42 +67,49 @@ data:wfcrime_route_n24 wf:applicationOf tools:Merge ;
     wf:input1 data:wfcrime_route_supermarket ;
     wf:input2 data:wfcrime_route_office ;
     wf:input3 data:wfcrime_route_sport ;
-    wf:output data:wfcrime_route_work_sport_store_locations .
+    wf:output data:wfcrime_route_work_sport_store_locations ;
+    cct:expression """ set_union(
+        3:ObjectInfo(Nom),
+        set_union(
+            1:ObjectInfo(Nom), 
+            2:ObjectInfo(Nom)
+            )
+        )""" .
 
-data:wfcrime_route_sport_area_points a ccd:ObjectQ ;
-    a ccd:PointA ;
+data:wfcrime_route_sport_area_points a ccd:PointA ;
+    a ccd:ObjectQ ;
     a ccd:NominalA .
 
-data:wfcrime_route_supermarket_area_points a ccd:ObjectQ ;
-    a ccd:PointA ;
-    a ccd:NominalA .
-
-data:wfcrime_route_work_sport_store_locations a ccd:NominalA ;
+data:wfcrime_route_supermarket_area_points a ccd:NominalA ;
     a ccd:PointA ;
     a ccd:ObjectQ .
 
-data:wfcrime_route_function_mix a ccd:PlainVectorRegionA ;
+data:wfcrime_route_work_sport_store_locations a ccd:PointA ;
     a ccd:NominalA ;
-    a ccd:ObjectQ ;
+    a ccd:ObjectQ .
+
+data:wfcrime_route_function_mix a ccd:ObjectQ ;
+    a ccd:PlainVectorRegionA ;
+    a ccd:NominalA ;
     rdfs:comment "Buildings with functions" .
 
 data:wfcrime_route_house_area a ccd:ObjectQ ;
     a ccd:PlainVectorRegionA ;
     a ccd:NominalA .
 
-data:wfcrime_route_office a ccd:NominalA ;
-    a ccd:ObjectQ ;
+data:wfcrime_route_office a ccd:ObjectQ ;
+    a ccd:NominalA ;
     a ccd:PointA .
 
-data:wfcrime_route_office_area a ccd:ObjectQ ;
-    a ccd:NominalA ;
-    a ccd:PlainVectorRegionA .
-
-data:wfcrime_route_sport a ccd:PointA ;
+data:wfcrime_route_office_area a ccd:PlainVectorRegionA ;
     a ccd:NominalA ;
     a ccd:ObjectQ .
+
+data:wfcrime_route_sport a ccd:ObjectQ ;
+    a ccd:PointA ;
+    a ccd:NominalA .
 
 data:wfcrime_route_supermarket a ccd:NominalA ;
-    a ccd:PointA ;
-    a ccd:ObjectQ .
+    a ccd:ObjectQ ;
+    a ccd:PointA .
 

@@ -6,22 +6,6 @@ def test(complex_string):
 
 expressions=[
     """
-    1: R2(Obj, Count);
-2: ObjectExtent; 
-join_attr 2 1
-    """
-    ,
-    """
-     1: ObjectInfo(Count);        
-        join_attr
-            (get_attrL 1)
-            (apply2 ratio (get_attrR 1)  (apply1
-                (compose size deify)
-                (get_attrL 1)
-            ))
-    """
-    ,
-    """
 1: ObjectInfo(Ratio);
 2: ObjectInfo(Nom);
 arealinterpol
@@ -37,6 +21,48 @@ arealinterpol
             2:ObjectInfo(Nom)
             )
         )
+    """
+    ,
+    """
+            1: ObjectInfo(Ratio);     
+                nest2 (merge (pi1 (getamounts 1))) (avg (getamounts 1))         
+    """,
+    """
+            nest2 true (ratio
+            (size (fcover (1: Field(Bool)) (nest true)))
+            (size (fcover (2: Field(Bool)) (nest true)))
+        )
+    """
+    ,
+    """
+    apply2 ratio (1: Amounts(Ratio)) (2: Amounts(Ratio))
+    """
+    ,
+    """
+            1: ObjectInfo(Count);
+        2: ObjectInfo(Count);
+        join_attr
+            (get_attrL 1)
+            (apply2 ratio (get_attrR 1) (get_attrR 2))
+    """
+    ,
+    """
+    apply1 (product (size (pi1 (1: Field(Nom))))) (2: R2(Bool, Ratio))
+    """,
+    """
+    1: R2(Obj, Count);
+2: ObjectExtent; 
+join_attr 2 1
+    """
+    ,
+    """
+     1: ObjectInfo(Count);        
+        join_attr
+            (get_attrL 1)
+            (apply2 ratio (get_attrR 1)  (apply1
+                (compose size deify)
+                (get_attrL 1)
+            ))
     """
     ,
     """
@@ -58,10 +84,7 @@ arealinterpol
     subset (1: ObjectInfo(Nom)) (-: C(Nom))
 """
 ,
-"""
-        1: ObjectInfo(Ratio);     
-            avg (getamounts 1)         
-""",
+
 """
         1: ObjectInfo(Nom);
         2: ObjectInfo(Nom);
