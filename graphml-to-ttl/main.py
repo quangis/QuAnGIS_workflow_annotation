@@ -294,13 +294,13 @@ class Workflow:
         with open(file, "w") as f:
             f.write(new)
 
-<<<<<<< Updated upstream
+
 # Export all .graphml files to .ttl files
 indir = '../data_source/graphml/wfsemantics/'
 outdir = '../data_source/ttl/wfsemantics/'
 for file in os.listdir(indir):
     filename_parts = os.path.splitext(file)
-=======
+
 def process_all():
     # Export all .graphml files to .ttl files
     for file in os.listdir('../data_source/graphml/'):
@@ -311,7 +311,6 @@ def process_all():
 
             # Initialize workflow object
             wf = Workflow()
->>>>>>> Stashed changes
 
             # Import file into networkx
             networkx_dag = nx.read_graphml('../data_source/graphml/' + file)
@@ -319,14 +318,10 @@ def process_all():
             # Convert metadata to rdflib.graph workflow metadata
             wf.update_metadata_from_networkx_dag(networkx_dag)
 
-<<<<<<< Updated upstream
-        # Import file into networkx
-        networkx_dag = nx.read_graphml(indir + file)
-        print("Now processing: "+file+"/")
-=======
+
             # Convert data to rdflib.graph workflow action/artefact data
             wf.import_data_from_networkx_dag(networkx_dag)
->>>>>>> Stashed changes
+
 
             # Export to RDF .ttl format
             wf.export_to_RDF('../data_source/ttl/' + filename_parts[0] + '.ttl')
@@ -337,13 +332,11 @@ def main():
     wf.update_metadata_from_networkx_dag(networkx_dag)
     wf.import_data_from_networkx_dag(networkx_dag)
     wf.process_compositions()
+       # Export to RDF .ttl format
+    wf.export_to_RDF(outdir + filename_parts[0] + '.ttl')
 
-<<<<<<< Updated upstream
-        # Export to RDF .ttl format
-        wf.export_to_RDF(outdir + filename_parts[0] + '.ttl')
-=======
     for action in wf.actions:
         print(action.compositions)
->>>>>>> Stashed changes
+
 
 main()
