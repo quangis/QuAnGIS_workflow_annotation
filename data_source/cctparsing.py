@@ -6,6 +6,10 @@ def test(complex_string):
 
 expressions=[
     """
+    revert (select eq (invert (1: Field(Nom)): Coverages(Nom)) (-: Nom))
+    """
+    ,
+    """
 1: ObjectInfo(Ratio);
 2: ObjectInfo(Nom);
 arealinterpol
