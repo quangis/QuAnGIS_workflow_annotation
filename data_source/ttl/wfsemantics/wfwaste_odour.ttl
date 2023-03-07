@@ -1,4 +1,4 @@
-# @Author(s): Eric Top, Simon Scheider
+# @Author(s): Eric Top
 @prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .
 @prefix dbo: <https://dbpedia.org/ontology/> .
 @prefix dct: <http://purl.org/dc/terms/> .
@@ -7,81 +7,103 @@
 @prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
 @prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
 
-repo:wfwaste_odour a wf:Workflow ;
-    wf:edge data:wfwaste_odour_n0,
-        data:wfwaste_odour_n11,
-        data:wfwaste_odour_n13,
-        data:wfwaste_odour_n17,
-        data:wfwaste_odour_n20,
-        data:wfwaste_odour_n21,
-        data:wfwaste_odour_n22,
-        data:wfwaste_odour_n27,
-        data:wfwaste_odour_n29,
-        data:wfwaste_odour_n3,
-        data:wfwaste_odour_n4,
-        data:wfwaste_odour_n5,
-        data:wfwaste_odour_n9 ;
-    wf:source data:wfwaste_odour_Amsterdam_centrum,
-        data:wfwaste_odour_new_containers,
-        data:wfwaste_odour_old_containers ;
-    dct:subject "" ;
-    rdfs:comment "What is the total walking time to the nearest waste disposal places from each household in the Amsterdam city centre?" ;
-    dbo:abstract "." .
+repo: a wf:Workflow ;
+    wf:edge data:_n0,
+        data:_n14,
+        data:_n16,
+        data:_n17,
+        data:_n20,
+        data:_n22,
+        data:_n23,
+        data:_n26,
+        data:_n27,
+        data:_n29,
+        data:_n34,
+        data:_n37,
+        data:_n39,
+        data:_n40,
+        data:_n41,
+        data:_n45 ;
+    dct:subject "Out: IntV, In: OS, In: OS, In: OS" ;
+    rdfs:comment "How much of the rural population in Shikoku, Japan, can reach all-season roads?" ;
+    dbo:abstract "In this lesson, you'll act as an analyst in Japan's National Statistical Office. To promote sustainable development in the nation's rural areas, you'll estimate access to all-season roads. First, you'll add population and road data and limit your study area to rural regions. Then, you'll create a 2-kilometer buffer around all-season roads and calculate the percentage of the rural population within that buffer." .
 
-data:wfwaste_odour_n0 wf:applicationOf tools:AddField ;
-    wf:input1 data:wfwaste_odour_new_containers ;
-    wf:output data:wfwaste_odour_new_containers2 .
+data:_chochomoku rdfs:comment "Cho-cho-moku ((SCCM, small administrative regions) in Shikoku, Japan (Polygon) with population number" .
 
-data:wfwaste_odour_n11 wf:applicationOf tools:JoinField ;
-    wf:input1 data:wfwaste_odour_new_zonal_stats2 ;
-    wf:input2 data:wfwaste_odour_Amsterdam_centrum ;
-    wf:output data:wfwaste_odour_new_zonal_stats3 .
+data:_n0 wf:applicationOf tools:SelectLayerByAttribute ;
+    wf:input0 data:_urbanization ;
+    wf:output data:_urbanization_select ;
+    rdfs:comment "Add a field for area sizes" .
 
-data:wfwaste_odour_n13 wf:applicationOf tools:JoinField ;
-    wf:input1 data:wfwaste_odour_new_zonal_stats3 ;
-    wf:input2 data:wfwaste_odour_old_zonal_stats3 ;
-    wf:output data:wfwaste_odour_joined_zonal_stats3 .
+data:_n14 wf:applicationOf tools:FeatureClassToFeatureClass ;
+    wf:input0 data:_urbanization_select ;
+    wf:output data:_rural .
 
-data:wfwaste_odour_n17 wf:applicationOf tools:AddField ;
-    wf:input1 data:wfwaste_odour_old_containers ;
-    wf:output data:wfwaste_odour_old_containers2 .
+data:_n16 wf:applicationOf tools:Clip ;
+    wf:input0 data:_chochomoku ;
+    wf:input1 data:_rural ;
+    wf:output data:_rural_clip .
 
-data:wfwaste_odour_n20 wf:applicationOf tools:CalculateField ;
-    wf:input1 data:wfwaste_odour_old_containers2 ;
-    wf:output data:wfwaste_odour_old_containers3 .
+data:_n17 wf:applicationOf tools:SummaryStatistics ;
+    wf:input0 data:_rural_clip ;
+    wf:output data:_rural_clip_popsum .
 
-data:wfwaste_odour_n21 wf:applicationOf tools:KernelDensity ;
-    wf:input1 data:wfwaste_odour_old_containers3 ;
-    wf:output data:wfwaste_odour_old_container_density .
+data:_n20 wf:applicationOf tools:Buffer ;
+    wf:input0 data:_roads ;
+    wf:output data:_roads_buffer ;
+    rdfs:comment "2km buffer" .
 
-data:wfwaste_odour_n22 wf:applicationOf tools:ZonalStatisticsAsTable ;
-    wf:input1 data:wfwaste_odour_old_container_density ;
-    wf:input2 data:wfwaste_odour_Amsterdam_centrum ;
-    wf:output data:wfwaste_odour_old_zonal_stats .
+data:_n22 wf:applicationOf tools:Clip ;
+    wf:input0 data:_rural_clip ;
+    wf:input1 data:_roads_buffer ;
+    wf:output data:_rural_2km ;
+    rdfs:comment "clip rural areas with the roads buffer and estimate the total population that is within the buffer of 2km" .
 
-data:wfwaste_odour_n27 wf:applicationOf tools:AlterField ;
-    wf:input1 data:wfwaste_odour_old_zonal_stats ;
-    wf:output data:wfwaste_odour_old_zonal_stats2 .
+data:_n23 wf:applicationOf tools:AddFields ;
+    wf:input0 data:_rural_2km ;
+    wf:output data:_rural_2km_addfields ;
+    rdfs:comment "Add fields for area proportion and population proportion" .
 
-data:wfwaste_odour_n29 wf:applicationOf tools:JoinField ;
-    wf:input1 data:wfwaste_odour_Amsterdam_centrum ;
-    wf:input2 data:wfwaste_odour_old_zonal_stats2 ;
-    wf:output data:wfwaste_odour_old_zonal_stats3 .
+data:_n26 wf:applicationOf tools:CalculateField ;
+    wf:input0 data:_rural_2km_addfields ;
+    wf:output data:_rural_2km_area_perc ;
+    rdfs:comment "Calculate proportion of area in buffer" .
 
-data:wfwaste_odour_n3 wf:applicationOf tools:CalculateField ;
-    wf:input1 data:wfwaste_odour_new_containers2 ;
-    wf:output data:wfwaste_odour_new_containers3 .
+data:_n27 wf:applicationOf tools:CalculateField ;
+    wf:input0 data:_rural_2km_area_perc ;
+    wf:output data:_rural_2km_pop_est ;
+    rdfs:comment "Calculate proportion of population in buffer" .
 
-data:wfwaste_odour_n4 wf:applicationOf tools:KernelDensity ;
-    wf:input1 data:wfwaste_odour_new_containers3 ;
-    wf:output data:wfwaste_odour_new_container_density .
+data:_n29 wf:applicationOf tools:SummaryStatistics ;
+    wf:input0 data:_rural_2km_pop_est ;
+    wf:output data:_rural_2km_pop_sum .
 
-data:wfwaste_odour_n5 wf:applicationOf tools:ZonalStatisticsAsTable ;
-    wf:input1 data:wfwaste_odour_new_container_density ;
-    wf:input2 data:wfwaste_odour_Amsterdam_centrum ;
-    wf:output data:wfwaste_odour_new_zonal_stats .
+data:_n34 wf:applicationOf tools:AddField ;
+    wf:input0 data:_rural_2km_pop_sum ;
+    wf:output data:_rural_2km_pop_sum_addfield .
 
-data:wfwaste_odour_n9 wf:applicationOf tools:AlterField ;
-    wf:input1 data:wfwaste_odour_new_zonal_stats ;
-    wf:output data:wfwaste_odour_new_zonal_stats2 .
+data:_n37 wf:applicationOf tools:CalculateField ;
+    wf:input0 data:_rural_2km_pop_sum_addfield ;
+    wf:output data:_rural_2km_pop_sum_joinID .
+
+data:_n39 wf:applicationOf tools:AddFields ;
+    wf:input0 data:_rural_clip_popsum ;
+    wf:output data:_rural_clip_popsum_addfields .
+
+data:_n40 wf:applicationOf tools:CalculateField ;
+    wf:input0 data:_rural_clip_popsum_addfields ;
+    wf:output data:_rural_clip_popsum_addfields_calculatefield .
+
+data:_n41 wf:applicationOf tools:JoinField ;
+    wf:input0 data:_rural_clip_popsum_addfields_calculatefield ;
+    wf:input1 data:_rural_2km_pop_sum_joinID ;
+    wf:output data:_rural_clip_popsum_2km_join .
+
+data:_n45 wf:applicationOf tools:CalculateField ;
+    wf:input0 data:_rural_clip_popsum_2km_join ;
+    wf:output data:_rural_pop_estimate .
+
+data:_roads rdfs:comment "all-season roads in Shikoku, Japan (line)" .
+
+data:_urbanization rdfs:comment "MetropolitanEmploymentAreas: Urbanization levels in Shikoku, Japan (Polygon)" .
 

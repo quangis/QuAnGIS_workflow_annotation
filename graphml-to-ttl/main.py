@@ -3,10 +3,9 @@ from rdflib import Graph, Namespace, RDF, RDFS, URIRef, BNode
 from rdflib.term import Literal
 import os
 
-#Libraries for parsing CCT expressions
+# Libraries for parsing CCT expressions
 from cct import cct
 import transforge as tf
-
 
 
 class Action:
@@ -21,17 +20,17 @@ class Action:
         self.compositions = compositions
 
     def __str__(self):
-        statement = "Action: " + str(self.node) + "\n"
-        statement += "Inputs: " + str(self.inputs) + "\n"
-        statement += "Outputs: " + str(self.outputs) + "\n"
-        statement += "Comments: " + str(self.comments) + "\n"
-        statement += "Expressions: " + str(self.expressions) + "\n"
-        statement += "Labels: " + str(self.labels) + "\n"
-        statement += "Compositions: " + str(self.compositions) + "\n"
-        return statement
+        return f""" 
+{'Action:' : >13} {self.node}
+{'Inputs:' : >13} {self.inputs}
+{'Outputs:' : >13} {self.outputs}
+{'Comments:' : >13} {self.comments}
+{'Expressions:' : >13} {self.expressions}
+{'Labels:' : >13} {self.labels}
+{'Compositions:' : >13} {self.compositions}"""
 
-    # Method for testing syntax of CCT expressions
-    def ccttest(self,complex_string):
+    # Method for testing syntax of CCT expressions (NOTE: testing is done when importing expression to expressions)
+    def test_cct_expression(self, complex_string):
         return cct.parse(complex_string, *(tf.Source() for _ in range(10)))
 
 
@@ -43,13 +42,14 @@ class Artefact:
         self.comments = comments
         self.signatures = signatures
         self.labels = labels
+
     def __str__(self):
-        statement = "Artefact: " + str(self.action) + "\n"
-        statement += "Inputs: " + str(self.inputs) + "\n"
-        statement += "Outputs: " + str(self.outputs) + "\n"
-        statement += "Comments: " + str(self.comments) + "\n"
-        statement += "Signatures: " + str(self.signatures) + "\n"
-        return statement
+        return f"""
+{'Artefact:' : >11} {self.node}  
+{'Inputs:' : >11} {self.inputs}
+{'Outputs:' : >11} {self.outputs}
+{'Comments:' : >11} {self.comments}
+{'Signatures:' : >11} {self.signatures}"""
 
 
 class Workflow:
@@ -58,6 +58,7 @@ class Workflow:
         self.author = author
         self.actions = set()
         self.artefacts = set()
+        # Make static attribute / global? Potentially, wf's need different namespaces due to different data sources
         self.namespaces = {
              'rdf': Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#'),
              'rdfs': Namespace('http://www.w3.org/2000/01/rdf-schema#'),
@@ -71,92 +72,88 @@ class Workflow:
              'data': Namespace('https://github.com/quangis/cct/blob/master/tools/data.ttl#'),
              'ccd': Namespace('http://geographicknowledge.de/vocab/CoreConceptData.rdf#'),
              'cct': Namespace('https://github.com/quangis/cct#')
-        } # TODO: Check namespaces
+        }
         self.comment = comment
         self.subject = subject
         self.abstract = abstract
         self.sources = set()
 
-    def __str__(self):
-        for action in self.actions:
-            print(action)
+    def import_data_from_networkx_dag(self, dag):
 
-    def update_metadata_from_networkx_dag(self, dag):
+        # # # Add metadata using edge labels # # #
         self.sources = set()  # Empty existing sources
 
         for edge in dag.edges(data=True):
-
-            # Get author, question, subject, abstract metadata by annotation edges
+            # Get author, question, subject, abstract metadata using edge labels
             if 'label' in edge[2]:
-                if edge[2]['label'] == 'Author':
-                    self.author = dag.nodes[edge[0]]['label']
-                if edge[2]['label'] == 'Question':
-                    self.comment = dag.nodes[edge[0]]['label']
-                if edge[2]['label'] == 'Subject':
-                    self.subject = dag.nodes[edge[0]]['label']
-                if edge[2]['label'] == 'Abstract':
-                    self.abstract = dag.nodes[edge[0]]['label']
-                if edge[2]['label'] == 'Author':
-                    self.name = dag.nodes[edge[1]]['label']
+                edge_label = edge[2]['label']
+                origin_label = dag.nodes[edge[0]]['label']
+                if edge_label == 'Author':
+                    self.author = origin_label
+                elif edge_label == 'Question':
+                    self.comment = origin_label
+                elif edge_label == 'Subject':
+                    self.subject = origin_label
+                elif edge_label == 'Abstract':
+                    self.abstract = origin_label
 
             # Get source labels by whether they are starting nodes
-            if dag.nodes[edge[0]]['shape_type'] == 'parallelogram':
-                if all(edge[0] != edge2[1] for edge2 in dag.edges):
-                    self.sources.add(dag.nodes[edge[0]]['label'])
+            if dag.nodes[edge[0]]['shape_type'] == 'parallelogram' and all(edge[0] != edge2[1] for edge2 in dag.edges):
+                self.sources.add(dag.nodes[edge[0]]['label'])
 
-    def import_data_from_networkx_dag(self, dag):
+        # # # Add data using node shapes and edges between node shapes # # #
         for node in dag.nodes(data=True):
+            if node[1]['shape_type'] == 'trapezoid':
+                print(node)
+                exit()
 
             # Create artefacts from nodes
             if node[1]['shape_type'] in ['parallelogram']:
-                artefact = node
-                inputs = list()
-                outputs = list()
-                comments = list()
-                signatures = list()
-                labels = list()
+                inputs, outputs, comments, signatures, labels = [], [], [], [], []
                 for edge in dag.edges:
-                    # Let edges incoming from roundrectangles be inputs
-                    if node[0] == edge[1] and dag.nodes[edge[0]]['shape_type'] == 'roundrectangle':
-                        inputs.append((edge[0], dag.nodes[edge[0]]))
-                    # Let edges outgoing to roundrectangles be outputs
-                    if node[0] == edge[0] and dag.nodes[edge[1]]['shape_type'] == 'roundrectangle':
-                        outputs.append((edge[1], dag.nodes[edge[1]]))
-                    # Let edges incoming from fat arrows be comments
-                    if node[0] == edge[1] and dag.nodes[edge[0]]['shape_type'] == 'fatarrow':
-                        comments.append((edge[0], dag.nodes[edge[0]]))
-                    if node[0] == edge[1] and dag.nodes[edge[0]]['shape_type'] == 'octagon':
-                        signatures.append((edge[0], dag.nodes[edge[0]]))
-                    if node[0] == edge[1] and dag.nodes[edge[0]]['shape_type'] == 'hexagon':
-                        labels.append((edge[0], dag.nodes[edge[0]]))
-                self.artefacts.add(Artefact(artefact, inputs, outputs, comments, signatures, labels))
+                    origin_node = dag.nodes[edge[0]]
+                    destination_node = dag.nodes[edge[1]]
+                    if node[0] == edge[1] and origin_node['shape_type'] == 'roundrectangle':
+                        inputs.append((edge[0], origin_node))
+                    elif node[0] == edge[0] and destination_node['shape_type'] == 'roundrectangle':
+                        outputs.append((edge[1], destination_node))
+                    elif node[0] == edge[1] and origin_node['shape_type'] == 'fatarrow':
+                        comments.append((edge[0], origin_node))
+                    elif node[0] == edge[1] and origin_node['shape_type'] == 'octagon':
+                        signatures.append((edge[0], origin_node))
+                    elif node[0] == edge[1] and origin_node['shape_type'] == 'hexagon':
+                        labels.append((edge[0], origin_node))
+                self.artefacts.add(Artefact(node, inputs, outputs, comments, signatures, labels))
 
             # Create actions from nodes
             if node[1]['shape_type'] == 'roundrectangle':
-                action = node
-                inputs = list()
-                outputs = list()
-                comments = list()
-                expressions = list()
-                labels = list()
-                compositions = list()
+                inputs, outputs, comments, expressions, labels, compositions = [], [], [], [], [], []
                 for edge in dag.edges:
-                    # Let edges incoming from parallelograms be inputs
-                    if node[0] == edge[1] and dag.nodes[edge[0]]['shape_type'] == 'parallelogram':
-                        inputs.append((edge[0], dag.nodes[edge[0]]))
-                    # Let edges outgoing to parallelograms be outputs
-                    if node[0] == edge[0] and dag.nodes[edge[1]]['shape_type'] == 'parallelogram':
-                        outputs.append((edge[1], dag.nodes[edge[1]]))
-                    # Let edges incoming from fat arrows be comments
-                    if node[0] == edge[1] and dag.nodes[edge[0]]['shape_type'] == 'fatarrow':
-                        comments.append((edge[0], dag.nodes[edge[0]]))
-                    if node[0] == edge[1] and dag.nodes[edge[0]]['shape_type'] == 'octagon':
-                        expressions.append((edge[0], dag.nodes[edge[0]]))
-                    if node[0] == edge[1] and dag.nodes[edge[0]]['shape_type'] == 'hexagon':
-                        labels.append((edge[0], dag.nodes[edge[0]]))
-                    if node[0] == edge[1] and dag.nodes[edge[0]]['shape_type'] == 'star5':
-                        compositions.append((edge[0], dag.nodes[edge[0]]))
-                self.actions.add(Action(action, inputs, outputs, comments, expressions, labels, compositions))
+                    origin_node = dag.nodes[edge[0]]
+                    destination_node = dag.nodes[edge[1]]
+                    if node[0] == edge[1] and origin_node['shape_type'] == 'parallelogram':
+                        inputs.append((edge[0], origin_node))
+                    elif node[0] == edge[0] and destination_node['shape_type'] == 'parallelogram':
+                        outputs.append((edge[1], destination_node))
+                    elif node[0] == edge[1] and origin_node['shape_type'] == 'fatarrow':
+                        comments.append((edge[0], origin_node))
+                    elif node[0] == edge[1] and origin_node['shape_type'] == 'octagon':
+                        # N:
+                        # I'm assuming that an action can have at most one expression, right? I'd suggest that
+                        # such things be reflected by not putting it in a list (and explicitly assert your assumptions,
+                        # so that things crash if it's a wrong assumption).
+                        # E:
+                        # It's true that we only need one expression per action. However, there are some reasons to keep
+                        # this functionality. Maybe we come up with a method for conjunction/disjunction of expressions,
+                        # or we want to consider inter-annotator agreement. That's why I think it is better to have this
+                        # assertion at a point further down the pipeline.
+
+                        expressions.append((edge[0], origin_node))
+                    elif node[0] == edge[1] and origin_node['shape_type'] == 'hexagon':
+                        labels.append((edge[0], origin_node))
+                    elif node[0] == edge[1] and origin_node['shape_type'] == 'star5':
+                        compositions.append((edge[0], origin_node))
+                self.actions.add(Action(node, inputs, outputs, comments, expressions, labels, compositions))
 
     def process_compositions(self):
 
@@ -167,115 +164,108 @@ class Workflow:
             for composition in action.compositions:
                 compositions.append((composition, action))
 
-
-
     def export_to_RDF(self, file):
         rdf_g = Graph()
 
         # Blank node namespace
-        self.namespaces.update({'_': Namespace('#')})
+        # self.namespaces.update({'_': Namespace('#')})
 
         # Add namespaces to file
         for prefix, namespace in self.namespaces.items():
             rdf_g.bind(prefix, namespace)
 
         # Add workflow triples
+        origin = self.namespaces['repo'][self.name] # subject remains constant over triples
+
         # Workflow name
-        s = self.namespaces['repo'][self.name]
-        p = BNode()
-        o = self.namespaces['wf']['Workflow']
-        rdf_g.add((s, p, o))
+        rdf_g.add((origin,
+                   BNode(),
+                   self.namespaces['wf']['Workflow']))
 
         # Question
-        p = RDFS.comment
-        o = Literal(self.comment)
-        rdf_g.add((s, p, o))
+        rdf_g.add((origin,
+                   RDFS.comment,
+                   Literal(self.comment)))
 
         # Subject
-        p = self.namespaces['dct']['subject']
-        o = Literal(self.subject)
-        rdf_g.add((s, p, o))
+        rdf_g.add((origin,
+                   self.namespaces['dct']['subject'],
+                   Literal(self.subject)))
 
         # Abstract
-        p = self.namespaces['dbo']['abstract']
-        o = Literal(self.abstract)
-        rdf_g.add((s, p, o))
+        rdf_g.add((origin,
+                   self.namespaces['dbo']['abstract'],
+                   Literal(self.abstract)))
 
         # Sources
         for source in self.sources:
-            p = self.namespaces['wf']['source']
-            #o = BNode(source)
-            o = self.namespaces['data'][self.name + '_' + source]
-            rdf_g.add((s, p, o))
+            rdf_g.add((origin,
+                       self.namespaces['wf']['source'],
+                       self.namespaces['data'][self.name + source]))
 
         # Add actions
         for action in self.actions:
-            p = self.namespaces['wf']['edge']
-            o = self.namespaces['data'][self.name + '_' + str(action.node[0])]
-            rdf_g.add((s, p, o))
+            rdf_g.add((origin,
+                       self.namespaces['wf']['edge'],
+                       self.namespaces['data'][self.name + str(action.node[0])]))
 
         # Add action-specific triples to rdf_graph
         for action in self.actions:
 
             # Add tool node
-            s = self.namespaces['data'][self.name + '_' + str(action.node[0])]
-            p = self.namespaces['wf']['applicationOf']
-            o = self.namespaces['tools'][action.node[1]['label']]
-            rdf_g.add((s, p, o))
+            origin = self.namespaces['data'][self.name + str(action.node[0])]
+            rdf_g.add((origin,
+                       self.namespaces['wf']['applicationOf'],
+                       self.namespaces['tools'][action.node[1]['label']]))
 
             # Add input nodes
-            count = 0
-            for input in action.inputs:
-                count += 1
-                p = self.namespaces['wf']['input'] + str(count)
-                o = self.namespaces['data'][self.name + '_' + str(input[1]['label'])]
-                rdf_g.add((s, p, o))
+            for count, input in enumerate(action.inputs):
+                rdf_g.add((origin,
+                           self.namespaces['wf']['input'] + str(count),
+                           self.namespaces['data'][self.name + str(input[1]['label'])]))
 
             # Add comments
             for comment in action.comments:
-                p = RDFS.comment
-                o = Literal(comment[1]['label'])
-                rdf_g.add((s, p, o))
+                rdf_g.add((origin,
+                           RDFS.comment,
+                           Literal(comment[1]['label'])))
 
             # Add output nodes
             for output in action.outputs:
-                p = self.namespaces['wf']['output']
-                o = self.namespaces['data'][self.name + '_' + str(output[1]['label'])]
-                rdf_g.add((s, p, o))
+                rdf_g.add((origin,
+                           self.namespaces['wf']['output'],
+                           self.namespaces['data'][self.name + str(output[1]['label'])]))
 
             # Add expressions
             for expression in action.expressions:
-                p = self.namespaces['cct']['expression']
-                o = Literal(expression[1]['label'])
-                print(o)
-                #parse to check whether cct expression is correct
-                action.ccttest(o)
-                rdf_g.add((s, p, o))
+                rdf_g.add((origin,
+                           self.namespaces['cct']['expression'],
+                           Literal(expression[1]['label'])))
 
             # Add labels
             for label in action.labels:
-                p = RDFS.label
-                o = Literal(label[1]['label'])
-                rdf_g.add((s, p, o))
+                rdf_g.add((origin,
+                           RDFS.label,
+                           Literal(label[1]['label'])))
 
         # Add artefacts
         for artefact in self.artefacts:
-            s = self.namespaces['data'][self.name + '_' + artefact.node[1]['label']]
+            origin = self.namespaces['data'][self.name + artefact.node[1]['label']]
             # Add artefact comments
             for comment in artefact.comments:
-                p = RDFS.comment
-                o = Literal(comment[1]['label'])
-                rdf_g.add((s, p, o))
+                rdf_g.add((origin,
+                           RDFS.comment,
+                           Literal(comment[1]['label'])))
             # Add artefact comments
             for signature in artefact.signatures:
-                p = BNode()
-                o = self.namespaces['ccd'][signature[1]['label']]
-                rdf_g.add((s, p, o))
+                rdf_g.add((origin,
+                           BNode(),
+                           self.namespaces['ccd'][signature[1]['label']]))
             # Add labels
             for label in artefact.labels:
-                p = RDFS.label
-                o = Literal(label[1]['label'])
-                rdf_g.add((s, p, o))
+                rdf_g.add((origin,
+                           RDFS.label,
+                           Literal(label[1]['label'])))
 
         # Write non-binary metadata
         with open(file, 'w') as f:
@@ -295,11 +285,7 @@ class Workflow:
             f.write(new)
 
 
-# Export all .graphml files to .ttl files
-indir = '../data_source/graphml/wfsemantics/'
-outdir = '../data_source/ttl/wfsemantics/'
-for file in os.listdir(indir):
-    filename_parts = os.path.splitext(file)
+
 
 def process_all():
     # Export all .graphml files to .ttl files
@@ -326,17 +312,22 @@ def process_all():
             # Export to RDF .ttl format
             wf.export_to_RDF('../data_source/ttl/' + filename_parts[0] + '.ttl')
 
+
 def main():
     wf = Workflow()
     networkx_dag = nx.read_graphml('../data_source/graphml/wfaccess.graphml')
-    wf.update_metadata_from_networkx_dag(networkx_dag)
     wf.import_data_from_networkx_dag(networkx_dag)
     wf.process_compositions()
-       # Export to RDF .ttl format
-    wf.export_to_RDF(outdir + filename_parts[0] + '.ttl')
+    wf.export_to_RDF('../data_source/graphml/wfaccess.ttl')
 
     for action in wf.actions:
-        print(action.compositions)
+        print(action)
+
+    # Export all .graphml files in the semantics subfolder to .ttl files
+    # indir = '../data_source/graphml/wfsemantics/'
+    # outdir = '../data_source/ttl/wfsemantics/'
+    # for file in os.listdir(indir):
+    #    filename_parts = os.path.splitext(file)
 
 
 main()
