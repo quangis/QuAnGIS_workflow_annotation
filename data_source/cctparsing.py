@@ -6,6 +6,28 @@ def test(complex_string):
 
 expressions=[
     """
+        1: ObjectInfo(Count);
+        2: ObjectInfo(Ratio);
+        join_attr
+            (get_attrL 1)
+            (apply2 ratio (get_attrR 1) (get_attrR 2))
+    """
+    ,
+    """    
+    1: Field(Nom);
+    2: ObjectInfo(Nom);
+    join_attr
+            (get_attrL 2)
+            (apply1 
+                (compose size pi1) 
+                (apply1 
+                    (compose (subset (1)) deify) 
+                    (get_attrL 2)
+                )
+            )
+    """
+    ,
+    """
     revert (select eq (invert (1: Field(Nom)): Coverages(Nom)) (-: Nom))
     """
     ,
