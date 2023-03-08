@@ -6,28 +6,29 @@ def test(complex_string):
 
 expressions=[
     """
-    1: ObjectInfo(Nom);
-    2: ObjectInfo(Nom);    
+    1: ObjectInfo(Nom);        
     join_attr     
     (groupby merge 
         (groupbyL objectfromobjects 
             (select 
                 (compose notj leq) 
-                (prod3(apply1 (groupby count) (prod(intersect, (get_attrL 1), (get_attrL 2))))) 
+                (prod3(apply1 (groupby count) (prod_3(consIntersect ((get_attrL 1), (get_attrL 1)))))) 
                 (-:Count)
             )
         )
     )
     (apply nominalize 
-        (pi1 (groupby merge 
-            (groupbyL objectfromobjects 
-                (select 
-                    (compose notj leq) 
-                    (prod3(apply1 (groupby count) (prod(intersect, (get_attrL 1), (get_attrL 2))))) 
-                    (-:Count)
+        (pi1 
+            (groupby merge 
+                (groupbyL objectfromobjects 
+                    (select 
+                        (compose notj leq) 
+                        (prod3(apply1 (groupby count) (prod_3(consIntersect ((get_attrL 1), (get_attrL 1)))))) 
+                        (-:Count)
+                    )
                 )
-            )
-        ))
+            )   
+        )
     )
     """
     ,
