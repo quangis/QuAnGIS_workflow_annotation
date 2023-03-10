@@ -6,6 +6,17 @@ def test(complex_string):
 
 expressions=[
     """
+        1: ObjectInfo(Nom);        
+    join_attr     
+    (nIntersections((get_attrL 1), (get_attrL 1)))
+    (apply nominalize 
+        (pi1 
+            (nIntersections((get_attrL 1), (get_attrL 1)))   
+        )
+    )
+    """
+    ,
+    """
     1: ObjectInfo(Nom);        
     join_attr     
     (groupby merge 
