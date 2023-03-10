@@ -6,6 +6,27 @@ def test(complex_string):
 
 expressions=[
     """
+        1: ObjectInfo(Ratio);
+        2: ObjectInfo(Nom);
+        join_attr
+            (get_attrL 2)
+            (join (get_attrL 2) (groupbyR sum (join_key
+                (select eq (rTopo
+                    (pi2 (get_attrL 1))
+                    (pi2 (get_attrL 2))
+                ) in)
+                (getamounts 1)
+            )))
+    """
+    ,
+    """
+    1: ObjectInfo(Ratio);
+    join_attr
+        (get_attrL 1)
+        (apply1 (product (-:Ratio)) (get_attrR 1))
+    """
+    ,
+    """
     1: ObjectInfo(Ratio);
     2: ObjectInfo(Ratio);
     3: ObjectInfo(Ratio);
