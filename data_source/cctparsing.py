@@ -6,7 +6,63 @@ def test(complex_string):
 
 expressions=[
     """
-        1: ObjectInfo(Nom);        
+    1: ObjectInfo(Ratio);
+    2: ObjectInfo(Ratio);
+    3: ObjectInfo(Ratio);
+    4: ObjectInfo(Ratio);
+    join_attr
+        (get_attrL 1)
+        (diversity
+            (addlistrel
+                (addlistrel
+                    (addlistrel            
+                        (conslistrel
+                            (apply2 ratio 
+                                (get_attrR 1)            
+                                (apply1 (compose size deify) (get_attrL 1))
+                            )
+                        )
+                        (apply2 ratio 
+                                (get_attrR 2)            
+                                (apply1 (compose size deify) (get_attrL 2))
+                        )
+                    )
+                    (apply2 ratio 
+                                (get_attrR 3)            
+                                (apply1 (compose size deify) (get_attrL 3))
+                    )
+                )
+                (apply2 ratio 
+                                (get_attrR 4)            
+                                (apply1 (compose size deify) (get_attrL 4))
+                )    
+            )
+        )
+    """
+    ,
+    """
+    1: ObjectInfo(Count);        
+    join_attr
+        (get_attrL 1)
+        (apply2 ratio 
+            (get_attrR 1)            
+            (apply1 (compose size deify) (get_attrL 1))
+        )    
+    """
+    ,
+    """
+        1: ObjectInfo(Nom);
+        2: ObjectInfo(Nom);
+        join_attr
+            (get_attrL 2)
+            (apply1
+                (ocont (get_attrL 1))
+                (get_attrL 2)
+            )
+    """
+    ,
+    """
+    1: ObjectInfo(Nom);        
     join_attr     
     (nIntersections((get_attrL 1), (get_attrL 1)))
     (apply nominalize 
