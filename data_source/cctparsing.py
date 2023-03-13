@@ -5,6 +5,48 @@ def test(complex_string):
     return cct.parse(complex_string, *(tf.Source() for _ in range(10)))
 
 expressions=[
+    """           
+    1: Field(Ratio);
+    2: ObjectInfo(Nom);
+    join_attr
+        (get_attrL 2)
+        (groupbyR sum (join_key
+            (select eq (loTopo (pi1 1) (get_attrL 2)) in)
+            1
+        ))       
+    """
+    ,
+    """
+    1: ObjectInfo(Ratio);
+    groupbyL 
+        (compose sum (apply2 product (get_attrR 1))) 
+        (loDist (-:R1(Loc)) (get_attrL 1))
+    """
+    ,
+    """
+    1: ObjectInfo(Nom);
+    join_attr((get_attrL 1), (-: R2(Obj,Ratio)))
+    """
+    ,
+    """
+    1: Network(Ratio);
+    2: ObjectInfo(Nom);
+    3: ObjectInfo(Nom);        
+           nRoutes (get_attrL 2) (get_attrL 3) 1
+    """
+    ,
+    """
+    1: ObjectInfo(Nom);
+    nbuild(
+        join_attr
+            (get_attrL 1)
+            (apply1
+                (compose size deify)
+                (get_attrL 1)
+            )
+    )
+    """
+    ,
     """
         1: ObjectInfo(Ratio);
         2: ObjectInfo(Nom);
