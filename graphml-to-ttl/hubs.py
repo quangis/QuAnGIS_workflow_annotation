@@ -32,8 +32,13 @@ class Hub:
             return self.node == other.node and self.graph == other.graph
         return False
 
-    def get_cache(self):
-        return self._instances
+    @classmethod
+    def get_cache(cls):
+        return cls._instances
+
+    @classmethod
+    def clear_cache(cls):
+        cls._instances.clear()
 
 
 # Tests whether the passed string is a valid CCT expression. Used for expression assignment
@@ -233,7 +238,7 @@ def derive_outer_nodes(input_candidates, output_candidates):
 
 
 # Adds the entire workflow as another action to the graph
-def add_context_edges(graph, context_label):
+def add_context_edges(graph):
     input_candidates = []
     output_candidates = []
     metadata = []

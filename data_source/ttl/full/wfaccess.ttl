@@ -1,4 +1,4 @@
-# @Author(s): Eric Top, 
+# @Author(s): Eric Top, Simon Scheider, 
 @prefix ccd: <http://geographicknowledge.de/vocab/CoreConceptData.rdf#> .
 @prefix cct: <https://github.com/quangis/cct#> .
 @prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .

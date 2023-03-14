@@ -1,0 +1,90 @@
+# @Author(s): Eric Top, Simon Scheider, 
+@prefix ccd: <http://geographicknowledge.de/vocab/CoreConceptData.rdf#> .
+@prefix cct: <https://github.com/quangis/cct#> .
+@prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
+
+tools:wfwaste_odour a wf:Workflow ;
+    wf:edge data:n0,
+        data:n10,
+        data:n12,
+        data:n14,
+        data:n3,
+        data:n4,
+        data:n5 ;
+    wf:source data:gebiedsindeling,
+        data:old_containers ;
+    rdfs:comment "What is the proportion of areas covered by odour concentration from waste disposal places in the Amsterdam city center?" .
+
+data:n0 wf:applicationOf tools:AddField ;
+    wf:input1 data:old_containers ;
+    wf:output data:old_containers2 .
+
+data:n10 wf:applicationOf tools:AlterField ;
+    wf:input1 data:old_zonal_stats ;
+    wf:output data:old_zonal_stats2 .
+
+data:n12 wf:applicationOf tools:JoinField ;
+    wf:input1 data:Amsterdam_centrum ;
+    wf:input2 data:old_zonal_stats2 ;
+    wf:output data:old_zonal_stats3 .
+
+data:n14 rdfs:label "Amsterdam city Neighborhoods" ;
+    wf:applicationOf tools:SelectLayerByAttribute ;
+    wf:input1 data:gebiedsindeling ;
+    wf:output data:Amsterdam_centrum ;
+    rdfs:comment "Select amsterdam centrum" ;
+    cct:expression "['subset (1: ObjectInfo(Nom)) (-: C(Nom))']" .
+
+data:n3 wf:applicationOf tools:CalculateField ;
+    wf:input1 data:old_containers2 ;
+    wf:output data:old_containers3 .
+
+data:n4 wf:applicationOf tools:KernelDensity ;
+    wf:input1 data:old_containers3 ;
+    wf:output data:old_container_density ;
+    rdfs:comment "Computes a capacitated kernel density (distance weighted sum of attributes)" ;
+    cct:expression "['    1: ObjectInfo(Ratio);\\n    groupbyL \\n        (compose sum (apply2 product (get_attrR 1))) \\n        (loDist (-:R1(Loc)) (get_attrL 1))']" .
+
+data:n5 wf:applicationOf tools:ZonalStatisticsAsTable ;
+    wf:input1 data:old_container_density ;
+    wf:input2 data:Amsterdam_centrum ;
+    wf:output data:old_zonal_stats .
+
+data:old_zonal_stats3 a ccd:ERA,
+        ccd:ObjectQ,
+        ccd:PlainVectorRegionA .
+
+data:gebiedsindeling a ccd:NominalA,
+        ccd:ObjectQ,
+        ccd:VectorTessellationA ;
+    rdfs:label "Amsterdam city Neighborhoods" ;
+    rdfs:comment "Amsterdam city neighborhoods" .
+
+data:old_container_density a ccd:FieldQ,
+        ccd:RasterA,
+        ccd:RatioA .
+
+data:old_containers a ccd:NominalA,
+        ccd:ObjectQ,
+        ccd:PointA .
+
+data:old_containers2 a ccd:NominalA,
+        ccd:ObjectQ,
+        ccd:PointA .
+
+data:old_containers3 a ccd:ERA,
+        ccd:ObjectQ,
+        ccd:PointA .
+
+data:old_zonal_stats a ccd:ObjectQ .
+
+data:old_zonal_stats2 a ccd:ObjectQ .
+
+data:Amsterdam_centrum a ccd:NominalA,
+        ccd:ObjectQ,
+        ccd:PlainVectorRegionA ;
+    rdfs:comment "A vector polygon representing the Centrum neighborhood of Amsterdam" .
+
