@@ -97,15 +97,11 @@ class Workflow:
 
         iterate_over_components(self, rdf_graph)
 
-        for triple in rdf_graph.triples((None, None, None)):
-            print(triple)
-
         # Write non-binary metadata
         with open(file, 'w') as f:
             authors = '# @Author(s): '
-            if self.context is None:
+            if self.context is not None:
                 for author in self.context.authors.items():
-                    print(self.graph.nodes[author[1]])
                     authors += self.graph.nodes[author[1]]['label'] + ', '
             f.write(authors + '\n')
 

@@ -8,12 +8,10 @@ import transforge as tf
 
 
 def main():
-    g = nx.read_graphml('../data_source/graphml/wfaccess.graphml')
-    add_context(g, 'askdlflakjs')
-    for node in g.nodes(data=True):
-        print(node)
-    # Remove redundant coordinate information from nodes
+    g = nx.read_graphml('../data_source/graphml/wfsemantics/wfaccess.graphml')
+    add_context_edges(g, 'wfaccess')
 
+    # Remove redundant coordinate information from nodes
     actions = []
     artefacts = []
     for node in g.nodes():
@@ -27,8 +25,8 @@ def main():
             artefacts.append(Artefact(node, g))
 
     wf = Workflow(actions, g)
-    wf.generalize()
-    wf.to_rdf('../data_source/graphml/wfaccess_test2.ttl')
+    #wf.generalize()
+    wf.to_rdf('../data_source/graphml/wfsemantics/wfaccess_test.ttl')
 
 
 main()

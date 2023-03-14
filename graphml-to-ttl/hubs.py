@@ -58,15 +58,15 @@ class Action(Hub):
         if not graph.nodes[node]['shape_type'] == 'roundrectangle':
             raise ValueError('Tried to initialize a non-action node as action')
 
-        self.inputs = dict()  # Incoming artefact nodes
-        self.outputs = dict()  # Outgoing artefact nodes
-        self.comments = dict()  # Nodes to store additional comments
-        self.labels = dict()  # Nodes to store concise labels
-        self.expressions = dict()  # nodes to store algebra expressions
-        self.components = dict()  # nodes to store actions that compose this action
-        self.compositions = dict()  # nodes to store actions that are composed by this action
-        self.abstracts = dict()
-        self.authors = dict()
+        self.inputs = dict()  # Incoming artefact nodes. Converts to wf:input<input no.> in RDF
+        self.outputs = dict()  # Outgoing artefact nodes. Converts to wf:output in RDF
+        self.comments = dict()  # Converts to rdfs:comment in RDF
+        self.labels = dict()  # Converts to rdfs:label in RDF
+        self.expressions = dict()  # nodes to store cct-algebra expressions. Converts to cct:expression and dct:subject
+        self.components = dict()  # nodes to store actions that compose this action.
+        self.compositions = dict()  # nodes to store actions that are composed by this action.
+        self.abstracts = dict()  # Converts to dbo:abstract
+        self.authors = dict()  # Converts to notation in RDF file
 
         for edge in self.edges:
             # Cases where the hub is the node of departure (hub is x in (x, y), other is y)
@@ -91,7 +91,12 @@ class Action(Hub):
                     elif other_shape == 'fatarrow':  # comments
                         self.comments[edge[2]['label']] = other
                     elif other_shape == 'octagon':  # comments
-                        test_cct_expression(graph.nodes[other]['label'])
+                        try:
+                            graph.nodes[other]['label'] = graph.nodes[other]['label']
+                            test_cct_expression(graph.nodes[other]['label'])
+                        except:
+                            print('node ' + str(other) + ' has invalid cct: ' + graph.nodes[other]['label'])
+                            graph.nodes[other]['label'] += '#INVALID_EXPRESSION#'
                         self.expressions[edge[2]['label']] = other
                     elif other_shape == 'hexagon':  # comments
                         self.labels[edge[2]['label']] = other
@@ -109,7 +114,12 @@ class Action(Hub):
                     elif other_shape == 'fatarrow':  # comments
                         self.comments[len(self.comments)] = other
                     elif other_shape == 'octagon':  # expressions
-                        test_cct_expression(graph.nodes[other]['label'])
+                        try:
+                            graph.nodes[other]['label'] = graph.nodes[other]['label']
+                            test_cct_expression(graph.nodes[other]['label'])
+                        except:
+                            print('node ' + str(other) + ' has invalid cct: ' + graph.nodes[other]['label'])
+                            graph.nodes[other]['label'] += '#INVALID_EXPRESSION#'
                         self.expressions[len(self.expressions)] = other
                     elif other_shape == 'hexagon':  # labels
                         self.labels[len(self.labels)] = other
@@ -120,6 +130,7 @@ class Action(Hub):
                     elif other_shape == 'star8':
                         self.authors[len(self.authors)] = other
 
+        # Get inputs and outputs if they are not explicitly defined (E.g., in the case of the context action)
         if not self.inputs or not self.outputs:
             # Iterate over own components, collecting inputs and outputs
             input_candidates = []
@@ -127,8 +138,8 @@ class Action(Hub):
 
             for value in self.components.values():
                 component = Action(value, self.graph)  # Note: Actions are cached; no duplicates are generated
-                input_candidates.append(*[x for x in component.inputs.values()])
-                output_candidates.append(*[x for x in component.outputs.values()])
+                input_candidates += [x for x in component.inputs.values()]
+                output_candidates += [x for x in component.outputs.values()]
 
             inputs, outputs = derive_outer_nodes(input_candidates, output_candidates)
             for input in inputs:
@@ -222,7 +233,7 @@ def derive_outer_nodes(input_candidates, output_candidates):
 
 
 # Adds the entire workflow as another action to the graph
-def add_context(graph, context_label):
+def add_context_edges(graph, context_label):
     input_candidates = []
     output_candidates = []
     metadata = []
