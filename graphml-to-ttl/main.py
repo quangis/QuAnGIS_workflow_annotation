@@ -1,7 +1,6 @@
 import networkx as nx
-import rdflib as rdf
-import os
 from hubs import *
+from workflow_turtling import *
 
 # Libraries for parsing CCT expressions
 from cct import cct
@@ -9,10 +8,10 @@ import transforge as tf
 
 
 def main():
-    g = nx.read_graphml('../data_source/graphml/wfaccess.graphml')
-    add_context(g, 'askdlflakjs')
-    # Remove redundant coordinate information from nodes
+    g = nx.read_graphml('../data_source/graphml/wfsemantics/wfaccess.graphml')
+    add_context_edges(g, 'wfaccess')
 
+    # Remove redundant coordinate information from nodes
     actions = []
     artefacts = []
     for node in g.nodes():
@@ -25,8 +24,9 @@ def main():
         if g.nodes[node]['shape_type'] == 'parallelogram':
             artefacts.append(Artefact(node, g))
 
-    for action in actions:
-        print(action)
+    wf = Workflow(actions, g)
+    #wf.generalize()
+    wf.to_rdf('../data_source/graphml/wfsemantics/wfaccess_test.ttl')
 
 
 main()

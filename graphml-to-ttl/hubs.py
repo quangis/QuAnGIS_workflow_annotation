@@ -1,26 +1,7 @@
-import networkx as nx
-import rdflib as rdf
-from rdflib.term import Literal
-import os
 
 # Libraries for parsing CCT expressions
 from cct import cct
 import transforge as tf
-
-namespaces = {
-    'rdf': rdf.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#'),
-    'rdfs': rdf.Namespace('http://www.w3.org/2000/01/rdf-schema#'),
-    'xsd': rdf.Namespace('http://www.w3.org/2001/XMLSchema#'),
-    'xml': rdf.Namespace('http://www.w3.org/XML/1998/namespace'),
-    'dbo': rdf.Namespace('https://dbpedia.org/ontology/'),
-    'dct': rdf.Namespace('http://purl.org/dc/terms/'),
-    'wf': rdf.Namespace('http://geographicknowledge.de/vocab/Workflow.rdf#'),
-    'tools': rdf.Namespace('https://github.com/quangis/cct/blob/master/tools/tools.ttl#'),
-    'repo': rdf.Namespace('https://example.com/#'),
-    'data': rdf.Namespace('https://github.com/quangis/cct/blob/master/tools/data.ttl#'),
-    'ccd': rdf.Namespace('http://geographicknowledge.de/vocab/CoreConceptData.rdf#'),
-    'cct': rdf.Namespace('https://github.com/quangis/cct#')
-}
 
 
 # A node together with all its directly-related edges
@@ -49,10 +30,15 @@ class Hub:
     def __eq__(self, other):
         if isinstance(other, Hub):
             return self.node == other.node and self.graph == other.graph
-        raise TypeError('Expected type Hub, got ' + str(type(other)))
+        return False
 
     def get_cache(self):
         return self._instances
+
+
+# Tests whether the passed string is a valid CCT expression. Used for expression assignment
+def test_cct_expression(complex_string):
+    return cct.parse(complex_string, *(tf.Source() for _ in range(10)))
 
 
 class Action(Hub):
@@ -72,15 +58,15 @@ class Action(Hub):
         if not graph.nodes[node]['shape_type'] == 'roundrectangle':
             raise ValueError('Tried to initialize a non-action node as action')
 
-        self.inputs = dict()  # Incoming artefact nodes
-        self.outputs = dict()  # Outgoing artefact nodes
-        self.comments = dict()  # Nodes to store additional comments
-        self.labels = dict()  # Nodes to store concise labels
-        self.expressions = dict()  # nodes to store algebra expressions
-        self.components = dict()  # nodes to store actions that compose this action
-        self.compositions = dict()  # nodes to store actions that are composed by this action
-        self.abstracts = dict()
-        self.authors = dict()
+        self.inputs = dict()  # Incoming artefact nodes. Converts to wf:input<input no.> in RDF
+        self.outputs = dict()  # Outgoing artefact nodes. Converts to wf:output in RDF
+        self.comments = dict()  # Converts to rdfs:comment in RDF
+        self.labels = dict()  # Converts to rdfs:label in RDF
+        self.expressions = dict()  # nodes to store cct-algebra expressions. Converts to cct:expression and dct:subject
+        self.components = dict()  # nodes to store actions that compose this action.
+        self.compositions = dict()  # nodes to store actions that are composed by this action.
+        self.abstracts = dict()  # Converts to dbo:abstract
+        self.authors = dict()  # Converts to notation in RDF file
 
         for edge in self.edges:
             # Cases where the hub is the node of departure (hub is x in (x, y), other is y)
@@ -105,6 +91,12 @@ class Action(Hub):
                     elif other_shape == 'fatarrow':  # comments
                         self.comments[edge[2]['label']] = other
                     elif other_shape == 'octagon':  # comments
+                        try:
+                            graph.nodes[other]['label'] = graph.nodes[other]['label']
+                            test_cct_expression(graph.nodes[other]['label'])
+                        except:
+                            print('node ' + str(other) + ' has invalid cct: ' + graph.nodes[other]['label'])
+                            graph.nodes[other]['label'] += '#INVALID_EXPRESSION#'
                         self.expressions[edge[2]['label']] = other
                     elif other_shape == 'hexagon':  # comments
                         self.labels[edge[2]['label']] = other
@@ -122,6 +114,12 @@ class Action(Hub):
                     elif other_shape == 'fatarrow':  # comments
                         self.comments[len(self.comments)] = other
                     elif other_shape == 'octagon':  # expressions
+                        try:
+                            graph.nodes[other]['label'] = graph.nodes[other]['label']
+                            test_cct_expression(graph.nodes[other]['label'])
+                        except:
+                            print('node ' + str(other) + ' has invalid cct: ' + graph.nodes[other]['label'])
+                            graph.nodes[other]['label'] += '#INVALID_EXPRESSION#'
                         self.expressions[len(self.expressions)] = other
                     elif other_shape == 'hexagon':  # labels
                         self.labels[len(self.labels)] = other
@@ -132,6 +130,7 @@ class Action(Hub):
                     elif other_shape == 'star8':
                         self.authors[len(self.authors)] = other
 
+        # Get inputs and outputs if they are not explicitly defined (E.g., in the case of the context action)
         if not self.inputs or not self.outputs:
             # Iterate over own components, collecting inputs and outputs
             input_candidates = []
@@ -139,8 +138,8 @@ class Action(Hub):
 
             for value in self.components.values():
                 component = Action(value, self.graph)  # Note: Actions are cached; no duplicates are generated
-                input_candidates.append(*[x for x in component.inputs.values()])
-                output_candidates.append(*[x for x in component.outputs.values()])
+                input_candidates += [x for x in component.inputs.values()]
+                output_candidates += [x for x in component.outputs.values()]
 
             inputs, outputs = derive_outer_nodes(input_candidates, output_candidates)
             for input in inputs:
@@ -170,17 +169,8 @@ class Action(Hub):
 {'Components:':>13} {components}
 {'Compositions:':>13} {compositions}
 {'Abstracts:':>13} {abstracts}
-{'Authors:':>13} {authors}"""
-
-    def to_RDF(self, graph):
-        rdf_g = rdf.Graph()
-
-        for prefix, namespace in namespaces.items():
-            rdf_g.bind(prefix, namespace)
-
-        for action in self.actions:
-
-            origin = namespaces['data'][self.id +str(action.id[0])]
+{'Authors:':>13} {authors}
+"""
 
 
 class Artefact(Hub):
@@ -243,7 +233,7 @@ def derive_outer_nodes(input_candidates, output_candidates):
 
 
 # Adds the entire workflow as another action to the graph
-def add_context(graph, context_label):
+def add_context_edges(graph, context_label):
     input_candidates = []
     output_candidates = []
     metadata = []

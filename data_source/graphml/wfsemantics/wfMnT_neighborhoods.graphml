@@ -567,22 +567,22 @@
     <node id="n50">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="30.0" width="136.07421875" x="1161.962890625" y="-525.0"/>
+          <y:Geometry height="30.0" width="136.07421875" x="1761.962890625" y="-555.0"/>
           <y:Fill color="#00FFFF" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="126.07421875" x="5.0" xml:space="preserve" y="5.6494140625">wfMnT_neighborhoods<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
-          <y:Shape type="rectangle"/>
+          <y:Shape type="trapezoid"/>
         </y:ShapeNode>
       </data>
     </node>
     <node id="n51">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="30.0" width="663.0546875" x="808.47265625" y="-445.0"/>
+          <y:Geometry height="30.0" width="663.0546875" x="1748.47265625" y="-457.6421907427341"/>
           <y:Fill color="#00FFFF" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="653.0546875" x="5.0" xml:space="preserve" y="5.6494140625">What neighborhoods in Utrecht have an average WOZ below 200 and a percentage of 25 to 45 year-olds of 30% or more?<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
-          <y:Shape type="rectangle"/>
+          <y:Shape type="fatarrow"/>
         </y:ShapeNode>
       </data>
     </node>
@@ -592,8 +592,8 @@
           <y:Geometry height="30.0" width="58.677734375" x="1320.0014845402602" y="-485.0"/>
           <y:Fill color="#00FFFF" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="48.677734375" x="5.0" xml:space="preserve" y="5.6494140625">Eric Top<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
-          <y:Shape type="rectangle"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="48.677734375" x="31.3466796875" xml:space="preserve" y="5.6494140625">Eric Top<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
+          <y:Shape type="star8"/>
         </y:ShapeNode>
       </data>
     </node>
@@ -1425,10 +1425,7 @@
     <edge id="e62" source="n52" target="n50">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="-15.0" tx="34.0185546875" ty="15.0">
-            <y:Point x="1290.0" y="-470.0"/>
-            <y:Point x="1252.009765625" y="-470.0"/>
-          </y:Path>
+          <y:Path sx="0.0" sy="-15.0" tx="17.009277343750004" ty="15.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:EdgeLabel alignment="center" anchorX="-29.266634466906453" anchorY="-1.8537300541808577" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" rotationAngle="359.7560119628906" textColor="#000000" upX="-1.2246467991473532E-16" upY="1.0" verticalTextPosition="bottom" visible="true" width="39.35546875" x="-68.70138311121838" xml:space="preserve" y="-1.8537300541808626">Author<y:LabelModel><y:SmartEdgeLabelModel autoRotationEnabled="true" defaultAngle="0.0" defaultDistance="10.0"/></y:LabelModel><y:ModelParameter><y:SmartEdgeLabelModelParameter angle="0.0" distance="7.477230452711325" distanceToCenter="false" position="center" ratio="0.5" segment="1"/></y:ModelParameter><y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/></y:EdgeLabel>
@@ -1439,13 +1436,9 @@
     <edge id="e63" source="n51" target="n50">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="-15.0" tx="-34.0185546875" ty="15.0">
-            <y:Point x="1140.0" y="-470.0"/>
-            <y:Point x="1207.990234375" y="-470.0"/>
-          </y:Path>
+          <y:Path sx="0.0" sy="-15.0" tx="51.02783203125" ty="15.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="52.029296875" x="-1.3457213023484655" xml:space="preserve" y="-42.4648725573374">Question<y:LabelModel><y:SmartEdgeLabelModel autoRotationEnabled="true" defaultAngle="0.0" defaultDistance="10.0"/></y:LabelModel><y:ModelParameter><y:SmartEdgeLabelModelParameter angle="6.283185307179586" distance="8.163114744837474" distanceToCenter="true" position="left" ratio="0.36283044707700646" segment="1"/></y:ModelParameter><y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/></y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
