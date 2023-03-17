@@ -6,6 +6,18 @@ def test(complex_string):
 
 expressions=[
     """
+        1: ObjectInfo(Nom);
+        2: ObjectInfo(Nom);
+        subset
+            1
+            (pi1 (select
+                leq
+                (oDist (get_attrL 1) (get_attrL 2))
+                (-:Ratio)
+            ))
+    """
+    ,
+    """
     1: ObjectInfo(Ratio);
     2: Field(Bool);
     arealinterpol
