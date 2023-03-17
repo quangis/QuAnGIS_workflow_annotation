@@ -6,6 +6,14 @@ def test(complex_string):
 
 expressions=[
     """
+    1:ObjectInfo(Nom);
+    2:ObjectInfo(Ratio);
+    join_attr (get_attrL 1) (get_attrR 2) 
+    """,
+    """
+    select (compose2 notj leq) (1: ObjectInfo(Ratio)) (-: Ratio)
+    """,
+    """
         1: ObjectInfo(Nom);
         2: ObjectInfo(Nom);
         subset
