@@ -5,6 +5,37 @@ def test(complex_string):
     return cct.parse(complex_string, *(tf.Source() for _ in range(10)))
 
 expressions=[
+    """
+    1:ObjectInfo(Nom);
+    2:ObjectInfo(Ratio);
+    join_attr (get_attrL 1) (get_attrR 2) 
+    """,
+    """
+    select (compose2 notj leq) (1: ObjectInfo(Ratio)) (-: Ratio)
+    """,
+    """
+        1: ObjectInfo(Nom);
+        2: ObjectInfo(Nom);
+        subset
+            1
+            (pi1 (select
+                leq
+                (oDist (get_attrL 1) (get_attrL 2))
+                (-:Ratio)
+            ))
+    """
+    ,
+    """
+    1: ObjectInfo(Ratio);
+    2: Field(Bool);
+    arealinterpol
+        (getamounts 1)
+        (pi2 (groupbyR reify (select eq (loTopo
+            (fcover 2 (nest true))
+            (get_attrL 1)
+        ) in)))
+    """
+    ,
     """           
     1: Field(Ratio);
     2: ObjectInfo(Nom);
