@@ -1,0 +1,129 @@
+# @Author(s): Eric Top, Enkhbold Nyamsuren, Simon Scheider, 
+@prefix ccd: <http://geographicknowledge.de/vocab/CoreConceptData.rdf#> .
+@prefix cct: <https://github.com/quangis/cct#> .
+@prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
+
+data:n45 wf:applicationOf tools:wfwalk_intersectiondensity ;
+    wf:input1 data:streets ;
+    wf:input2 data:buurten ;
+    wf:output data:BRdRaReOfInRecInter4 ;
+    rdfs:comment "What is the density of street intersections for each neighbourhood in Amsterdam?" .
+
+data:n31 wf:applicationOf tools:GenerateIntersections ;
+    wf:input1 data:streets ;
+    wf:output data:true_intersection ;
+    rdfs:comment "Generate intersections from line objects by intersecting lines (with minimal cardinality)" ;
+    cct:expression "['    1: ObjectInfo(Nom);        \\n    join_attr     \\n    (nIntersections((get_attrL 1), (get_attrL 1)))\\n    (apply nominalize \\n        (pi1 \\n            (nIntersections((get_attrL 1), (get_attrL 1)))   \\n        )\\n    )#INVALID_EXPRESSION#']" .
+
+data:n39 wf:applicationOf tools:CalculateObjectVectorDensity ;
+    wf:input1 data:BRdRaReOfInRecInter ;
+    wf:output data:BRdRaReOfInRecInter4 ;
+    rdfs:comment "Calculate object density" ;
+    cct:expression "['    1: ObjectInfo(Count);        \\n    join_attr\\n        (get_attrL 1)\\n        (apply2 ratio \\n            (get_attrR 1)            \\n            (apply1 (compose size deify) (get_attrL 1))\\n        )']" .
+
+data:n4 wf:applicationOf tools:SummarizeWithin ;
+    wf:input1 data:true_intersection ;
+    wf:input2 data:buurten ;
+    wf:output data:BRdRaReOfInRecInter ;
+    rdfs:comment "Count the number of street intersections in each neighborhood",
+        "Counts the number of features from one feature to another based on the spatial relation" ;
+    cct:expression "['        1: ObjectInfo(Nom);\\n        2: ObjectInfo(Nom);\\n        join_attr\\n            (get_attrL 2)\\n            (apply1\\n                (ocont (get_attrL 1))\\n                (get_attrL 2)\\n            )']" .
+
+tools:CalculateObjectVectorDensity a wf:Workflow ;
+    wf:edge data:n6,
+        data:n8,
+        data:n9 ;
+    wf:source data:BRdRaReOfInRecInter ;
+    dct:subject """    1: ObjectInfo(Count);        
+    join_attr
+        (get_attrL 1)
+        (apply2 ratio 
+            (get_attrR 1)            
+            (apply1 (compose size deify) (get_attrL 1))
+        )""" ;
+    rdfs:comment "Calculate object density" .
+
+tools:GenerateIntersections a wf:Workflow ;
+    wf:edge data:n1,
+        data:n22,
+        data:n24 ;
+    wf:source data:streets ;
+    dct:subject """    1: ObjectInfo(Nom);        
+    join_attr     
+    (nIntersections((get_attrL 1), (get_attrL 1)))
+    (apply nominalize 
+        (pi1 
+            (nIntersections((get_attrL 1), (get_attrL 1)))   
+        )
+    )#INVALID_EXPRESSION#""" ;
+    rdfs:comment "Generate intersections from line objects by intersecting lines (with minimal cardinality)" .
+
+tools:wfwalk_intersectiondensity a wf:Workflow ;
+    wf:edge data:n1,
+        data:n22,
+        data:n24,
+        data:n31,
+        data:n39,
+        data:n4,
+        data:n6,
+        data:n8,
+        data:n9 ;
+    wf:source data:buurten,
+        data:streets ;
+    rdfs:comment "What is the density of street intersections for each neighbourhood in Amsterdam?" .
+
+data:endpoints a ccd:PointA .
+
+data:intersections a ccd:NominalA,
+        ccd:ObjectQ,
+        ccd:PointA .
+
+data:n1 wf:applicationOf tools:FeatureVerticesToPoints ;
+    wf:input1 data:streets ;
+    wf:output data:endpoints .
+
+data:n22 wf:applicationOf tools:CollectEvents ;
+    wf:input1 data:endpoints ;
+    wf:output data:intersections .
+
+data:n24 wf:applicationOf tools:SelectLayerByAttribute ;
+    wf:input1 data:intersections ;
+    wf:output data:true_intersection ;
+    rdfs:comment "Select only true intersections (with 3 or more streets (Edge count > 2))" .
+
+data:n6 wf:applicationOf tools:AddGeometryAttributes ;
+    wf:input1 data:BRdRaReOfInRecInter ;
+    wf:output data:BRdRaReOfInRecInter2 ;
+    rdfs:comment "Calculate the area of each neighborhood" .
+
+data:n8 wf:applicationOf tools:AddField ;
+    wf:input1 data:BRdRaReOfInRecInter2 ;
+    wf:output data:BRdRaReOfInRecInter3 ;
+    rdfs:comment "Add a field for intersection density per neighborhood" .
+
+data:n9 wf:applicationOf tools:CalculateField ;
+    wf:input1 data:BRdRaReOfInRecInter3 ;
+    wf:output data:BRdRaReOfInRecInter4 ;
+    rdfs:comment "Calculate intersection density per neighborhood" .
+
+data:buurten a ccd:NominalA,
+        ccd:ObjectQ,
+        ccd:VectorTessellationA ;
+    rdfs:comment "vector polygons representing buurten of Amsterdam to local file" .
+
+data:true_intersection a ccd:NominalA,
+        ccd:ObjectQ,
+        ccd:PointA .
+
+data:BRdRaReOfInRecInter a ccd:CountA,
+        ccd:ObjectQ,
+        ccd:VectorTessellationA .
+
+data:streets a ccd:LineA,
+        ccd:NominalA,
+        ccd:ObjectQ .
+

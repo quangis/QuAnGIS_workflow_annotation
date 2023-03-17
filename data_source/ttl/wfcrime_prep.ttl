@@ -1,0 +1,14 @@
+# @Author(s): Eric Top, Haiqi Xu, Simon Scheider, 
+@prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
+
+data:n39 wf:applicationOf tools:wfcrime_prep ;
+    wf:input1 data:function_mix ;
+    wf:input2 data:sport_area_points ;
+    wf:input3 data:supermarket_area_points ;
+    wf:output data:home,
+        data:work_sport_store_locations ;
+    rdfs:comment "what is a random location in residential areas in Amsterdam?" .
+

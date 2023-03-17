@@ -1,0 +1,286 @@
+# @Author(s): Eric Top, Simon Scheider, 
+@prefix ccd: <http://geographicknowledge.de/vocab/CoreConceptData.rdf#> .
+@prefix cct: <https://github.com/quangis/cct#> .
+@prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
+
+data:n89 wf:applicationOf tools:wfMnT_population ;
+    wf:input1 data:admin_areas ;
+    wf:input2 data:A2_highway ;
+    wf:input3 data:pop_centers ;
+    wf:output data:pop_clip_geom_attr_addfield ;
+    rdfs:comment "What is the number of people within 1000 meters of the A2 highway?" .
+
+data:n57 wf:applicationOf tools:BufferDissolve ;
+    wf:input1 data:A2_highway ;
+    wf:output data:A2_highway_buffer ;
+    cct:expression "['extrapol (get_attrL (1: ObjectInfo(Nom)))']" .
+
+data:n6 wf:applicationOf tools:ExportFeatures ;
+    wf:input1 data:admin_areas ;
+    wf:output data:provinces ;
+    rdfs:comment "Extract provinces from administrative areas of NL" ;
+    cct:expression "['subset (1: ObjectInfo(Nom)) (-: C(Nom))']" .
+
+data:n71 wf:applicationOf tools:SelectLayerByLocationDistTessObject ;
+    wf:input1 data:provinces ;
+    wf:input2 data:A2_highway ;
+    wf:output data:provinces_near_A2 ;
+    cct:expression "['        1: ObjectInfo(Nom);\\n        2: ObjectInfo(Nom);\\n        subset\\n            1\\n            (pi1 (select\\n                leq\\n                (oDist (get_attrL 1) (get_attrL 2))\\n                (-: Ratio)\\n            ))']" .
+
+data:n76 wf:applicationOf tools:SelectLayerByLocationTessObject ;
+    wf:input1 data:pop_centers ;
+    wf:input2 data:provinces_near_A2 ;
+    wf:output data:pop_centers_near_A2 ;
+    cct:expression "['        1: ObjectInfo(Count);\\n        2: ObjectInfo(Nom);\\n        subset\\n            1\\n            (pi1 (select\\n                eq\\n                (oTopo (get_attrL 1) (get_attrL 2))\\n                in\\n            ))']" .
+
+data:n78 wf:applicationOf tools:CalculateDensityonObject ;
+    wf:input1 data:pop_centers_near_A2 ;
+    wf:output data:pop_centers_near_A2_pop_dens ;
+    cct:expression "[' 1: ObjectInfo(Count);        \\n        join_attr\\n            (get_attrL 1)\\n            (apply2 ratio (get_attrR 1)  (apply1\\n                (compose size deify)\\n                (get_attrL 1)\\n            ))']" .
+
+data:n80 wf:applicationOf tools:CalculatePartialAmountsfromObjects ;
+    wf:input1 data:pop_centers_near_A2_pop_dens ;
+    wf:input2 data:A2_highway_buffer ;
+    wf:output data:pop_clip_geom_attr_addfield ;
+    cct:expression "['        1: ObjectInfo(Ratio);\\n        2: Field(Bool);\\n        arealinterpol\\n            (getamounts 1)\\n            (pi2 (groupbyR reify (select eq (loTopo\\n                (fcover 2 (nest true))\\n                (get_attrL 1)\\n            ) in)))']" .
+
+tools:BufferDissolve a wf:Workflow ;
+    wf:edge data:n34,
+        data:n37 ;
+    wf:source data:A2_highway ;
+    dct:subject "extrapol (get_attrL (1: ObjectInfo(Nom)))" .
+
+tools:CalculateDensityonObject a wf:Workflow ;
+    wf:edge data:n20,
+        data:n24,
+        data:n27,
+        data:n31 ;
+    wf:source data:pop_centers_near_A2 ;
+    dct:subject """ 1: ObjectInfo(Count);        
+        join_attr
+            (get_attrL 1)
+            (apply2 ratio (get_attrR 1)  (apply1
+                (compose size deify)
+                (get_attrL 1)
+            ))""" .
+
+tools:CalculatePartialAmountsfromObjects a wf:Workflow ;
+    wf:edge data:n33,
+        data:n43,
+        data:n45,
+        data:n47 ;
+    wf:source data:A2_highway_buffer,
+        data:pop_centers_near_A2_pop_dens ;
+    dct:subject """        1: ObjectInfo(Ratio);
+        2: Field(Bool);
+        arealinterpol
+            (getamounts 1)
+            (pi2 (groupbyR reify (select eq (loTopo
+                (fcover 2 (nest true))
+                (get_attrL 1)
+            ) in)))""" .
+
+tools:SelectLayerByLocationDistTessObject a wf:Workflow ;
+    wf:edge data:n11,
+        data:n9 ;
+    wf:source data:A2_highway,
+        data:provinces ;
+    dct:subject """        1: ObjectInfo(Nom);
+        2: ObjectInfo(Nom);
+        subset
+            1
+            (pi1 (select
+                leq
+                (oDist (get_attrL 1) (get_attrL 2))
+                (-: Ratio)
+            ))""" .
+
+tools:SelectLayerByLocationTessObject a wf:Workflow ;
+    wf:edge data:n14,
+        data:n18 ;
+    wf:source data:pop_centers,
+        data:provinces_near_A2 ;
+    dct:subject """        1: ObjectInfo(Count);
+        2: ObjectInfo(Nom);
+        subset
+            1
+            (pi1 (select
+                eq
+                (oTopo (get_attrL 1) (get_attrL 2))
+                in
+            ))""" .
+
+tools:wfMnT_population a wf:Workflow ;
+    wf:edge data:n11,
+        data:n14,
+        data:n18,
+        data:n20,
+        data:n24,
+        data:n27,
+        data:n31,
+        data:n33,
+        data:n34,
+        data:n37,
+        data:n43,
+        data:n45,
+        data:n47,
+        data:n57,
+        data:n6,
+        data:n71,
+        data:n76,
+        data:n78,
+        data:n80,
+        data:n9 ;
+    wf:source data:A2_highway,
+        data:admin_areas,
+        data:pop_centers ;
+    rdfs:comment "What is the number of people within 1000 meters of the A2 highway?" .
+
+data:A2_highway_buffers a ccd:BooleanA,
+        ccd:FieldQ,
+        ccd:PlainVectorRegionA .
+
+data:n11 wf:applicationOf tools:ExportFeatures ;
+    wf:input1 data:provinces_select ;
+    wf:output data:provinces_near_A2 ;
+    rdfs:comment "Extract provinces within 1000 meters of the A2 highway" .
+
+data:n14 wf:applicationOf tools:SelectLayerByLocation ;
+    wf:input1 data:pop_centers ;
+    wf:input2 data:provinces_near_A2 ;
+    wf:output data:pop_centers_select ;
+    rdfs:comment "Select population centers in provinces near the A2 highway" .
+
+data:n18 wf:applicationOf tools:ExportFeatures ;
+    wf:input1 data:pop_centers_select ;
+    wf:output data:pop_centers_near_A2 ;
+    rdfs:comment "Export selected population centers near the A2 highway to new layer" .
+
+data:n20 wf:applicationOf tools:AddField ;
+    wf:input1 data:pop_centers_near_A2 ;
+    wf:output data:pop_centers_near_A2_addfield ;
+    rdfs:comment "Add field for population density" .
+
+data:n24 wf:applicationOf tools:AddField ;
+    wf:input1 data:pop_centers_near_A2_addfield ;
+    wf:output data:pop_centers_near_A2_addfield_addfield ;
+    rdfs:comment "Add field for area size" .
+
+data:n27 wf:applicationOf tools:CalculateGeometryAttributes ;
+    wf:input1 data:pop_centers_near_A2_addfield_addfield ;
+    wf:output data:pop_centers_near_A2_geom_attr ;
+    rdfs:comment "Calculate the area size of each population center" .
+
+data:n31 wf:applicationOf tools:CalculateField ;
+    wf:input1 data:pop_centers_near_A2_geom_attr ;
+    wf:output data:pop_centers_near_A2_pop_dens ;
+    rdfs:comment "Calculate the population density of each population center" .
+
+data:n33 wf:applicationOf tools:Clip ;
+    wf:input1 data:pop_centers_near_A2_pop_dens ;
+    wf:input2 data:A2_highway_buffer ;
+    wf:output data:pop_clip ;
+    rdfs:comment "Clip the population centers using the A2_buffer" .
+
+data:n34 wf:applicationOf tools:Buffer ;
+    wf:input1 data:A2_highway ;
+    wf:output data:A2_highway_buffers ;
+    rdfs:comment "Generate a buffer of 1000 meters around each A2 highway line segment" .
+
+data:n37 wf:applicationOf tools:Dissolve ;
+    wf:input1 data:A2_highway_buffers ;
+    wf:output data:A2_highway_buffer ;
+    rdfs:comment "Dissolve the 1000 meter buffers around the A2 highway line segments" .
+
+data:n43 wf:applicationOf tools:CalculateGeometryAttributes ;
+    wf:input1 data:pop_clip ;
+    wf:output data:pop_clip_geom_attr ;
+    rdfs:comment "Calculate the area size of each clip-segment of the population centers" .
+
+data:n45 wf:applicationOf tools:AddField ;
+    wf:input1 data:pop_clip_geom_attr ;
+    wf:output data:pop_clip_geom_attr_addfield ;
+    rdfs:comment "Add a field for storing a population estimation" .
+
+data:n47 wf:applicationOf tools:CalculateField ;
+    wf:input1 data:pop_clip_geom_attr_addfield ;
+    wf:output data:pop_clip_geom_attr_addfield ;
+    rdfs:comment "Calculate the estimated populatoin count for each cut segment of the population centers" .
+
+data:n9 wf:applicationOf tools:SelectLayerByLocation ;
+    wf:input1 data:A2_highway ;
+    wf:input2 data:provinces ;
+    wf:output data:provinces_select ;
+    rdfs:comment "Select provinces within 1000 meters of the A2 highway" .
+
+data:pop_centers_near_A2_addfield a ccd:ObjectQ,
+        ccd:PlainVectorRegionA,
+        ccd:RatioA .
+
+data:pop_centers_near_A2_addfield_addfield a ccd:ObjectQ,
+        ccd:PlainVectorRegionA,
+        ccd:RatioA .
+
+data:pop_centers_near_A2_geom_attr a ccd:ObjectQ,
+        ccd:PlainVectorRegionA,
+        ccd:RatioA .
+
+data:pop_centers_select a ccd:CountA,
+        ccd:ObjectQ,
+        ccd:PlainVectorRegionA .
+
+data:pop_clip a ccd:AmountQ,
+        ccd:PlainVectorRegionA,
+        ccd:RatioA .
+
+data:pop_clip_geom_attr a ccd:AmountQ,
+        ccd:PlainVectorRegionA,
+        ccd:RatioA .
+
+data:provinces_select a ccd:NominalA,
+        ccd:ObjectQ,
+        ccd:PlainVectorRegionA .
+
+data:admin_areas a ccd:NominalA,
+        ccd:ObjectQ,
+        ccd:VectorTessellationA ;
+    rdfs:comment "The administrative areas of the Netherlands at municipal, provincial, and national levels as vector polygons" .
+
+data:provinces a ccd:NominalA,
+        ccd:ObjectQ,
+        ccd:VectorTessellationA .
+
+data:A2_highway_buffer a ccd:BooleanA,
+        ccd:FieldQ,
+        ccd:PlainVectorRegionA .
+
+data:pop_centers a ccd:CountA,
+        ccd:ObjectQ,
+        ccd:PlainVectorRegionA ;
+    rdfs:comment "Vector polygons showing where population centers are in the Netherlands" .
+
+data:pop_centers_near_A2 a ccd:CountA,
+        ccd:ObjectQ,
+        ccd:PlainVectorRegionA .
+
+data:pop_centers_near_A2_pop_dens a ccd:ObjectQ,
+        ccd:PlainVectorRegionA,
+        ccd:RatioA .
+
+data:pop_clip_geom_attr_addfield a ccd:AmountQ,
+        ccd:PlainVectorRegionA,
+        ccd:RatioA .
+
+data:provinces_near_A2 a ccd:NominalA,
+        ccd:ObjectQ,
+        ccd:PlainVectorRegionA .
+
+data:A2_highway a ccd:LineA,
+        ccd:NominalA,
+        ccd:ObjectQ ;
+    rdfs:comment "Vector line segments representing the A2 highway in the Netherlands" .
+

@@ -1,0 +1,140 @@
+# @Author(s): Eric Top, Enkhbold Nyamsuren, Simon Scheider, 
+@prefix ccd: <http://geographicknowledge.de/vocab/CoreConceptData.rdf#> .
+@prefix cct: <https://github.com/quangis/cct#> .
+@prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
+@prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
+
+data:n40 wf:applicationOf tools:wfMnT_neighborhoodsnearschools ;
+    wf:input1 data:neighborhoods ;
+    wf:input2 data:schools ;
+    wf:output data:neighborhoods_Utrecht_near_schools ;
+    rdfs:comment "Which neighborhoods in Utrecht are within 100 meters from a school?" .
+
+data:n27 wf:applicationOf tools:SelectLayerByAttributeTessObjects ;
+    wf:input1 data:neighborhoods ;
+    wf:output data:neighborhoods_Utrecht ;
+    cct:expression "['subset (1: ObjectInfo(Nom)) (-: C(Nom))']" .
+
+data:n33 wf:applicationOf tools:SelectLayerByLocationPointObject ;
+    wf:input1 data:schools ;
+    wf:input2 data:neighborhoods_Utrecht ;
+    wf:output data:schools_Utrecht ;
+    cct:expression "['        1: ObjectInfo(Nom);\\n        2: ObjectInfo(Nom);\\n        subset\\n            1\\n            (pi1 (select\\n                eq\\n                (oTopo (get_attrL 1) (get_attrL 2))\\n                in\\n            ))']" .
+
+data:n35 wf:applicationOf tools:SelectLayerByLocationDistPointObject ;
+    wf:input1 data:neighborhoods_Utrecht ;
+    wf:input2 data:schools_Utrecht ;
+    wf:output data:neighborhoods_Utrecht_near_schools ;
+    cct:expression "['        1: ObjectInfo(Nom);\\n        2: ObjectInfo(Nom);\\n        subset\\n            1\\n            (pi1 (select\\n                leq\\n                (oDist (get_attrL 1) (get_attrL 2))\\n                (-:Ratio)\\n            ))']" .
+
+tools:SelectLayerByAttributeTessObjects a wf:Workflow ;
+    wf:edge data:n0,
+        data:n3 ;
+    wf:source data:neighborhoods ;
+    dct:subject "subset (1: ObjectInfo(Nom)) (-: C(Nom))" .
+
+tools:SelectLayerByLocationDistPointObject a wf:Workflow ;
+    wf:edge data:n16,
+        data:n19 ;
+    wf:source data:neighborhoods_Utrecht,
+        data:schools_Utrecht ;
+    dct:subject """        1: ObjectInfo(Nom);
+        2: ObjectInfo(Nom);
+        subset
+            1
+            (pi1 (select
+                leq
+                (oDist (get_attrL 1) (get_attrL 2))
+                (-:Ratio)
+            ))""" .
+
+tools:SelectLayerByLocationPointObject a wf:Workflow ;
+    wf:edge data:n12,
+        data:n8 ;
+    wf:source data:neighborhoods_Utrecht,
+        data:schools ;
+    dct:subject """        1: ObjectInfo(Nom);
+        2: ObjectInfo(Nom);
+        subset
+            1
+            (pi1 (select
+                eq
+                (oTopo (get_attrL 1) (get_attrL 2))
+                in
+            ))""" .
+
+tools:wfMnT_neighborhoodsnearschools a wf:Workflow ;
+    wf:edge data:n0,
+        data:n12,
+        data:n16,
+        data:n19,
+        data:n27,
+        data:n3,
+        data:n33,
+        data:n35,
+        data:n8 ;
+    wf:source data:neighborhoods,
+        data:schools ;
+    rdfs:comment "Which neighborhoods in Utrecht are within 100 meters from a school?" .
+
+data:n0 wf:applicationOf tools:SelectLayerByAttribute ;
+    wf:input1 data:neighborhoods ;
+    wf:output data:neighborhoods_select ;
+    rdfs:comment "Select neighborhoods in the Utrecht municipality" .
+
+data:n12 wf:applicationOf tools:ExportFeatures ;
+    wf:input1 data:schools_select ;
+    wf:output data:schools_Utrecht ;
+    rdfs:comment "Extract selected schools (in Utrecht municipality) to new layer file" .
+
+data:n16 wf:applicationOf tools:SelectLayerByLocation ;
+    wf:input1 data:neighborhoods_Utrecht ;
+    wf:input2 data:schools_Utrecht ;
+    wf:output data:neighborhoods_Utrecht_select ;
+    rdfs:comment "Select Utrecht neighborhoods that are within 100 meters of a school" .
+
+data:n19 wf:applicationOf tools:ExportFeatures ;
+    wf:input1 data:neighborhoods_Utrecht_select ;
+    wf:output data:neighborhoods_Utrecht_near_schools ;
+    rdfs:comment "Extract selected Utrecht neighborhoods (that are within 100 meters of a school)" .
+
+data:n3 wf:applicationOf tools:ExportFeatures ;
+    wf:input1 data:neighborhoods_select ;
+    wf:output data:neighborhoods_Utrecht ;
+    rdfs:comment "Extract selected neighborhoods (in Utrecht municipality) to new layer file" .
+
+data:n8 wf:applicationOf tools:SelectLayerByLocation ;
+    wf:input1 data:schools ;
+    wf:input2 data:neighborhoods_Utrecht ;
+    wf:output data:schools_select ;
+    rdfs:comment "Select schools that are within the Utrecht municipality" .
+
+data:neighborhoods_select a ccd:NominalA,
+        ccd:ObjectQ,
+        ccd:PlainVectorRegionA .
+
+data:schools_select a ccd:NominalA,
+        ccd:ObjectQ,
+        ccd:PointA .
+
+data:neighborhoods a ccd:NominalA,
+        ccd:ObjectQ,
+        ccd:VectorTessellationA ;
+    rdfs:comment "Vector polygons representing neighborhoods in the Netherlands" .
+
+data:schools a ccd:NominalA,
+        ccd:ObjectQ,
+        ccd:PointA ;
+    rdfs:comment "Vector points representing schools in the Netherlands" .
+
+data:schools_Utrecht a ccd:NominalA,
+        ccd:ObjectQ,
+        ccd:PointA .
+
+data:neighborhoods_Utrecht a ccd:NominalA,
+        ccd:ObjectQ,
+        ccd:PlainVectorRegionA .
+

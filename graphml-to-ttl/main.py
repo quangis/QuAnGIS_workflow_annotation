@@ -1,66 +1,31 @@
 import networkx as nx
-from hubs import *
-from workflow_turtling import *
+from hubs3 import *
 import os
-
-# Libraries for parsing CCT expressions
-from cct import cct
-import transforge as tf
 
 
 def main():
-    """g = nx.read_graphml('../data_source/graphml/wfsemantics/wfaccess.graphml')
-    add_context_edges(g, 'wfaccess')
-
-    # Remove redundant coordinate information from nodes
-    actions = []
-    artefacts = []
-    for node in g.nodes():
-        if 'x' in g.nodes[node]:
-            del g.nodes[node]['x']
-        if 'y' in g.nodes[node]:
-            del g.nodes[node]['y']
-        if g.nodes[node]['shape_type'] == 'roundrectangle':
-            actions.append(Action(node, g))
-        if g.nodes[node]['shape_type'] == 'parallelogram':
-            artefacts.append(Artefact(node, g))
-    """
-    #wf = Workflow(actions, g)
-    #wf.generalize()
-    #wf.to_rdf('../data_source/graphml/wfsemantics/wfaccess_test.ttl')
-
     current_dir = os.getcwd()
-    input_folder = os.path.join(current_dir, "..\data_source\graphml\wfsemantics")
-    output_folder = os.path.join(current_dir, "..\data_source\\ttl\\general\\")
+    input_folder = os.path.join(current_dir, "../data_source/graphml/wfsemantics/")
+    output_folder = os.path.join(current_dir, "../data_source/ttl/")
 
-    for filename in os.listdir(input_folder):
-        f = os.path.join(input_folder, filename)
-        head, tail = os.path.split(f)
-        # checking if it is a file
-        if f.endswith('wfcrime_prep.graphml'):  # This wf has multiple final outputs
-            continue
-        elif tail.split('.')[1] == 'graphml':
-            g = nx.read_graphml(f)
+    for file in os.listdir(input_folder):
+        if file.endswith('.graphml'):
+            g = nx.read_graphml(input_folder + file)
             add_context_edges(g)
+            print(file.replace('.graphml', ''))
+            wf_node = [x for x, y in g.nodes(data=True) if y['label'] == file.replace('.graphml', '')][0]
+            wf = Action(wf_node, g)
+            ttl_file = file.replace('.graphml', '.ttl')
+            wf.to_ttl(output_folder + ttl_file)
+            print(output_folder + ttl_file)
+            clear_all_caches()
 
-            # Remove redundant coordinate information from nodes
-            actions = []
-            artefacts = []
-            for node in g.nodes():
-                if 'x' in g.nodes[node]:
-                    del g.nodes[node]['x']
-                if 'y' in g.nodes[node]:
-                    del g.nodes[node]['y']
-                if g.nodes[node]['shape_type'] == 'roundrectangle':
-                    actions.append(Action(node, g))
-                if g.nodes[node]['shape_type'] == 'parallelogram':
-                    artefacts.append(Artefact(node, g))
-
-            wf = Workflow(actions, g)
-            #wf.specify()
-            wf.generalize()
-            wf.to_rdf(output_folder + tail.replace('graphml', 'ttl'))
-            Hub.clear_cache()
-
+    '''
+    g = nx.read_graphml('D:\PhD\Github\QuAnGIS_workflow_annotation\data_source\graphml\wfsemantics\wfcrime_exposure.graphml')
+    add_context_edges(g)
+    wf_node = [x for x, y in g.nodes(data=True) if y['label'] == wf_name][0]
+    wf = Action(wf_node, g)
+    wf.to_ttl('D:\PhD\Github\QuAnGIS_workflow_annotation\data_source\graphml\wfsemantics\wfcrime_exposure.ttl')
+    '''
 
 main()
