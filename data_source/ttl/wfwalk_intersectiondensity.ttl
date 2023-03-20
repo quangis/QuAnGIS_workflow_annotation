@@ -76,6 +76,13 @@ tools:wfwalk_intersectiondensity a wf:Workflow ;
         data:streets ;
     rdfs:comment "What is the density of street intersections for each neighbourhood in Amsterdam?" .
 
+data:BRdRaReOfInRecInter2 a ccd:ObjectQ,
+        ccd:RatioA,
+        ccd:VectorTessellationA .
+
+data:BRdRaReOfInRecInter3 a ccd:ObjectQ,
+        ccd:VectorTessellationA .
+
 data:endpoints a ccd:PointA .
 
 data:intersections a ccd:NominalA,
