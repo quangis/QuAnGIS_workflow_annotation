@@ -17,7 +17,7 @@ data:n31 wf:applicationOf tools:GenerateIntersections ;
     wf:input1 data:streets ;
     wf:output data:true_intersection ;
     rdfs:comment "Generate intersections from line objects by intersecting lines (with minimal cardinality)" ;
-    cct:expression "['    1: ObjectInfo(Nom);        \\n    join_attr     \\n    (nIntersections((get_attrL 1), (get_attrL 1)))\\n    (apply nominalize \\n        (pi1 \\n            (nIntersections((get_attrL 1), (get_attrL 1)))   \\n        )\\n    )#INVALID_EXPRESSION#']" .
+    cct:expression "['    1: ObjectInfo(Nom);        \\n    join_attr     \\n    (nIntersections((get_attrL 1), (get_attrL 1)))\\n    (apply nominalize \\n        (pi1 \\n            (nIntersections((get_attrL 1), (get_attrL 1)))   \\n        )\\n    )']" .
 
 data:n39 wf:applicationOf tools:CalculateObjectVectorDensity ;
     wf:input1 data:BRdRaReOfInRecInter ;
@@ -59,7 +59,7 @@ tools:GenerateIntersections a wf:Workflow ;
         (pi1 
             (nIntersections((get_attrL 1), (get_attrL 1)))   
         )
-    )#INVALID_EXPRESSION#""" ;
+    )""" ;
     rdfs:comment "Generate intersections from line objects by intersecting lines (with minimal cardinality)" .
 
 tools:wfwalk_intersectiondensity a wf:Workflow ;

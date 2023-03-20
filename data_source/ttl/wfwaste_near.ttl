@@ -12,7 +12,7 @@ data:n72 wf:applicationOf tools:wfwaste_near ;
     wf:input2 data:gebiedsindeling ;
     wf:input3 data:afvalcontainers ;
     wf:output data:SumofDurationinDistrict ;
-    rdfs:comment "What is the walking time to the nearest waste disposal place from each household in the Amsterdam city center?" .
+    rdfs:comment "What is the total walking time from each household to the nearest waste disposal place in the Amsterdam city center?" .
 
 data:n0 wf:applicationOf tools:SelectLayerByAttribute ;
     wf:input1 data:verblijfsobject ;
@@ -74,7 +74,7 @@ tools:wfwaste_near a wf:Workflow ;
     wf:source data:afvalcontainers,
         data:gebiedsindeling,
         data:verblijfsobject ;
-    rdfs:comment "What is the walking time to the nearest waste disposal place from each household in the Amsterdam city center?" .
+    rdfs:comment "What is the total walking time from each household to the nearest waste disposal place in the Amsterdam city center?" .
 
 data:n11 wf:applicationOf tools:AddField ;
     wf:input1 data:residential_dwellings_dist ;

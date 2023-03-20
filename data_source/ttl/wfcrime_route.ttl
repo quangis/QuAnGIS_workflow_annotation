@@ -12,7 +12,7 @@ data:n41 wf:applicationOf tools:wfcrime_route ;
     wf:input2 data:home ;
     wf:input3 data:work_sport_store_locations ;
     wf:output data:route_analysis_layer_solved ;
-    rdfs:comment "What is the shortest path from my home along my workplace, a gym and a supermarket in Amsterdam?" .
+    rdfs:comment "What is the shortest path from my home through my workplace, a gym and a supermarket in Amsterdam?" .
 
 data:n26 wf:applicationOf tools:BuildNetwork ;
     wf:input1 data:roads ;
@@ -51,7 +51,7 @@ tools:wfcrime_route a wf:Workflow ;
     wf:source data:home,
         data:roads,
         data:work_sport_store_locations ;
-    rdfs:comment "What is the shortest path from my home along my workplace, a gym and a supermarket in Amsterdam?" .
+    rdfs:comment "What is the shortest path from my home through my workplace, a gym and a supermarket in Amsterdam?" .
 
 data:n10 wf:applicationOf tools:MakeRouteAnalysisLayer ;
     wf:input1 data:network ;

@@ -12,7 +12,7 @@ data:n37 wf:applicationOf tools:wfwaste_disposal ;
     wf:input2 data:afvalcontainers ;
     wf:input3 data:AEBfacility ;
     wf:output data:routes ;
-    rdfs:comment "What is the travel time along waterways to the AEB incineration plant from every waste disposal place in Amsterdam?" .
+    rdfs:comment "What is the travel time along waterways from the AEB incineration plant through every waste disposal place in Amsterdam?" .
 
 data:n21 wf:applicationOf tools:CreateNetwork ;
     wf:input1 data:waterways ;
@@ -67,7 +67,7 @@ tools:wfwaste_disposal a wf:Workflow ;
     wf:source data:AEBfacility,
         data:afvalcontainers,
         data:waterways ;
-    rdfs:comment "What is the travel time along waterways to the AEB incineration plant from every waste disposal place in Amsterdam?" .
+    rdfs:comment "What is the travel time along waterways from the AEB incineration plant through every waste disposal place in Amsterdam?" .
 
 data:n0 wf:applicationOf tools:CreateNetworkDataset ;
     wf:input1 data:waterways ;

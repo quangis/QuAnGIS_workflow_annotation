@@ -12,7 +12,7 @@ data:n89 wf:applicationOf tools:wfMnT_population ;
     wf:input2 data:A2_highway ;
     wf:input3 data:pop_centers ;
     wf:output data:pop_clip_geom_attr_addfield ;
-    rdfs:comment "What is the number of people within 1000 meters of the A2 highway?" .
+    rdfs:comment "What is the number of people within 1000 meters of the A2 highway in the Netherlands?" .
 
 data:n57 wf:applicationOf tools:BufferDissolve ;
     wf:input1 data:A2_highway ;
@@ -138,7 +138,7 @@ tools:wfMnT_population a wf:Workflow ;
     wf:source data:A2_highway,
         data:admin_areas,
         data:pop_centers ;
-    rdfs:comment "What is the number of people within 1000 meters of the A2 highway?" .
+    rdfs:comment "What is the number of people within 1000 meters of the A2 highway in the Netherlands?" .
 
 data:A2_highway_buffers a ccd:BooleanA,
         ccd:FieldQ,

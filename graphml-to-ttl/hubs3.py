@@ -2,8 +2,8 @@
 import networkx as nx
 import rdflib as rdf
 
-from cct import cct
 import transforge as tf
+from cct import cct
 
 # # # Data declaration  # # #
 namespaces = {
@@ -52,6 +52,7 @@ def test_cct_expression(complex_string):
 # Tests whether a node in a graph has a valid CCT expression. If not, add notifier to the node label
 def test_cct_expression_node(node, graph):
     if not node in cct_test_cache.values():
+        test_cct_expression(graph.nodes[node]['label'])
         try:
             test_cct_expression(graph.nodes[node]['label'])
         except:

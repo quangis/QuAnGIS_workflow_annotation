@@ -11,8 +11,7 @@ data:n39 wf:applicationOf tools:wfMnT_neighborhoodsWOZ ;
     wf:input1 data:neighborhoods_Utrecht_near_schools ;
     wf:input2 data:WOZ ;
     wf:output data:suitable_neighborhoods ;
-    rdfs:comment "Which neighborhoods in Utrecht have a WOZ value of less than 200?",
-        "Which neighborhoods in Utrecht have an average WOZ value below 200?" .
+    rdfs:comment "Which neighborhoods have an averaged WOZ value of less than 200 in Utrecht?" .
 
 data:n28 wf:applicationOf tools:SelectLayerByRatioObjects ;
     wf:input1 data:WOZ ;
@@ -51,8 +50,7 @@ tools:wfMnT_neighborhoodsWOZ a wf:Workflow ;
         data:n6 ;
     wf:source data:WOZ,
         data:neighborhoods_Utrecht_near_schools ;
-    rdfs:comment "Which neighborhoods in Utrecht have a WOZ value of less than 200?",
-        "Which neighborhoods in Utrecht have an average WOZ value below 200?" .
+    rdfs:comment "Which neighborhoods have an averaged WOZ value of less than 200 in Utrecht?" .
 
 data:WOZ_select a ccd:ObjectQ,
         ccd:RatioA .

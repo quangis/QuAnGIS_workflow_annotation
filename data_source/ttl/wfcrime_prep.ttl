@@ -12,7 +12,7 @@ data:n30 wf:applicationOf tools:wfcrime_prep ;
     wf:input2 data:sport_area_points ;
     wf:input3 data:supermarket_area_points ;
     wf:output data:work_sport_store_locations ;
-    rdfs:comment "what are random locations of  superrmarkets, sport facilities and offices in Amsterdam?" .
+    rdfs:comment "What are examples of supermarkets, sport facilities and offices in Amsterdam?" .
 
 data:n12 wf:applicationOf tools:CreateRandomPoints ;
     wf:input1 data:supermarket_area_points ;
@@ -58,7 +58,7 @@ tools:wfcrime_prep a wf:Workflow ;
     wf:source data:function_mix,
         data:sport_area_points,
         data:supermarket_area_points ;
-    rdfs:comment "what are random locations of  superrmarkets, sport facilities and offices in Amsterdam?" .
+    rdfs:comment "What are examples of supermarkets, sport facilities and offices in Amsterdam?" .
 
 data:n5 wf:applicationOf tools:FeatureToPoint ;
     wf:input1 data:office_area ;

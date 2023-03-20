@@ -11,7 +11,7 @@ data:n40 wf:applicationOf tools:wfMnT_neighborhoodsnearschools ;
     wf:input1 data:neighborhoods ;
     wf:input2 data:schools ;
     wf:output data:neighborhoods_Utrecht_near_schools ;
-    rdfs:comment "Which neighborhoods in Utrecht are within 100 meters from a school?" .
+    rdfs:comment "Which neighborhoods are within 100 meters from a school in Utrecht?" .
 
 data:n27 wf:applicationOf tools:SelectLayerByAttributeTessObjects ;
     wf:input1 data:neighborhoods ;
@@ -78,7 +78,7 @@ tools:wfMnT_neighborhoodsnearschools a wf:Workflow ;
         data:n8 ;
     wf:source data:neighborhoods,
         data:schools ;
-    rdfs:comment "Which neighborhoods in Utrecht are within 100 meters from a school?" .
+    rdfs:comment "Which neighborhoods are within 100 meters from a school in Utrecht?" .
 
 data:n0 wf:applicationOf tools:SelectLayerByAttribute ;
     wf:input1 data:neighborhoods ;

@@ -13,7 +13,7 @@ data:n64 wf:applicationOf tools:wffood ;
     wf:input3 data:Amsterdam_buildings ;
     wf:input4 data:supermarkets ;
     wf:output data:summary_centrum ;
-    rdfs:comment "what is the average network distance from households to the nearest supermarket in the centrum district in Amsterdam?" .
+    rdfs:comment "What is the average network distance from households to the nearest supermarket in the centrum district in Amsterdam?" .
 
 data:n22 wf:applicationOf tools:MakeClosestFacilityAnalysisLayer ;
     wf:input1 data:roads ;
@@ -95,7 +95,7 @@ tools:wffood a wf:Workflow ;
         data:Amsterdam_buildings,
         data:roads,
         data:supermarkets ;
-    rdfs:comment "what is the average network distance from households to the nearest supermarket in the centrum district in Amsterdam?" .
+    rdfs:comment "What is the average network distance from households to the nearest supermarket in the centrum district in Amsterdam?" .
 
 data:NL_network_centrum a ccd:LineA,
         ccd:NetworkQ,

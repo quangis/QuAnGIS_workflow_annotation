@@ -12,7 +12,7 @@ data:n57 wf:applicationOf tools:wfwalk_residentialdensity ;
     wf:input2 data:Amsterdam_land ;
     wf:input3 data:households ;
     wf:output data:buurten_res_dens ;
-    rdfs:comment "What is the density of residential areas for each neighbourhood in Amsterdam" .
+    rdfs:comment "What is the proportion of area covered by residential landuse for each neighbourhood in Amsterdam?" .
 
 data:n15 wf:applicationOf tools:SelectLayerByAttribute ;
     wf:input1 data:Amsterdam_land ;
@@ -75,7 +75,7 @@ tools:wfwalk_residentialdensity a wf:Workflow ;
     wf:source data:Amsterdam_buurt,
         data:Amsterdam_land,
         data:households ;
-    rdfs:comment "What is the density of residential areas for each neighbourhood in Amsterdam" .
+    rdfs:comment "What is the proportion of area covered by residential landuse for each neighbourhood in Amsterdam?" .
 
 data:buurten_HH_RA2 a ccd:ObjectQ,
         ccd:VectorTessellationA .

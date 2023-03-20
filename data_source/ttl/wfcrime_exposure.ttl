@@ -12,7 +12,7 @@ data:n1 wf:applicationOf tools:wfcrime_exposure ;
     wf:input2 data:crimes ;
     wf:input3 data:routes ;
     wf:output data:buurt_crime_density_avg ;
-    rdfs:comment "what is the crime density along the shortest path from my home to my workplace in Amsterdam?" .
+    rdfs:comment "What is the crime density along the shortest path from my home to my workplace in Amsterdam?" .
 
 data:n50 wf:applicationOf tools:JoinCountAttribute ;
     wf:input1 data:crimes ;
@@ -84,7 +84,7 @@ tools:wfcrime_exposure a wf:Workflow ;
     wf:source data:buurt,
         data:crimes,
         data:routes ;
-    rdfs:comment "what is the crime density along the shortest path from my home to my workplace in Amsterdam?" .
+    rdfs:comment "What is the crime density along the shortest path from my home to my workplace in Amsterdam?" .
 
 data:buurt_crime_addfield a ccd:ObjectQ,
         ccd:VectorTessellationA .
