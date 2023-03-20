@@ -36,7 +36,7 @@ data:n28 wf:applicationOf tools:Solve ;
 data:n30 wf:applicationOf tools:SummaryStatistics ;
     wf:input1 data:NL_network_centrum_supermarkets_households_solved ;
     wf:output data:summary_centrum ;
-    cct:expression "['        1: ObjectInfo(Ratio);     \\n            nest2 (merge (pi1 (getamounts 1))) (avg (getamounts 1)) ']" .
+    cct:expression "['    1: ObjectInfo(Ratio);     \\n    join_attr  \\n    (nest2 (objectfromobjects (pi1 1)) (avg (getamounts 1))) \\n    (nest2 (objectfromobjects (pi1 1))  (merge (pi1 (getamounts 1))))']" .
 
 data:n43 wf:applicationOf tools:convert2PointObjects ;
     wf:input1 data:Amsterdam_buildings ;

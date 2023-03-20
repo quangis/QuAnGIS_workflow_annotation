@@ -6,6 +6,12 @@ def test(complex_string):
 
 expressions=[
     """
+    1: ObjectInfo(Ratio);     
+    join_attr  
+    (nest2 (objectfromobjects (pi1 1))  (merge (pi1 (getamounts 1))))
+    (nest2 (objectfromobjects (pi1 1)) (avg (getamounts 1))) 
+    """,
+    """
     1: ObjectInfo(Ratio);
     2: ObjectInfo(Ratio);
     3: ObjectInfo(Ratio);
