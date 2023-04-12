@@ -327,7 +327,7 @@ class Action(Hub):
             expression_label = self.graph.nodes[expression[1]]['label']
             rdf_graph.add((namespaces['data'][self.node],
                            namespaces['cct']['expression'],
-                           rdf.Literal([expression_label])))
+                           rdf.Literal(expression_label)))
 
         # Add comments
         for comment in self.comments.items():
