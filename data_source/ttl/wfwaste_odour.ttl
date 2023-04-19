@@ -11,7 +11,7 @@ data:n46 wf:applicationOf tools:wfwaste_odour ;
     wf:input1 data:old_containers ;
     wf:input2 data:gebiedsindeling ;
     wf:output data:old_zonal_stats3 ;
-    rdfs:comment "What is the proportion of areas covered by odour concentration from waste disposal places in the Amsterdam city center?" .
+    rdfs:comment "What is the sum of the kernel density of waste disposal places in the Amsterdam city center?" .
 
 data:n14 rdfs:label "Amsterdam city Neighborhoods" ;
     wf:applicationOf tools:SelectLayerByAttribute ;
@@ -75,7 +75,7 @@ tools:wfwaste_odour a wf:Workflow ;
         data:n5 ;
     wf:source data:gebiedsindeling,
         data:old_containers ;
-    rdfs:comment "What is the proportion of areas covered by odour concentration from waste disposal places in the Amsterdam city center?" .
+    rdfs:comment "What is the sum of the kernel density of waste disposal places in the Amsterdam city center?" .
 
 data:n0 wf:applicationOf tools:AddField ;
     wf:input1 data:old_containers ;

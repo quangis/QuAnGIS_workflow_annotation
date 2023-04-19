@@ -12,7 +12,7 @@ data:n1 wf:applicationOf tools:wfcrime_exposure ;
     wf:input2 data:crimes ;
     wf:input3 data:routes ;
     wf:output data:buurt_crime_density_avg ;
-    rdfs:comment "what is the crime density along the shortest path from my home to my workplace in Amsterdam?" .
+    rdfs:comment "What is the crime density along the shortest path from my home to my workplace in Amsterdam?" .
 
 data:n50 wf:applicationOf tools:JoinCountAttribute ;
     wf:input1 data:crimes ;
@@ -84,7 +84,26 @@ tools:wfcrime_exposure a wf:Workflow ;
     wf:source data:buurt,
         data:crimes,
         data:routes ;
-    rdfs:comment "what is the crime density along the shortest path from my home to my workplace in Amsterdam?" .
+    rdfs:comment "What is the crime density along the shortest path from my home to my workplace in Amsterdam?" .
+
+data:buurt_crime_addfield a ccd:ObjectQ,
+        ccd:VectorTessellationA .
+
+data:buurt_crime_count a ccd:CountA,
+        ccd:ObjectQ,
+        ccd:VectorTessellationA .
+
+data:buurt_crime_count_addfield a ccd:ObjectQ,
+        ccd:VectorTessellationA .
+
+data:buurt_crime_geom a ccd:ObjectQ,
+        ccd:VectorTessellationA .
+
+data:buurt_crime_geom_addfield a ccd:ObjectQ,
+        ccd:VectorTessellationA .
+
+data:buurt_crime_join a ccd:ObjectQ,
+        ccd:VectorTessellationA .
 
 data:n0 wf:applicationOf tools:JoinField ;
     wf:input1 data:crimes ;
@@ -156,6 +175,7 @@ data:routes a ccd:LineA,
     rdfs:comment "A custom-generated route through Amsterdam" .
 
 data:buurt_crime_density a ccd:IRA,
+        ccd:LineA,
         ccd:ObjectQ,
         ccd:VectorTessellationA .
 

@@ -13,7 +13,7 @@ data:n82 wf:applicationOf tools:wfaccess ;
     wf:input2 data:chochomoku ;
     wf:input3 data:roads ;
     wf:output data:rural_pop_estimate ;
-    rdfs:comment "what is rural population within 2 km of all-season roads in Shikoku, Japan?" .
+    rdfs:comment "What is the percentage of the rural population within 2 km of all-season roads in Shikoku, Japan?" .
 
 data:n11 wf:applicationOf tools:Clip ;
     wf:input1 data:chochomoku ;
@@ -110,7 +110,7 @@ tools:wfaccess a wf:Workflow ;
     wf:source data:chochomoku,
         data:roads,
         data:urbanization ;
-    rdfs:comment "what is rural population within 2 km of all-season roads in Shikoku, Japan?" ;
+    rdfs:comment "What is the percentage of the rural population within 2 km of all-season roads in Shikoku, Japan?" ;
     dbo:abstract "In this lesson, you'll act as an analyst in Japan's National Statistical Office. To promote sustainable development in the nation's rural areas, you'll estimate access to all-season roads. First, you'll add population and road data and limit your study area to rural regions. Then, you'll create a 2-kilometer buffer around all-season roads and calculate the percentage of the rural population within that buffer." .
 
 data:n0 wf:applicationOf tools:SelectLayerByAttribute ;
@@ -167,6 +167,33 @@ data:n40 wf:applicationOf tools:CalculateField ;
 data:n9 wf:applicationOf tools:FeatureClassToFeatureClass ;
     wf:input1 data:urbanization_select ;
     wf:output data:rural .
+
+data:rural_2km a ccd:AmountQ,
+        ccd:PlainVectorRegionA .
+
+data:rural_2km_addfields a ccd:AmountQ,
+        ccd:PlainVectorRegionA .
+
+data:rural_2km_area_perc a ccd:AmountQ,
+        ccd:CountA,
+        ccd:PlainVectorRegionA .
+
+data:rural_2km_pop_sum_addfield a ccd:AmountQ,
+        ccd:PlainVectorRegionA .
+
+data:rural_2km_pop_sum_joinID a ccd:AmountQ,
+        ccd:CountA,
+        ccd:PlainVectorRegionA .
+
+data:rural_clip_popsum_2km_join a ccd:AmountQ,
+        ccd:PlainVectorRegionA .
+
+data:rural_clip_popsum_addfields a ccd:AmountQ,
+        ccd:PlainVectorRegionA .
+
+data:rural_clip_popsum_addfields_calculatefield a ccd:AmountQ,
+        ccd:CountA,
+        ccd:PlainVectorRegionA .
 
 data:chochomoku a ccd:CountA,
         ccd:ObjectQ,

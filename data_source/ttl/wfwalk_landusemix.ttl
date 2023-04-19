@@ -11,7 +11,7 @@ data:n56 wf:applicationOf tools:wfwalk_landusemix ;
     wf:input1 data:Amsterdam_buurt ;
     wf:input2 data:Amsterdam_land ;
     wf:output data:BRdRaReOfInRec3 ;
-    rdfs:comment "What is the land use mix for each neighborhood in Amsterdam?" .
+    rdfs:comment "What is the diversity of land use for each neighborhood in Amsterdam?" .
 
 data:n16 wf:applicationOf tools:SummarizeWithin ;
     wf:input1 data:retail_area ;
@@ -54,7 +54,7 @@ data:n48 wf:applicationOf tools:CalculateDiversity4onObjectVector ;
     wf:input4 data:BRdRaReOfInRec ;
     wf:output data:BRdRaReOfInRec3 ;
     rdfs:comment "Calculate diversity of 4 attributes" ;
-    cct:expression "['    1: ObjectInfo(Ratio);\\n    2: ObjectInfo(Ratio);\\n    3: ObjectInfo(Ratio);\\n    4: ObjectInfo(Ratio);\\n    join_attr\\n        (get_attrL 1)\\n        (diversity\\n            (addlistrel\\n                (addlistrel\\n                    (addlistrel            \\n                        (conslistrel\\n                            (apply2 ratio \\n                                (get_attrR 1)            \\n                                (apply1 (compose size deify) (get_attrL 1))\\n                            )\\n                        )\\n                        (apply2 ratio \\n                                (get_attrR 2)            \\n                                (apply1 (compose size deify) (get_attrL 2))\\n                        )\\n                    )\\n                    (apply2 ratio \\n                                (get_attrR 3)            \\n                                (apply1 (compose size deify) (get_attrL 3))\\n                    )\\n                )\\n                (apply2 ratio \\n                                (get_attrR 4)            \\n                                (apply1 (compose size deify) (get_attrL 4))\\n                )    \\n            )\\n        )#INVALID_EXPRESSION#']" .
+    cct:expression "['    1: ObjectInfo(Ratio);\\n    2: ObjectInfo(Ratio);\\n    3: ObjectInfo(Ratio);\\n    4: ObjectInfo(Ratio);\\n    join_attr\\n        (get_attrL 1)\\n        (diversity\\n            (addlistrel\\n                (addlistrel\\n                    (addlistrel            \\n                        (conslistrel\\n                            (apply2 ratio \\n                                (get_attrR 1)            \\n                                (apply1 (compose size deify) (get_attrL 1))\\n                            )\\n                        )\\n                        (apply2 ratio \\n                                (get_attrR 2)            \\n                                (apply1 (compose size deify) (get_attrL 2))\\n                        )\\n                    )\\n                    (apply2 ratio \\n                                (get_attrR 3)            \\n                                (apply1 (compose size deify) (get_attrL 3))\\n                    )\\n                )\\n                (apply2 ratio \\n                                (get_attrR 4)            \\n                                (apply1 (compose size deify) (get_attrL 4))\\n                )    \\n            )\\n        )']" .
 
 data:n5 wf:applicationOf tools:SelectLayerByAttribute ;
     wf:input1 data:Amsterdam_land ;
@@ -112,7 +112,7 @@ tools:CalculateDiversity4onObjectVector a wf:Workflow ;
                                 (apply1 (compose size deify) (get_attrL 4))
                 )    
             )
-        )#INVALID_EXPRESSION#""" ;
+        )""" ;
     rdfs:comment "Calculate diversity of 4 attributes" .
 
 tools:wfwalk_landusemix a wf:Workflow ;
@@ -129,7 +129,7 @@ tools:wfwalk_landusemix a wf:Workflow ;
         data:n9 ;
     wf:source data:Amsterdam_buurt,
         data:Amsterdam_land ;
-    rdfs:comment "What is the land use mix for each neighborhood in Amsterdam?" .
+    rdfs:comment "What is the diversity of land use for each neighborhood in Amsterdam?" .
 
 data:BRdRaReOfInRec2 a ccd:ObjectQ,
         ccd:VectorTessellationA .

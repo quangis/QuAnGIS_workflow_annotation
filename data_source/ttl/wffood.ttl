@@ -13,7 +13,7 @@ data:n64 wf:applicationOf tools:wffood ;
     wf:input3 data:Amsterdam_buildings ;
     wf:input4 data:supermarkets ;
     wf:output data:summary_centrum ;
-    rdfs:comment "what is the average network distance from households to the nearest supermarket in centrum district in Amsterdam?" .
+    rdfs:comment "What is the average network distance from households to the nearest supermarket in the centrum district in Amsterdam?" .
 
 data:n22 wf:applicationOf tools:MakeClosestFacilityAnalysisLayer ;
     wf:input1 data:roads ;
@@ -36,7 +36,7 @@ data:n28 wf:applicationOf tools:Solve ;
 data:n30 wf:applicationOf tools:SummaryStatistics ;
     wf:input1 data:NL_network_centrum_supermarkets_households_solved ;
     wf:output data:summary_centrum ;
-    cct:expression "['        1: ObjectInfo(Ratio);     \\n            nest2 (merge (pi1 (getamounts 1))) (avg (getamounts 1)) ']" .
+    cct:expression "['    1: ObjectInfo(Ratio);     \\n    join_attr  \\n    (nest2 (objectfromobjects (pi1 1)) (avg (getamounts 1))) \\n    (nest2 (objectfromobjects (pi1 1))  (merge (pi1 (getamounts 1))))']" .
 
 data:n43 wf:applicationOf tools:convert2PointObjects ;
     wf:input1 data:Amsterdam_buildings ;
@@ -95,7 +95,25 @@ tools:wffood a wf:Workflow ;
         data:Amsterdam_buildings,
         data:roads,
         data:supermarkets ;
-    rdfs:comment "what is the average network distance from households to the nearest supermarket in centrum district in Amsterdam?" .
+    rdfs:comment "What is the average network distance from households to the nearest supermarket in the centrum district in Amsterdam?" .
+
+data:NL_network_centrum a ccd:LineA,
+        ccd:NetworkQ,
+        ccd:RatioA .
+
+data:NL_network_centrum_supermarkets a ccd:LineA,
+        ccd:NetworkQ,
+        ccd:RatioA .
+
+data:NL_network_centrum_supermarkets_households a ccd:LineA,
+        ccd:NetworkQ,
+        ccd:RatioA .
+
+data:function_mix a ccd:ObjectQ,
+        ccd:VectorTessellationA .
+
+data:households_centrum_select a ccd:ObjectQ,
+        ccd:PointA .
 
 data:n10 wf:applicationOf tools:FeatureToPoint ;
     wf:input1 data:function_mix ;
@@ -122,6 +140,9 @@ data:n20 wf:applicationOf tools:CopyFeatures ;
 data:n8 wf:applicationOf tools:SelectLayerByAttribute ;
     wf:input1 data:Amsterdam_buildings ;
     wf:output data:function_mix .
+
+data:supermarkets_centrum_select a ccd:ObjectQ,
+        ccd:PointA .
 
 tools:SelectLayerByLocationPointObjects a wf:Workflow ;
     wf:edge data:n14,
