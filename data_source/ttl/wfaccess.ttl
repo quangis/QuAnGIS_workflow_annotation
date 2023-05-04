@@ -1,77 +1,30 @@
 # @Author(s): Eric Top, Simon Scheider, 
 @prefix ccd: <http://geographicknowledge.de/vocab/CoreConceptData.rdf#> .
 @prefix cct: <https://github.com/quangis/cct#> .
-@prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .
 @prefix dbo: <https://dbpedia.org/ontology/> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
 @prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
 
-data:n82 wf:applicationOf tools:wfaccess ;
-    wf:input1 data:urbanization ;
-    wf:input2 data:chochomoku ;
-    wf:input3 data:roads ;
-    wf:output data:rural_pop_estimate ;
-    rdfs:comment "What is the percentage of the rural population within 2 km of all-season roads in Shikoku, Japan?" .
-
-data:n11 wf:applicationOf tools:Clip ;
-    wf:input1 data:chochomoku ;
-    wf:input2 data:rural ;
-    wf:output data:rural_clip ;
-    cct:expression "['        1: ObjectInfo(Count);\\n        2: ObjectInfo(Nom);\\n        subset\\n            1\\n            (pi1 (select eq\\n                (oTopo (get_attrL 1) (get_attrL 2))\\n                in\\n            ))']" .
-
-data:n12 wf:applicationOf tools:SummaryStatistics ;
-    wf:input1 data:rural_clip ;
-    wf:output data:rural_clip_popsum ;
-    cct:expression "['contentsum (getamounts (1: ObjectInfo(Ratio)))']" .
-
-data:n15 wf:applicationOf tools:Buffer ;
-    wf:input1 data:roads ;
-    wf:output data:roads_buffer ;
-    rdfs:comment "2km buffer" ;
-    cct:expression "['extrapol (get_attrL (1: ObjectInfo(Nom)))']" .
-
-data:n24 wf:applicationOf tools:SummaryStatistics ;
-    wf:input1 data:rural_2km_pop_est ;
-    wf:output data:rural_2km_pop_sum ;
-    cct:expression "['contentsum (1: Amounts(Ratio))']" .
-
-data:n48 wf:applicationOf tools:SelectLayerByAttributeTessObjects ;
-    wf:input1 data:urbanization ;
-    wf:output data:rural ;
-    cct:expression "['subset (1: ObjectInfo(Nom)) (-: C(Nom))']" .
-
-data:n68 wf:applicationOf tools:CalculatePartialAmountsfromObjects ;
-    wf:input1 data:rural_clip ;
-    wf:input2 data:roads_buffer ;
-    wf:output data:rural_2km_pop_est ;
-    cct:expression "['        1: ObjectInfo(Count);\\n        2: Field(Bool);\\n        arealinterpol\\n            (getamounts 1)\\n            (pi2 (groupbyR reify (select eq (loTopo\\n                (fcover 2 (nest true))\\n                (get_attrL 1)\\n            ) in)))']" .
-
-data:n77 wf:applicationOf tools:CalculateCountAmountRatio ;
-    wf:input1 data:rural_2km_pop_sum ;
-    wf:input2 data:rural_clip_popsum ;
-    wf:output data:rural_pop_estimate ;
-    cct:expression "['apply2 ratio (1: Amounts(Ratio)) (2: Amounts(Ratio))']" .
-
 tools:CalculateCountAmountRatio a wf:Workflow ;
-    wf:edge data:n29,
-        data:n32,
-        data:n34,
-        data:n35,
-        data:n36,
-        data:n40 ;
-    wf:source data:rural_2km_pop_sum,
-        data:rural_clip_popsum ;
+    wf:edge _:n29,
+        _:n32,
+        _:n34,
+        _:n35,
+        _:n36,
+        _:n40 ;
+    wf:source _:rural_2km_pop_sum,
+        _:rural_clip_popsum ;
     dct:subject "apply2 ratio (1: Amounts(Ratio)) (2: Amounts(Ratio))" .
 
 tools:CalculatePartialAmountsfromObjects a wf:Workflow ;
-    wf:edge data:n17,
-        data:n18,
-        data:n21,
-        data:n22 ;
-    wf:source data:roads_buffer,
-        data:rural_clip ;
+    wf:edge _:n17,
+        _:n18,
+        _:n21,
+        _:n22 ;
+    wf:source _:roads_buffer,
+        _:rural_clip ;
     dct:subject """        1: ObjectInfo(Count);
         2: Field(Bool);
         arealinterpol
@@ -82,152 +35,198 @@ tools:CalculatePartialAmountsfromObjects a wf:Workflow ;
             ) in)))""" .
 
 tools:SelectLayerByAttributeTessObjects a wf:Workflow ;
-    wf:edge data:n0,
-        data:n9 ;
-    wf:source data:urbanization ;
+    wf:edge _:n0,
+        _:n9 ;
+    wf:source _:urbanization ;
     dct:subject "subset (1: ObjectInfo(Nom)) (-: C(Nom))" .
 
 tools:wfaccess a wf:Workflow ;
-    wf:edge data:n0,
-        data:n11,
-        data:n12,
-        data:n15,
-        data:n17,
-        data:n18,
-        data:n21,
-        data:n22,
-        data:n24,
-        data:n29,
-        data:n32,
-        data:n34,
-        data:n35,
-        data:n36,
-        data:n40,
-        data:n48,
-        data:n68,
-        data:n77,
-        data:n9 ;
-    wf:source data:chochomoku,
-        data:roads,
-        data:urbanization ;
+    wf:edge _:n0,
+        [ wf:applicationOf tools:Clip ;
+            wf:input1 _:chochomoku ;
+            wf:input2 _:rural ;
+            wf:output _:rural_clip ;
+            cct:expression """        1: ObjectInfo(Count);
+        2: ObjectInfo(Nom);
+        subset
+            1
+            (pi1 (select eq
+                (oTopo (get_attrL 1) (get_attrL 2))
+                in
+            ))""" ],
+        [ wf:applicationOf tools:SummaryStatistics ;
+            wf:input1 _:rural_clip ;
+            wf:output _:rural_clip_popsum ;
+            cct:expression "contentsum (getamounts (1: ObjectInfo(Ratio)))" ],
+        [ wf:applicationOf tools:Buffer ;
+            wf:input1 _:roads ;
+            wf:output _:roads_buffer ;
+            rdfs:comment "2km buffer" ;
+            cct:expression "extrapol (get_attrL (1: ObjectInfo(Nom)))" ],
+        _:n17,
+        _:n18,
+        _:n21,
+        _:n22,
+        [ wf:applicationOf tools:SummaryStatistics ;
+            wf:input1 _:rural_2km_pop_est ;
+            wf:output _:rural_2km_pop_sum ;
+            cct:expression "contentsum (1: Amounts(Ratio))" ],
+        _:n29,
+        _:n32,
+        _:n34,
+        _:n35,
+        _:n36,
+        _:n40,
+        [ wf:applicationOf tools:SelectLayerByAttributeTessObjects ;
+            wf:input1 _:urbanization ;
+            wf:output _:rural ;
+            cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
+        [ wf:applicationOf tools:CalculatePartialAmountsfromObjects ;
+            wf:input1 _:rural_clip ;
+            wf:input2 _:roads_buffer ;
+            wf:output _:rural_2km_pop_est ;
+            cct:expression """        1: ObjectInfo(Count);
+        2: Field(Bool);
+        arealinterpol
+            (getamounts 1)
+            (pi2 (groupbyR reify (select eq (loTopo
+                (fcover 2 (nest true))
+                (get_attrL 1)
+            ) in)))""" ],
+        [ wf:applicationOf tools:CalculateCountAmountRatio ;
+            wf:input1 _:rural_2km_pop_sum ;
+            wf:input2 _:rural_clip_popsum ;
+            wf:output _:rural_pop_estimate ;
+            cct:expression "apply2 ratio (1: Amounts(Ratio)) (2: Amounts(Ratio))" ],
+        _:n9 ;
+    wf:source _:chochomoku,
+        _:roads,
+        _:urbanization ;
     rdfs:comment "What is the percentage of the rural population within 2 km of all-season roads in Shikoku, Japan?" ;
     dbo:abstract "In this lesson, you'll act as an analyst in Japan's National Statistical Office. To promote sustainable development in the nation's rural areas, you'll estimate access to all-season roads. First, you'll add population and road data and limit your study area to rural regions. Then, you'll create a 2-kilometer buffer around all-season roads and calculate the percentage of the rural population within that buffer." .
 
-data:n0 wf:applicationOf tools:SelectLayerByAttribute ;
-    wf:input1 data:urbanization ;
-    wf:output data:urbanization_select ;
+[] wf:applicationOf tools:wfaccess ;
+    wf:input1 _:urbanization ;
+    wf:input2 _:chochomoku ;
+    wf:input3 _:roads ;
+    wf:output _:rural_pop_estimate ;
+    rdfs:comment "What is the percentage of the rural population within 2 km of all-season roads in Shikoku, Japan?" .
+
+_:n0 wf:applicationOf tools:SelectLayerByAttribute ;
+    wf:input1 _:urbanization ;
+    wf:output _:urbanization_select ;
     rdfs:comment "Add a field for area sizes" .
 
-data:n17 wf:applicationOf tools:Clip ;
-    wf:input1 data:rural_clip ;
-    wf:input2 data:roads_buffer ;
-    wf:output data:rural_2km ;
+_:n17 wf:applicationOf tools:Clip ;
+    wf:input1 _:rural_clip ;
+    wf:input2 _:roads_buffer ;
+    wf:output _:rural_2km ;
     rdfs:comment "clip rural areas with the roads buffer and estimate the total population that is within the buffer of 2km" .
 
-data:n18 wf:applicationOf tools:AddFields ;
-    wf:input1 data:rural_2km ;
-    wf:output data:rural_2km_addfields ;
+_:n18 wf:applicationOf tools:AddFields ;
+    wf:input1 _:rural_2km ;
+    wf:output _:rural_2km_addfields ;
     rdfs:comment "Add fields for area proportion and population proportion" .
 
-data:n21 wf:applicationOf tools:CalculateField ;
-    wf:input1 data:rural_2km_addfields ;
-    wf:output data:rural_2km_area_perc ;
+_:n21 wf:applicationOf tools:CalculateField ;
+    wf:input1 _:rural_2km_addfields ;
+    wf:output _:rural_2km_area_perc ;
     rdfs:comment "Calculate proportion of area in buffer" .
 
-data:n22 wf:applicationOf tools:CalculateField ;
-    wf:input1 data:rural_2km_area_perc ;
-    wf:output data:rural_2km_pop_est ;
+_:n22 wf:applicationOf tools:CalculateField ;
+    wf:input1 _:rural_2km_area_perc ;
+    wf:output _:rural_2km_pop_est ;
     rdfs:comment "Calculate proportion of population in buffer" .
 
-data:n29 wf:applicationOf tools:AddField ;
-    wf:input1 data:rural_2km_pop_sum ;
-    wf:output data:rural_2km_pop_sum_addfield .
+_:n29 wf:applicationOf tools:AddField ;
+    wf:input1 _:rural_2km_pop_sum ;
+    wf:output _:rural_2km_pop_sum_addfield .
 
-data:n32 wf:applicationOf tools:CalculateField ;
-    wf:input1 data:rural_2km_pop_sum_addfield ;
-    wf:output data:rural_2km_pop_sum_joinID .
+_:n32 wf:applicationOf tools:CalculateField ;
+    wf:input1 _:rural_2km_pop_sum_addfield ;
+    wf:output _:rural_2km_pop_sum_joinID .
 
-data:n34 wf:applicationOf tools:AddFields ;
-    wf:input1 data:rural_clip_popsum ;
-    wf:output data:rural_clip_popsum_addfields .
+_:n34 wf:applicationOf tools:AddFields ;
+    wf:input1 _:rural_clip_popsum ;
+    wf:output _:rural_clip_popsum_addfields .
 
-data:n35 wf:applicationOf tools:CalculateField ;
-    wf:input1 data:rural_clip_popsum_addfields ;
-    wf:output data:rural_clip_popsum_addfields_calculatefield .
+_:n35 wf:applicationOf tools:CalculateField ;
+    wf:input1 _:rural_clip_popsum_addfields ;
+    wf:output _:rural_clip_popsum_addfields_calculatefield .
 
-data:n36 wf:applicationOf tools:JoinField ;
-    wf:input1 data:rural_clip_popsum_addfields_calculatefield ;
-    wf:input2 data:rural_2km_pop_sum_joinID ;
-    wf:output data:rural_clip_popsum_2km_join .
+_:n36 wf:applicationOf tools:JoinField ;
+    wf:input1 _:rural_clip_popsum_addfields_calculatefield ;
+    wf:input2 _:rural_2km_pop_sum_joinID ;
+    wf:output _:rural_clip_popsum_2km_join .
 
-data:n40 wf:applicationOf tools:CalculateField ;
-    wf:input1 data:rural_clip_popsum_2km_join ;
-    wf:output data:rural_pop_estimate .
+_:n40 wf:applicationOf tools:CalculateField ;
+    wf:input1 _:rural_clip_popsum_2km_join ;
+    wf:output _:rural_pop_estimate .
 
-data:n9 wf:applicationOf tools:FeatureClassToFeatureClass ;
-    wf:input1 data:urbanization_select ;
-    wf:output data:rural .
+_:n9 wf:applicationOf tools:FeatureClassToFeatureClass ;
+    wf:input1 _:urbanization_select ;
+    wf:output _:rural .
 
-data:rural_2km a ccd:AmountQ,
+_:rural_2km a ccd:AmountQ,
         ccd:PlainVectorRegionA .
 
-data:rural_2km_addfields a ccd:AmountQ,
+_:rural_2km_addfields a ccd:AmountQ,
         ccd:PlainVectorRegionA .
 
-data:rural_2km_area_perc a ccd:AmountQ,
+_:rural_2km_area_perc a ccd:AmountQ,
         ccd:CountA,
         ccd:PlainVectorRegionA .
 
-data:rural_2km_pop_sum_addfield a ccd:AmountQ,
+_:rural_2km_pop_sum_addfield a ccd:AmountQ,
         ccd:PlainVectorRegionA .
 
-data:rural_2km_pop_sum_joinID a ccd:AmountQ,
+_:rural_2km_pop_sum_joinID a ccd:AmountQ,
         ccd:CountA,
         ccd:PlainVectorRegionA .
 
-data:rural_clip_popsum_2km_join a ccd:AmountQ,
+_:rural_clip_popsum_2km_join a ccd:AmountQ,
         ccd:PlainVectorRegionA .
 
-data:rural_clip_popsum_addfields a ccd:AmountQ,
+_:rural_clip_popsum_addfields a ccd:AmountQ,
         ccd:PlainVectorRegionA .
 
-data:rural_clip_popsum_addfields_calculatefield a ccd:AmountQ,
+_:rural_clip_popsum_addfields_calculatefield a ccd:AmountQ,
         ccd:CountA,
         ccd:PlainVectorRegionA .
 
-data:chochomoku a ccd:CountA,
+_:chochomoku a ccd:CountA,
         ccd:ObjectQ,
         ccd:PlainVectorRegionA ;
     rdfs:comment "Cho-cho-moku ((SCCM, small administrative regions) in Shikoku, Japan (Polygon) with population number" .
 
-data:roads a ccd:LineA,
+_:roads a ccd:LineA,
         ccd:ObjectQ ;
     rdfs:comment "all-season roads in Shikoku, Japan (line)" .
 
-data:rural a ccd:ObjectQ,
+_:rural a ccd:ObjectQ,
         ccd:PlainVectorRegionA .
 
-data:rural_2km_pop_est a ccd:AmountQ,
+_:rural_2km_pop_est a ccd:AmountQ,
         ccd:CountA,
         ccd:PlainVectorRegionA .
 
-data:roads_buffer a ccd:BooleanA,
+_:roads_buffer a ccd:BooleanA,
         ccd:FieldQ,
         ccd:PlainVectorRegionA .
 
-data:rural_2km_pop_sum a ccd:AmountQ,
+_:rural_2km_pop_sum a ccd:AmountQ,
         ccd:CountA,
         ccd:PlainVectorRegionA .
 
-data:rural_clip_popsum a ccd:AmountQ,
+_:rural_clip_popsum a ccd:AmountQ,
         ccd:CountA,
         ccd:PlainVectorRegionA .
 
-data:rural_clip a ccd:CountA,
+_:rural_clip a ccd:CountA,
         ccd:ObjectQ,
         ccd:PlainVectorRegionA .
 
-data:urbanization a ccd:NominalA,
+_:urbanization a ccd:NominalA,
         ccd:ObjectQ,
         ccd:VectorTessellationA ;
     rdfs:comment "MetropolitanEmploymentAreas: Urbanization levels in Shikoku, Japan (Polygon)" .

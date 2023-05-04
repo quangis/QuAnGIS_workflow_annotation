@@ -1,157 +1,105 @@
 # @Author(s): Eric Top, Haiqi Xu, Simon Scheider, 
 @prefix ccd: <http://geographicknowledge.de/vocab/CoreConceptData.rdf#> .
 @prefix cct: <https://github.com/quangis/cct#> .
-@prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
 @prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
 
-data:n64 wf:applicationOf tools:wffood ;
-    wf:input1 data:roads ;
-    wf:input2 data:Amsterdam_boundaries ;
-    wf:input3 data:Amsterdam_buildings ;
-    wf:input4 data:supermarkets ;
-    wf:output data:summary_centrum ;
-    rdfs:comment "What is the average network distance from households to the nearest supermarket in the centrum district in Amsterdam?" .
-
-data:n22 wf:applicationOf tools:MakeClosestFacilityAnalysisLayer ;
-    wf:input1 data:roads ;
-    wf:output data:NL_network_centrum .
-
-data:n24 wf:applicationOf tools:AddLocations ;
-    wf:input1 data:supermarkets_centrum ;
-    wf:input2 data:NL_network_centrum ;
-    wf:output data:NL_network_centrum_supermarkets .
-
-data:n26 wf:applicationOf tools:AddLocations ;
-    wf:input1 data:households_centrum ;
-    wf:input2 data:NL_network_centrum_supermarkets ;
-    wf:output data:NL_network_centrum_supermarkets_households .
-
-data:n28 wf:applicationOf tools:Solve ;
-    wf:input1 data:NL_network_centrum_supermarkets_households ;
-    wf:output data:NL_network_centrum_supermarkets_households_solved .
-
-data:n30 wf:applicationOf tools:SummaryStatistics ;
-    wf:input1 data:NL_network_centrum_supermarkets_households_solved ;
-    wf:output data:summary_centrum ;
-    cct:expression "['    1: ObjectInfo(Ratio);     \\n    join_attr  \\n    (nest2 (objectfromobjects (pi1 1)) (avg (getamounts 1))) \\n    (nest2 (objectfromobjects (pi1 1))  (merge (pi1 (getamounts 1))))']" .
-
-data:n43 wf:applicationOf tools:convert2PointObjects ;
-    wf:input1 data:Amsterdam_buildings ;
-    wf:output data:households ;
-    rdfs:comment "Select region objects and convert to points" ;
-    cct:expression "['subset (1: ObjectInfo(Nom)) (-: C(Nom))']" .
-
-data:n47 wf:applicationOf tools:SelectLayerByLocationPointObjects ;
-    wf:input1 data:households ;
-    wf:input2 data:Amsterdam_centrum ;
-    wf:output data:households_centrum ;
-    cct:expression "['        1: ObjectInfo(Nom);\\n        2: ObjectInfo(Nom);\\n        subset\\n            1\\n            (pi1 (select\\n                eq\\n                (oTopo (get_attrL 1) (get_attrL 2))\\n                in\\n            ))']" .
-
-data:n48 wf:applicationOf tools:SelectLayerByLocationPointObjects ;
-    wf:input1 data:Amsterdam_centrum ;
-    wf:input2 data:supermarkets ;
-    wf:output data:supermarkets_centrum ;
-    cct:expression "['        1: ObjectInfo(Nom);\\n        2: ObjectInfo(Nom);\\n        subset\\n            1\\n            (pi1 (select\\n                eq\\n                (oTopo (get_attrL 1) (get_attrL 2))\\n                in\\n            ))']" .
-
-data:n53 wf:applicationOf tools:ClostestFacilityAnalysis ;
-    wf:input1 data:roads ;
-    wf:output data:NL_network_centrum_supermarkets_households_solved ;
-    cct:expression "['        1: Network(Ratio);\\n        2: ObjectInfo(Nom);\\n        3: ObjectInfo(Nom);\\n        join_attr\\n            (get_attrL 2)\\n            (groupbyL min (nDist (get_attrL 2) (get_attrL 3) 1))']" .
-
-data:n6 wf:applicationOf tools:FeatureClassToFeatureClass ;
-    wf:input1 data:Amsterdam_boundaries ;
-    wf:output data:Amsterdam_centrum ;
-    rdfs:comment "Select region objects " ;
-    cct:expression "['subset (1: ObjectInfo(Nom)) (-: C(Nom))']" .
-
 tools:convert2PointObjects a wf:Workflow ;
-    wf:edge data:n10,
-        data:n8 ;
-    wf:source data:Amsterdam_buildings ;
+    wf:edge _:n10,
+        _:n8 ;
+    wf:source _:Amsterdam_buildings ;
     dct:subject "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ;
     rdfs:comment "Select region objects and convert to points" .
 
 tools:wffood a wf:Workflow ;
-    wf:edge data:n10,
-        data:n14,
-        data:n16,
-        data:n18,
-        data:n20,
-        data:n22,
-        data:n24,
-        data:n26,
-        data:n28,
-        data:n30,
-        data:n43,
-        data:n47,
-        data:n48,
-        data:n53,
-        data:n6,
-        data:n8 ;
-    wf:source data:Amsterdam_boundaries,
-        data:Amsterdam_buildings,
-        data:roads,
-        data:supermarkets ;
+    wf:edge _:n10,
+        _:n14,
+        _:n16,
+        _:n18,
+        _:n20,
+        [ wf:applicationOf tools:MakeClosestFacilityAnalysisLayer ;
+            wf:input1 _:roads ;
+            wf:output _:NL_network_centrum ],
+        [ wf:applicationOf tools:AddLocations ;
+            wf:input1 _:supermarkets_centrum ;
+            wf:input2 _:NL_network_centrum ;
+            wf:output _:NL_network_centrum_supermarkets ],
+        [ wf:applicationOf tools:AddLocations ;
+            wf:input1 _:households_centrum ;
+            wf:input2 _:NL_network_centrum_supermarkets ;
+            wf:output _:NL_network_centrum_supermarkets_households ],
+        [ wf:applicationOf tools:Solve ;
+            wf:input1 _:NL_network_centrum_supermarkets_households ;
+            wf:output _:NL_network_centrum_supermarkets_households_solved ],
+        [ wf:applicationOf tools:SummaryStatistics ;
+            wf:input1 _:NL_network_centrum_supermarkets_households_solved ;
+            wf:output _:summary_centrum ;
+            cct:expression """    1: ObjectInfo(Ratio);     
+    join_attr  
+    (nest2 (objectfromobjects (pi1 1)) (avg (getamounts 1))) 
+    (nest2 (objectfromobjects (pi1 1))  (merge (pi1 (getamounts 1))))""" ],
+        [ wf:applicationOf tools:convert2PointObjects ;
+            wf:input1 _:Amsterdam_buildings ;
+            wf:output _:households ;
+            rdfs:comment "Select region objects and convert to points" ;
+            cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
+        [ wf:applicationOf tools:SelectLayerByLocationPointObjects ;
+            wf:input1 _:households ;
+            wf:input2 _:Amsterdam_centrum ;
+            wf:output _:households_centrum ;
+            cct:expression """        1: ObjectInfo(Nom);
+        2: ObjectInfo(Nom);
+        subset
+            1
+            (pi1 (select
+                eq
+                (oTopo (get_attrL 1) (get_attrL 2))
+                in
+            ))""" ],
+        [ wf:applicationOf tools:SelectLayerByLocationPointObjects ;
+            wf:input1 _:Amsterdam_centrum ;
+            wf:input2 _:supermarkets ;
+            wf:output _:supermarkets_centrum ;
+            cct:expression """        1: ObjectInfo(Nom);
+        2: ObjectInfo(Nom);
+        subset
+            1
+            (pi1 (select
+                eq
+                (oTopo (get_attrL 1) (get_attrL 2))
+                in
+            ))""" ],
+        [ wf:applicationOf tools:ClostestFacilityAnalysis ;
+            wf:input1 _:roads ;
+            wf:output _:NL_network_centrum_supermarkets_households_solved ;
+            cct:expression """        1: Network(Ratio);
+        2: ObjectInfo(Nom);
+        3: ObjectInfo(Nom);
+        join_attr
+            (get_attrL 2)
+            (groupbyL min (nDist (get_attrL 2) (get_attrL 3) 1))""" ],
+        [ wf:applicationOf tools:FeatureClassToFeatureClass ;
+            wf:input1 _:Amsterdam_boundaries ;
+            wf:output _:Amsterdam_centrum ;
+            rdfs:comment "Select region objects " ;
+            cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
+        _:n8 ;
+    wf:source _:Amsterdam_boundaries,
+        _:Amsterdam_buildings,
+        _:roads,
+        _:supermarkets ;
     rdfs:comment "What is the average network distance from households to the nearest supermarket in the centrum district in Amsterdam?" .
 
-data:NL_network_centrum a ccd:LineA,
-        ccd:NetworkQ,
-        ccd:RatioA .
-
-data:NL_network_centrum_supermarkets a ccd:LineA,
-        ccd:NetworkQ,
-        ccd:RatioA .
-
-data:NL_network_centrum_supermarkets_households a ccd:LineA,
-        ccd:NetworkQ,
-        ccd:RatioA .
-
-data:function_mix a ccd:ObjectQ,
-        ccd:VectorTessellationA .
-
-data:households_centrum_select a ccd:ObjectQ,
-        ccd:PointA .
-
-data:n10 wf:applicationOf tools:FeatureToPoint ;
-    wf:input1 data:function_mix ;
-    wf:output data:households .
-
-data:n14 wf:applicationOf tools:SelectLayerByLocation ;
-    wf:input1 data:Amsterdam_centrum ;
-    wf:input2 data:supermarkets ;
-    wf:output data:supermarkets_centrum_select .
-
-data:n16 wf:applicationOf tools:CopyFeatures ;
-    wf:input1 data:supermarkets_centrum_select ;
-    wf:output data:supermarkets_centrum .
-
-data:n18 wf:applicationOf tools:SelectLayerByLocation ;
-    wf:input1 data:Amsterdam_centrum ;
-    wf:input2 data:households ;
-    wf:output data:households_centrum_select .
-
-data:n20 wf:applicationOf tools:CopyFeatures ;
-    wf:input1 data:households_centrum_select ;
-    wf:output data:households_centrum .
-
-data:n8 wf:applicationOf tools:SelectLayerByAttribute ;
-    wf:input1 data:Amsterdam_buildings ;
-    wf:output data:function_mix .
-
-data:supermarkets_centrum_select a ccd:ObjectQ,
-        ccd:PointA .
-
 tools:SelectLayerByLocationPointObjects a wf:Workflow ;
-    wf:edge data:n14,
-        data:n16,
-        data:n18,
-        data:n20 ;
-    wf:source data:Amsterdam_centrum,
-        data:households,
-        data:supermarkets ;
+    wf:edge _:n14,
+        _:n16,
+        _:n18,
+        _:n20 ;
+    wf:source _:Amsterdam_centrum,
+        _:households,
+        _:supermarkets ;
     dct:subject """        1: ObjectInfo(Nom);
         2: ObjectInfo(Nom);
         subset
@@ -162,35 +110,90 @@ tools:SelectLayerByLocationPointObjects a wf:Workflow ;
                 in
             ))""" .
 
-data:Amsterdam_boundaries a ccd:ObjectQ,
+[] wf:applicationOf tools:wffood ;
+    wf:input1 _:roads ;
+    wf:input2 _:Amsterdam_boundaries ;
+    wf:input3 _:Amsterdam_buildings ;
+    wf:input4 _:supermarkets ;
+    wf:output _:summary_centrum ;
+    rdfs:comment "What is the average network distance from households to the nearest supermarket in the centrum district in Amsterdam?" .
+
+_:NL_network_centrum a ccd:LineA,
+        ccd:NetworkQ,
+        ccd:RatioA .
+
+_:NL_network_centrum_supermarkets a ccd:LineA,
+        ccd:NetworkQ,
+        ccd:RatioA .
+
+_:NL_network_centrum_supermarkets_households a ccd:LineA,
+        ccd:NetworkQ,
+        ccd:RatioA .
+
+_:function_mix a ccd:ObjectQ,
+        ccd:VectorTessellationA .
+
+_:households_centrum_select a ccd:ObjectQ,
+        ccd:PointA .
+
+_:n10 wf:applicationOf tools:FeatureToPoint ;
+    wf:input1 _:function_mix ;
+    wf:output _:households .
+
+_:n14 wf:applicationOf tools:SelectLayerByLocation ;
+    wf:input1 _:Amsterdam_centrum ;
+    wf:input2 _:supermarkets ;
+    wf:output _:supermarkets_centrum_select .
+
+_:n16 wf:applicationOf tools:CopyFeatures ;
+    wf:input1 _:supermarkets_centrum_select ;
+    wf:output _:supermarkets_centrum .
+
+_:n18 wf:applicationOf tools:SelectLayerByLocation ;
+    wf:input1 _:Amsterdam_centrum ;
+    wf:input2 _:households ;
+    wf:output _:households_centrum_select .
+
+_:n20 wf:applicationOf tools:CopyFeatures ;
+    wf:input1 _:households_centrum_select ;
+    wf:output _:households_centrum .
+
+_:n8 wf:applicationOf tools:SelectLayerByAttribute ;
+    wf:input1 _:Amsterdam_buildings ;
+    wf:output _:function_mix .
+
+_:supermarkets_centrum_select a ccd:ObjectQ,
+        ccd:PointA .
+
+_:Amsterdam_boundaries a ccd:ObjectQ,
         ccd:VectorTessellationA ;
     rdfs:comment "The boundaries of the Amsterdam district as vector polygons" .
 
-data:NL_network_centrum_supermarkets_households_solved a ccd:ObjectQ,
+_:NL_network_centrum_supermarkets_households_solved a ccd:ObjectQ,
         ccd:PointA,
         ccd:RatioA .
 
-data:households_centrum a ccd:ObjectQ,
+_:households_centrum a ccd:ObjectQ,
         ccd:PointA .
 
-data:supermarkets_centrum a ccd:ObjectQ,
+_:supermarkets_centrum a ccd:ObjectQ,
         ccd:PointA .
 
-data:roads a ccd:LineA,
+_:roads a ccd:LineA,
         ccd:ObjectQ ;
     rdfs:comment "Line dataset representing roads in the Netherlands" .
 
-data:Amsterdam_buildings a ccd:ObjectQ,
+_:Amsterdam_buildings a ccd:ObjectQ,
         ccd:VectorTessellationA ;
     rdfs:comment "Vector polygon data of buildings with their functions as attributes" .
 
-data:households a ccd:ObjectQ,
+_:households a ccd:ObjectQ,
         ccd:PointA .
 
-data:supermarkets a ccd:ObjectQ,
+_:supermarkets a ccd:ObjectQ,
         ccd:PointA ;
     rdfs:comment "Point locations representing supermarkets" .
 
-data:Amsterdam_centrum a ccd:ObjectQ,
+_:Amsterdam_centrum a ccd:ObjectQ,
         ccd:PlainVectorRegionA .
 

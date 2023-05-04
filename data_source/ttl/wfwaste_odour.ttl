@@ -1,50 +1,17 @@
 # @Author(s): Eric Top, Simon Scheider, 
 @prefix ccd: <http://geographicknowledge.de/vocab/CoreConceptData.rdf#> .
 @prefix cct: <https://github.com/quangis/cct#> .
-@prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
 @prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
 
-data:n46 wf:applicationOf tools:wfwaste_odour ;
-    wf:input1 data:old_containers ;
-    wf:input2 data:gebiedsindeling ;
-    wf:output data:old_zonal_stats3 ;
-    rdfs:comment "What is the sum of the kernel density of waste disposal places in the Amsterdam city center?" .
-
-data:n14 rdfs:label "Amsterdam city Neighborhoods" ;
-    wf:applicationOf tools:SelectLayerByAttribute ;
-    wf:input1 data:gebiedsindeling ;
-    wf:output data:Amsterdam_centrum ;
-    rdfs:comment "Select amsterdam centrum" ;
-    cct:expression "['subset (1: ObjectInfo(Nom)) (-: C(Nom))']" .
-
-data:n29 wf:applicationOf tools:addObjectCapacity ;
-    wf:input1 data:old_containers ;
-    wf:output data:old_containers3 ;
-    rdfs:comment "Add a capacity to each waste container" ;
-    cct:expression "['    1: ObjectInfo(Nom);\\n    join_attr((get_attrL 1), (-: R2(Obj,Ratio)))']" .
-
-data:n4 wf:applicationOf tools:KernelDensity ;
-    wf:input1 data:old_containers3 ;
-    wf:output data:old_container_density ;
-    rdfs:comment "Computes a capacitated kernel density (distance weighted sum of attributes)" ;
-    cct:expression "['    1: ObjectInfo(Ratio);\\n    groupbyL \\n        (compose sum (apply2 product (get_attrR 1))) \\n        (loDist (-:R1(Loc)) (get_attrL 1))']" .
-
-data:n41 wf:applicationOf tools:ZonalStatisticsSumField ;
-    wf:input1 data:old_container_density ;
-    wf:input2 data:Amsterdam_centrum ;
-    wf:output data:old_zonal_stats3 ;
-    rdfs:comment "Computes a zonal sum of a ratio field over an object region" ;
-    cct:expression "['    1: Field(Ratio);\\n    2: ObjectInfo(Nom);\\n    join_attr\\n        (get_attrL 2)\\n        (groupbyR sum (join_key\\n            (select eq (loTopo (pi1 1) (get_attrL 2)) in)\\n            1\\n        )) ']" .
-
 tools:ZonalStatisticsSumField a wf:Workflow ;
-    wf:edge data:n10,
-        data:n12,
-        data:n5 ;
-    wf:source data:Amsterdam_centrum,
-        data:old_container_density ;
+    wf:edge _:n10,
+        _:n12,
+        _:n5 ;
+    wf:source _:Amsterdam_centrum,
+        _:old_container_density ;
     dct:subject """    1: Field(Ratio);
     2: ObjectInfo(Nom);
     join_attr
@@ -56,77 +23,112 @@ tools:ZonalStatisticsSumField a wf:Workflow ;
     rdfs:comment "Computes a zonal sum of a ratio field over an object region" .
 
 tools:addObjectCapacity a wf:Workflow ;
-    wf:edge data:n0,
-        data:n3 ;
-    wf:source data:old_containers ;
+    wf:edge _:n0,
+        _:n3 ;
+    wf:source _:old_containers ;
     dct:subject """    1: ObjectInfo(Nom);
     join_attr((get_attrL 1), (-: R2(Obj,Ratio)))""" ;
     rdfs:comment "Add a capacity to each waste container" .
 
 tools:wfwaste_odour a wf:Workflow ;
-    wf:edge data:n0,
-        data:n10,
-        data:n12,
-        data:n14,
-        data:n29,
-        data:n3,
-        data:n4,
-        data:n41,
-        data:n5 ;
-    wf:source data:gebiedsindeling,
-        data:old_containers ;
+    wf:edge _:n0,
+        _:n10,
+        _:n12,
+        [ rdfs:label "Amsterdam city Neighborhoods" ;
+            wf:applicationOf tools:SelectLayerByAttribute ;
+            wf:input1 _:gebiedsindeling ;
+            wf:output _:Amsterdam_centrum ;
+            rdfs:comment "Select amsterdam centrum" ;
+            cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
+        [ wf:applicationOf tools:addObjectCapacity ;
+            wf:input1 _:old_containers ;
+            wf:output _:old_containers3 ;
+            rdfs:comment "Add a capacity to each waste container" ;
+            cct:expression """    1: ObjectInfo(Nom);
+    join_attr((get_attrL 1), (-: R2(Obj,Ratio)))""" ],
+        _:n3,
+        [ wf:applicationOf tools:KernelDensity ;
+            wf:input1 _:old_containers3 ;
+            wf:output _:old_container_density ;
+            rdfs:comment "Computes a capacitated kernel density (distance weighted sum of attributes)" ;
+            cct:expression """    1: ObjectInfo(Ratio);
+    groupbyL 
+        (compose sum (apply2 product (get_attrR 1))) 
+        (loDist (-:R1(Loc)) (get_attrL 1))""" ],
+        [ wf:applicationOf tools:ZonalStatisticsSumField ;
+            wf:input1 _:old_container_density ;
+            wf:input2 _:Amsterdam_centrum ;
+            wf:output _:old_zonal_stats3 ;
+            rdfs:comment "Computes a zonal sum of a ratio field over an object region" ;
+            cct:expression """    1: Field(Ratio);
+    2: ObjectInfo(Nom);
+    join_attr
+        (get_attrL 2)
+        (groupbyR sum (join_key
+            (select eq (loTopo (pi1 1) (get_attrL 2)) in)
+            1
+        )) """ ],
+        _:n5 ;
+    wf:source _:gebiedsindeling,
+        _:old_containers ;
     rdfs:comment "What is the sum of the kernel density of waste disposal places in the Amsterdam city center?" .
 
-data:n0 wf:applicationOf tools:AddField ;
-    wf:input1 data:old_containers ;
-    wf:output data:old_containers2 .
+[] wf:applicationOf tools:wfwaste_odour ;
+    wf:input1 _:old_containers ;
+    wf:input2 _:gebiedsindeling ;
+    wf:output _:old_zonal_stats3 ;
+    rdfs:comment "What is the sum of the kernel density of waste disposal places in the Amsterdam city center?" .
 
-data:n10 wf:applicationOf tools:AlterField ;
-    wf:input1 data:old_zonal_stats ;
-    wf:output data:old_zonal_stats2 .
+_:n0 wf:applicationOf tools:AddField ;
+    wf:input1 _:old_containers ;
+    wf:output _:old_containers2 .
 
-data:n12 wf:applicationOf tools:JoinField ;
-    wf:input1 data:Amsterdam_centrum ;
-    wf:input2 data:old_zonal_stats2 ;
-    wf:output data:old_zonal_stats3 .
+_:n10 wf:applicationOf tools:AlterField ;
+    wf:input1 _:old_zonal_stats ;
+    wf:output _:old_zonal_stats2 .
 
-data:n3 wf:applicationOf tools:CalculateField ;
-    wf:input1 data:old_containers2 ;
-    wf:output data:old_containers3 .
+_:n12 wf:applicationOf tools:JoinField ;
+    wf:input1 _:Amsterdam_centrum ;
+    wf:input2 _:old_zonal_stats2 ;
+    wf:output _:old_zonal_stats3 .
 
-data:n5 wf:applicationOf tools:ZonalStatisticsAsTable ;
-    wf:input1 data:old_container_density ;
-    wf:input2 data:Amsterdam_centrum ;
-    wf:output data:old_zonal_stats .
+_:n3 wf:applicationOf tools:CalculateField ;
+    wf:input1 _:old_containers2 ;
+    wf:output _:old_containers3 .
 
-data:old_containers2 a ccd:NominalA,
+_:n5 wf:applicationOf tools:ZonalStatisticsAsTable ;
+    wf:input1 _:old_container_density ;
+    wf:input2 _:Amsterdam_centrum ;
+    wf:output _:old_zonal_stats .
+
+_:old_containers2 a ccd:NominalA,
         ccd:ObjectQ,
         ccd:PointA .
 
-data:old_zonal_stats a ccd:ObjectQ .
+_:old_zonal_stats a ccd:ObjectQ .
 
-data:old_zonal_stats2 a ccd:ObjectQ .
+_:old_zonal_stats2 a ccd:ObjectQ .
 
-data:gebiedsindeling a ccd:NominalA,
+_:gebiedsindeling a ccd:NominalA,
         ccd:ObjectQ,
         ccd:VectorTessellationA ;
     rdfs:label "Amsterdam city Neighborhoods" ;
     rdfs:comment "Amsterdam city neighborhoods" .
 
-data:old_containers3 a ccd:ERA,
+_:old_containers3 a ccd:ERA,
         ccd:ObjectQ,
         ccd:PointA .
 
-data:old_container_density a ccd:FieldQ,
+_:old_container_density a ccd:FieldQ,
         ccd:RasterA,
         ccd:RatioA .
 
-data:Amsterdam_centrum a ccd:NominalA,
+_:Amsterdam_centrum a ccd:NominalA,
         ccd:ObjectQ,
         ccd:PlainVectorRegionA ;
     rdfs:comment "A vector polygon representing the Centrum neighborhood of Amsterdam" .
 
-data:old_containers a ccd:NominalA,
+_:old_containers a ccd:NominalA,
         ccd:ObjectQ,
         ccd:PointA .
 

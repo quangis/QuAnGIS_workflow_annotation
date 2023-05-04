@@ -1,135 +1,147 @@
 # @Author(s): Eric Top, Simon Scheider, 
 @prefix ccd: <http://geographicknowledge.de/vocab/CoreConceptData.rdf#> .
 @prefix cct: <https://github.com/quangis/cct#> .
-@prefix data: <https://github.com/quangis/cct/blob/master/tools/data.ttl#> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
 @prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
 
-data:n72 wf:applicationOf tools:wfwaste_near ;
-    wf:input1 data:verblijfsobject ;
-    wf:input2 data:gebiedsindeling ;
-    wf:input3 data:afvalcontainers ;
-    wf:output data:SumofDurationinDistrict ;
-    rdfs:comment "What is the total walking time from each household to the nearest waste disposal place in the Amsterdam city center?" .
-
-data:n0 wf:applicationOf tools:SelectLayerByAttribute ;
-    wf:input1 data:verblijfsobject ;
-    wf:output data:residential_dwellings ;
-    rdfs:comment "Selecting residential dwellings" ;
-    cct:expression "['subset (1: ObjectInfo(Nom)) (-: C(Nom))']" .
-
-data:n3 wf:applicationOf tools:SelectLayerByLocation ;
-    wf:input1 data:residential_dwellings ;
-    wf:input2 data:Amsterdam ;
-    wf:output data:residential_dwellings_amsterdam ;
-    rdfs:comment "Select swellings in th Amsterdam city center" ;
-    cct:expression "['        1: ObjectInfo(Nom);\\n        2: ObjectInfo(Nom);\\n        subset\\n            1\\n            (pi1 (select\\n                eq\\n                (oTopo (get_attrL 1) (get_attrL 2))\\n                in\\n            ))']" .
-
-data:n5 rdfs:label "Amsterdam city Neighborhoods" ;
-    wf:applicationOf tools:SelectLayerByAttribute ;
-    wf:input1 data:gebiedsindeling ;
-    wf:output data:Amsterdam ;
-    rdfs:comment "Select amsterdam centrum" ;
-    cct:expression "['subset (1: ObjectInfo(Nom)) (-: C(Nom))']" .
-
-data:n60 wf:applicationOf tools:ConvertDist2TravelTimeonObjects ;
-    wf:input1 data:residential_dwellings_dist ;
-    wf:output data:residentialDwellingsDuration2 ;
-    cct:expression "['    1: ObjectInfo(Ratio);\\n    join_attr\\n        (get_attrL 1)\\n        (apply1 (product (-:Ratio)) (get_attrR 1))']" .
-
-data:n64 wf:applicationOf tools:SpatialJoin ;
-    wf:input1 data:residentialDwellingsDuration2 ;
-    wf:input2 data:Amsterdam ;
-    wf:output data:SumofDurationinDistrict ;
-    rdfs:comment "Sum up walking times over all dwellings in the amsterdam city center" ;
-    cct:expression "['        1: ObjectInfo(Ratio);\\n        2: ObjectInfo(Nom);\\n        join_attr\\n            (get_attrL 2)\\n            (join (get_attrL 2) (groupbyR sum (join_key\\n                (select eq (rTopo\\n                    (pi2 (get_attrL 1))\\n                    (pi2 (get_attrL 2))\\n                ) in)\\n                (getamounts 1)\\n            )))']" .
-
-data:n8 wf:applicationOf tools:GenerateNearTable ;
-    wf:input1 data:residential_dwellings_amsterdam ;
-    wf:input2 data:afvalcontainers ;
-    wf:output data:residential_dwellings_dist ;
-    rdfs:comment "Generate distance to the closest waste container" ;
-    cct:expression "['1: ObjectInfo(Nom);\\n        2: ObjectInfo(Nom);\\n        join_attr\\n            (get_attrL 1)\\n            (groupbyL min (oDist (get_attrL 1) (get_attrL 2)))']" .
-
 tools:ConvertDist2TravelTimeonObjects a wf:Workflow ;
-    wf:edge data:n11,
-        data:n13 ;
-    wf:source data:residential_dwellings_dist ;
+    wf:edge _:n11,
+        _:n13 ;
+    wf:source _:residential_dwellings_dist ;
     dct:subject """    1: ObjectInfo(Ratio);
     join_attr
         (get_attrL 1)
         (apply1 (product (-:Ratio)) (get_attrR 1))""" .
 
 tools:wfwaste_near a wf:Workflow ;
-    wf:edge data:n0,
-        data:n11,
-        data:n13,
-        data:n3,
-        data:n5,
-        data:n60,
-        data:n64,
-        data:n8 ;
-    wf:source data:afvalcontainers,
-        data:gebiedsindeling,
-        data:verblijfsobject ;
+    wf:edge [ wf:applicationOf tools:SelectLayerByAttribute ;
+            wf:input1 _:verblijfsobject ;
+            wf:output _:residential_dwellings ;
+            rdfs:comment "Selecting residential dwellings" ;
+            cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
+        _:n11,
+        _:n13,
+        [ wf:applicationOf tools:SelectLayerByLocation ;
+            wf:input1 _:residential_dwellings ;
+            wf:input2 _:Amsterdam ;
+            wf:output _:residential_dwellings_amsterdam ;
+            rdfs:comment "Select swellings in th Amsterdam city center" ;
+            cct:expression """        1: ObjectInfo(Nom);
+        2: ObjectInfo(Nom);
+        subset
+            1
+            (pi1 (select
+                eq
+                (oTopo (get_attrL 1) (get_attrL 2))
+                in
+            ))""" ],
+        [ rdfs:label "Amsterdam city Neighborhoods" ;
+            wf:applicationOf tools:SelectLayerByAttribute ;
+            wf:input1 _:gebiedsindeling ;
+            wf:output _:Amsterdam ;
+            rdfs:comment "Select amsterdam centrum" ;
+            cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
+        [ wf:applicationOf tools:ConvertDist2TravelTimeonObjects ;
+            wf:input1 _:residential_dwellings_dist ;
+            wf:output _:residentialDwellingsDuration2 ;
+            cct:expression """    1: ObjectInfo(Ratio);
+    join_attr
+        (get_attrL 1)
+        (apply1 (product (-:Ratio)) (get_attrR 1))""" ],
+        [ wf:applicationOf tools:SpatialJoin ;
+            wf:input1 _:residentialDwellingsDuration2 ;
+            wf:input2 _:Amsterdam ;
+            wf:output _:SumofDurationinDistrict ;
+            rdfs:comment "Sum up walking times over all dwellings in the amsterdam city center" ;
+            cct:expression """        1: ObjectInfo(Ratio);
+        2: ObjectInfo(Nom);
+        join_attr
+            (get_attrL 2)
+            (join (get_attrL 2) (groupbyR sum (join_key
+                (select eq (rTopo
+                    (pi2 (get_attrL 1))
+                    (pi2 (get_attrL 2))
+                ) in)
+                (getamounts 1)
+            )))""" ],
+        [ wf:applicationOf tools:GenerateNearTable ;
+            wf:input1 _:residential_dwellings_amsterdam ;
+            wf:input2 _:afvalcontainers ;
+            wf:output _:residential_dwellings_dist ;
+            rdfs:comment "Generate distance to the closest waste container" ;
+            cct:expression """1: ObjectInfo(Nom);
+        2: ObjectInfo(Nom);
+        join_attr
+            (get_attrL 1)
+            (groupbyL min (oDist (get_attrL 1) (get_attrL 2)))""" ] ;
+    wf:source _:afvalcontainers,
+        _:gebiedsindeling,
+        _:verblijfsobject ;
     rdfs:comment "What is the total walking time from each household to the nearest waste disposal place in the Amsterdam city center?" .
 
-data:n11 wf:applicationOf tools:AddField ;
-    wf:input1 data:residential_dwellings_dist ;
-    wf:output data:residentialDwellingsDuration .
+[] wf:applicationOf tools:wfwaste_near ;
+    wf:input1 _:verblijfsobject ;
+    wf:input2 _:gebiedsindeling ;
+    wf:input3 _:afvalcontainers ;
+    wf:output _:SumofDurationinDistrict ;
+    rdfs:comment "What is the total walking time from each household to the nearest waste disposal place in the Amsterdam city center?" .
 
-data:n13 wf:applicationOf tools:CalculateField ;
-    wf:input1 data:residentialDwellingsDuration ;
-    wf:output data:residentialDwellingsDuration2 .
+_:n11 wf:applicationOf tools:AddField ;
+    wf:input1 _:residential_dwellings_dist ;
+    wf:output _:residentialDwellingsDuration .
 
-data:residentialDwellingsDuration rdfs:label "Dwellings Amsterdam (Time_Prep)" ;
+_:n13 wf:applicationOf tools:CalculateField ;
+    wf:input1 _:residentialDwellingsDuration ;
+    wf:output _:residentialDwellingsDuration2 .
+
+_:residentialDwellingsDuration rdfs:label "Dwellings Amsterdam (Time_Prep)" ;
     rdfs:comment "Vector points representing residential dwellings in the Centrum neighborhood of Amsterdam with an empty attribute for the travel time to the nearest waste container as an attribute" .
 
-data:residential_dwellings a ccd:NominalA,
+_:residential_dwellings a ccd:NominalA,
         ccd:ObjectQ,
         ccd:PointA ;
     rdfs:label "Residential dwellings" ;
     rdfs:comment "Point locations of dwellings with a residential function" .
 
-data:residential_dwellings_amsterdam a ccd:NominalA,
+_:residential_dwellings_amsterdam a ccd:NominalA,
         ccd:ObjectQ,
         ccd:PointA ;
     rdfs:label "Dwellings Amsterdam" ;
     rdfs:comment "Vector points representing residential dwellings in the Centrum neighborhood of Amsterdam" .
 
-data:Amsterdam a ccd:NominalA,
+_:Amsterdam a ccd:NominalA,
         ccd:ObjectQ,
         ccd:PlainVectorRegionA ;
     rdfs:label "Amsterdam Centrum" ;
     rdfs:comment "A vector polygon representing the Centrum neighborhood of Amsterdam" .
 
-data:afvalcontainers a ccd:NominalA,
+_:afvalcontainers a ccd:NominalA,
         ccd:ObjectQ,
         ccd:PointA ;
     rdfs:label "Waste containers" ;
     rdfs:comment "Point locations of waste containers in Amsterdam" .
 
-data:gebiedsindeling a ccd:NominalA,
+_:gebiedsindeling a ccd:NominalA,
         ccd:ObjectQ,
         ccd:VectorTessellationA ;
     rdfs:label "Amsterdam city Neighborhoods" ;
     rdfs:comment "Amsterdam city neighborhoods" .
 
-data:residentialDwellingsDuration2 a ccd:ObjectQ,
+_:residentialDwellingsDuration2 a ccd:ObjectQ,
         ccd:PointA,
         ccd:RatioA ;
     rdfs:label "Dwellings Amsterdam (Time)" ;
     rdfs:comment "Vector points representing residential dwellings in the Centrum neighborhood of Amsterdam with the travel time to the nearest waste container as an attribute" .
 
-data:verblijfsobject a ccd:NominalA,
+_:verblijfsobject a ccd:NominalA,
         ccd:ObjectQ,
         ccd:PointA ;
     rdfs:label "Dwelling locations" ;
     rdfs:comment "Point locations of dwellings in the Netherlands" .
 
-data:residential_dwellings_dist a ccd:ObjectQ,
+_:residential_dwellings_dist a ccd:ObjectQ,
         ccd:PointA,
         ccd:RatioA ;
     rdfs:label "Dwellings Amsterdam (Dist)" ;

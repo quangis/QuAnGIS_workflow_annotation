@@ -301,45 +301,45 @@ class Action(Hub):
             # Add triple between context and action
             rdf_graph.add((context_node,
                            namespaces['wf']['edge'],
-                           namespaces['data'][self.node]))
+                           rdf.term.BNode(self.node))) #namespaces['data'][self.node]))
 
         # Add triple between action and its tool
-        rdf_graph.add((namespaces['data'][self.node],
+        rdf_graph.add((rdf.term.BNode(self.node), #namespaces['data'][self.node],
                        namespaces['wf']['applicationOf'],
                        namespaces['tools'][self_label]))
 
         # Add inputs
         for input in self.inputs.items():
             input_label = self.graph.nodes[input[1]]['label']
-            rdf_graph.add((namespaces['data'][self.node],
+            rdf_graph.add((rdf.term.BNode(self.node), #namespaces['data'][self.node],
                            namespaces['wf']['input' + str(int(input[0]))],
-                           namespaces['data'][input_label]))
+                           rdf.term.BNode(input_label))) #namespaces['data'][input_label]))
 
         # Add outputs
         for output in self.outputs.items():
             output_label = self.graph.nodes[output[1]]['label']
-            rdf_graph.add((namespaces['data'][self.node],
+            rdf_graph.add((rdf.term.BNode(self.node), #namespaces['data'][self.node],
                            namespaces['wf']['output'],
-                           namespaces['data'][output_label]))
+                           rdf.term.BNode(output_label)))#namespaces['data'][output_label]))
 
         # Add expressions
         for expression in self.expressions.items():
             expression_label = self.graph.nodes[expression[1]]['label']
-            rdf_graph.add((namespaces['data'][self.node],
+            rdf_graph.add((rdf.term.BNode(self.node), #namespaces['data'][self.node],
                            namespaces['cct']['expression'],
                            rdf.Literal(expression_label)))
 
         # Add comments
         for comment in self.comments.items():
             comment_label = self.graph.nodes[comment[1]]['label']
-            rdf_graph.add((namespaces['data'][self.node],
+            rdf_graph.add((rdf.term.BNode(self.node), #namespaces['data'][self.node],
                            rdf.RDFS.comment,
                            rdf.Literal(comment_label)))
 
         # Add labels
         for label in self.labels.items():
             label_label = self.graph.nodes[label[1]]['label']
-            rdf_graph.add((namespaces['data'][self.node],
+            rdf_graph.add((rdf.term.BNode(self.node), #namespaces['data'][self.node],
                            rdf.RDFS.label,
                            rdf.Literal(label_label)))
 
@@ -422,21 +422,21 @@ class Artefact(Hub):
         # Add comments
         for comment in self.comments.items():
             comment_label = self.graph.nodes[comment[1]]['label']
-            rdf_graph.add((namespaces['data'][artefact_label],
+            rdf_graph.add((rdf.term.BNode(artefact_label), #namespaces['data'][artefact_label],
                            rdf.RDFS.comment,
                            rdf.Literal(comment_label)))
 
         # Add labels
         for label in self.labels.items():
             label_label = self.graph.nodes[label[1]]['label']
-            rdf_graph.add((namespaces['data'][artefact_label],
+            rdf_graph.add((rdf.term.BNode(artefact_label), #namespaces['data'][artefact_label],
                            rdf.RDFS.label,
                            rdf.Literal(label_label)))
 
         # Add signatures
         for signature in self.signatures.items():
             signature_label = self.graph.nodes[signature[1]]['label']
-            rdf_graph.add((namespaces['data'][artefact_label],
+            rdf_graph.add((rdf.term.BNode(artefact_label), #namespaces['data'][artefact_label],
                            rdf.RDF.type,
                            namespaces['ccd'][signature_label]))
 
@@ -482,6 +482,7 @@ class Schema:
         rdf_graph.add((action_rdf_node,
                        rdf.RDF.type,
                        namespaces['wf']['Workflow']))
+
         # Context comments
         for comment in self.context.comments.items():
             rdf_graph.add((action_rdf_node,
@@ -501,7 +502,7 @@ class Schema:
         for source in self.context.inputs.items():
             rdf_graph.add((action_rdf_node,
                            namespaces['wf']['source'],
-                           namespaces['data'][self.graph.nodes[source[1]]['label']]))
+                           rdf.term.BNode(self.graph.nodes[source[1]]['label']))) #namespaces['data'][self.graph.nodes[source[1]]['label']]))
 
         # Add action data
         for sub_action in self.actions:
