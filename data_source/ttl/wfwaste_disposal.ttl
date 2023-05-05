@@ -6,11 +6,17 @@
 @prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
 @prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
 
-tools:CreateNetwork a wf:Workflow ;
-    wf:edge _:n0,
-        _:n2 ;
-    wf:source _:waterways ;
-    dct:subject """    1: ObjectInfo(Nom);
+[] wf:applicationOf [ a wf:Workflow ;
+            rdfs:label "wfwaste_disposal" ;
+            wf:edge _:n0,
+                _:n11,
+                _:n2,
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "CreateNetwork" ;
+                            wf:edge _:n0,
+                                _:n2 ;
+                            wf:source _:waterways ;
+                            dct:subject """    1: ObjectInfo(Nom);
     nbuild(
         join_attr
             (get_attrL 1)
@@ -19,30 +25,11 @@ tools:CreateNetwork a wf:Workflow ;
                 (get_attrL 1)
             )
     )""" ;
-    rdfs:comment "Builds ratio network from line objects" .
-
-tools:TSPRouting a wf:Workflow ;
-    wf:edge _:n11,
-        _:n4,
-        _:n7,
-        _:n9 ;
-    wf:source _:AEBfacility,
-        _:afvalcontainers,
-        _:waterways3 ;
-    dct:subject """1: Network(Ratio);
-2: ObjectInfo(Nom);
-3: ObjectInfo(Nom);        
-           nRoutes (get_attrL 2) (get_attrL 3) 1""" .
-
-tools:wfwaste_disposal a wf:Workflow ;
-    wf:edge _:n0,
-        _:n11,
-        _:n2,
-        [ wf:applicationOf tools:CreateNetwork ;
-            wf:inputx _:waterways ;
-            wf:output _:waterways3 ;
-            rdfs:comment "Builds ratio network from line objects" ;
-            cct:expression """    1: ObjectInfo(Nom);
+                            rdfs:comment "Builds ratio network from line objects" ] ;
+                    wf:inputx _:waterways ;
+                    wf:output _:waterways3 ;
+                    rdfs:comment "Builds ratio network from line objects" ;
+                    cct:expression """    1: ObjectInfo(Nom);
     nbuild(
         join_attr
             (get_attrL 1)
@@ -51,24 +38,34 @@ tools:wfwaste_disposal a wf:Workflow ;
                 (get_attrL 1)
             )
     )""" ],
-        [ wf:applicationOf tools:TSPRouting ;
-            wf:input1 _:waterways3 ;
-            wf:input2 _:afvalcontainers ;
-            wf:input3 _:AEBfacility ;
-            wf:output _:routes ;
-            cct:expression """1: Network(Ratio);
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "TSPRouting" ;
+                            wf:edge _:n11,
+                                _:n4,
+                                _:n7,
+                                _:n9 ;
+                            wf:source _:AEBfacility,
+                                _:afvalcontainers,
+                                _:waterways3 ;
+                            dct:subject """1: Network(Ratio);
+2: ObjectInfo(Nom);
+3: ObjectInfo(Nom);        
+           nRoutes (get_attrL 2) (get_attrL 3) 1""" ] ;
+                    wf:input1 _:waterways3 ;
+                    wf:input2 _:afvalcontainers ;
+                    wf:input3 _:AEBfacility ;
+                    wf:output _:routes ;
+                    cct:expression """1: Network(Ratio);
 2: ObjectInfo(Nom);
 3: ObjectInfo(Nom);        
            nRoutes (get_attrL 2) (get_attrL 3) 1""" ],
-        _:n4,
-        _:n7,
-        _:n9 ;
-    wf:source _:AEBfacility,
-        _:afvalcontainers,
-        _:waterways ;
-    rdfs:comment "What is the travel time along waterways from the AEB incineration plant through every waste disposal place in Amsterdam?" .
-
-[] wf:applicationOf tools:wfwaste_disposal ;
+                _:n4,
+                _:n7,
+                _:n9 ;
+            wf:source _:AEBfacility,
+                _:afvalcontainers,
+                _:waterways ;
+            rdfs:comment "What is the travel time along waterways from the AEB incineration plant through every waste disposal place in Amsterdam?" ] ;
     wf:inputx _:AEBfacility,
         _:afvalcontainers,
         _:waterways ;

@@ -6,136 +6,132 @@
 @prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
 @prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
 
-tools:BufferDissolve a wf:Workflow ;
-    wf:edge _:n34,
-        _:n37 ;
-    wf:source _:A2_highway ;
-    dct:subject "extrapol (get_attrL (1: ObjectInfo(Nom)))" .
-
-tools:CalculateDensityonObject a wf:Workflow ;
-    wf:edge _:n20,
-        _:n24,
-        _:n27,
-        _:n31 ;
-    wf:source _:pop_centers_near_A2 ;
-    dct:subject """ 1: ObjectInfo(Count);        
+[] wf:applicationOf [ a wf:Workflow ;
+            rdfs:label "wfMnT_population" ;
+            wf:edge _:n11,
+                _:n14,
+                _:n18,
+                _:n20,
+                _:n24,
+                _:n27,
+                _:n31,
+                _:n33,
+                _:n34,
+                _:n37,
+                _:n43,
+                _:n45,
+                _:n47,
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "BufferDissolve" ;
+                            wf:edge _:n34,
+                                _:n37 ;
+                            wf:source _:A2_highway ;
+                            dct:subject "extrapol (get_attrL (1: ObjectInfo(Nom)))" ] ;
+                    wf:inputx _:A2_highway ;
+                    wf:output _:A2_highway_buffer ;
+                    cct:expression "extrapol (get_attrL (1: ObjectInfo(Nom)))" ],
+                [ wf:applicationOf tools:ExportFeatures ;
+                    wf:inputx _:admin_areas ;
+                    wf:output _:provinces ;
+                    rdfs:comment "Extract provinces from administrative areas of NL" ;
+                    cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "SelectLayerByLocationDistTessObject" ;
+                            wf:edge _:n11,
+                                _:n9 ;
+                            wf:source _:A2_highway,
+                                _:provinces ;
+                            dct:subject """        1: ObjectInfo(Nom);
+        2: ObjectInfo(Nom);
+        subset
+            1
+            (pi1 (select
+                leq
+                (oDist (get_attrL 1) (get_attrL 2))
+                (-: Ratio)
+            ))""" ] ;
+                    wf:input1 _:provinces ;
+                    wf:input2 _:A2_highway ;
+                    wf:output _:provinces_near_A2 ;
+                    cct:expression """        1: ObjectInfo(Nom);
+        2: ObjectInfo(Nom);
+        subset
+            1
+            (pi1 (select
+                leq
+                (oDist (get_attrL 1) (get_attrL 2))
+                (-: Ratio)
+            ))""" ],
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "SelectLayerByLocationTessObject" ;
+                            wf:edge _:n14,
+                                _:n18 ;
+                            wf:source _:pop_centers,
+                                _:provinces_near_A2 ;
+                            dct:subject """        1: ObjectInfo(Count);
+        2: ObjectInfo(Nom);
+        subset
+            1
+            (pi1 (select
+                eq
+                (oTopo (get_attrL 1) (get_attrL 2))
+                in
+            ))""" ] ;
+                    wf:input1 _:pop_centers ;
+                    wf:input2 _:provinces_near_A2 ;
+                    wf:output _:pop_centers_near_A2 ;
+                    cct:expression """        1: ObjectInfo(Count);
+        2: ObjectInfo(Nom);
+        subset
+            1
+            (pi1 (select
+                eq
+                (oTopo (get_attrL 1) (get_attrL 2))
+                in
+            ))""" ],
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "CalculateDensityonObject" ;
+                            wf:edge _:n20,
+                                _:n24,
+                                _:n27,
+                                _:n31 ;
+                            wf:source _:pop_centers_near_A2 ;
+                            dct:subject """ 1: ObjectInfo(Count);        
         join_attr
             (get_attrL 1)
             (apply2 ratio (get_attrR 1)  (apply1
                 (compose size deify)
                 (get_attrL 1)
-            ))""" .
-
-tools:CalculatePartialAmountsfromObjects a wf:Workflow ;
-    wf:edge _:n33,
-        _:n43,
-        _:n45,
-        _:n47 ;
-    wf:source _:A2_highway_buffer,
-        _:pop_centers_near_A2_pop_dens ;
-    dct:subject """        1: ObjectInfo(Ratio);
+            ))""" ] ;
+                    wf:inputx _:pop_centers_near_A2 ;
+                    wf:output _:pop_centers_near_A2_pop_dens ;
+                    cct:expression """ 1: ObjectInfo(Count);        
+        join_attr
+            (get_attrL 1)
+            (apply2 ratio (get_attrR 1)  (apply1
+                (compose size deify)
+                (get_attrL 1)
+            ))""" ],
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "CalculatePartialAmountsfromObjects" ;
+                            wf:edge _:n33,
+                                _:n43,
+                                _:n45,
+                                _:n47 ;
+                            wf:source _:A2_highway_buffer,
+                                _:pop_centers_near_A2_pop_dens ;
+                            dct:subject """        1: ObjectInfo(Ratio);
         2: Field(Bool);
         arealinterpol
             (getamounts 1)
             (pi2 (groupbyR reify (select eq (loTopo
                 (fcover 2 (nest true))
                 (get_attrL 1)
-            ) in)))""" .
-
-tools:SelectLayerByLocationDistTessObject a wf:Workflow ;
-    wf:edge _:n11,
-        _:n9 ;
-    wf:source _:A2_highway,
-        _:provinces ;
-    dct:subject """        1: ObjectInfo(Nom);
-        2: ObjectInfo(Nom);
-        subset
-            1
-            (pi1 (select
-                leq
-                (oDist (get_attrL 1) (get_attrL 2))
-                (-: Ratio)
-            ))""" .
-
-tools:SelectLayerByLocationTessObject a wf:Workflow ;
-    wf:edge _:n14,
-        _:n18 ;
-    wf:source _:pop_centers,
-        _:provinces_near_A2 ;
-    dct:subject """        1: ObjectInfo(Count);
-        2: ObjectInfo(Nom);
-        subset
-            1
-            (pi1 (select
-                eq
-                (oTopo (get_attrL 1) (get_attrL 2))
-                in
-            ))""" .
-
-tools:wfMnT_population a wf:Workflow ;
-    wf:edge _:n11,
-        _:n14,
-        _:n18,
-        _:n20,
-        _:n24,
-        _:n27,
-        _:n31,
-        _:n33,
-        _:n34,
-        _:n37,
-        _:n43,
-        _:n45,
-        _:n47,
-        [ wf:applicationOf tools:BufferDissolve ;
-            wf:inputx _:A2_highway ;
-            wf:output _:A2_highway_buffer ;
-            cct:expression "extrapol (get_attrL (1: ObjectInfo(Nom)))" ],
-        [ wf:applicationOf tools:ExportFeatures ;
-            wf:inputx _:admin_areas ;
-            wf:output _:provinces ;
-            rdfs:comment "Extract provinces from administrative areas of NL" ;
-            cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
-        [ wf:applicationOf tools:SelectLayerByLocationDistTessObject ;
-            wf:input1 _:provinces ;
-            wf:input2 _:A2_highway ;
-            wf:output _:provinces_near_A2 ;
-            cct:expression """        1: ObjectInfo(Nom);
-        2: ObjectInfo(Nom);
-        subset
-            1
-            (pi1 (select
-                leq
-                (oDist (get_attrL 1) (get_attrL 2))
-                (-: Ratio)
-            ))""" ],
-        [ wf:applicationOf tools:SelectLayerByLocationTessObject ;
-            wf:input1 _:pop_centers ;
-            wf:input2 _:provinces_near_A2 ;
-            wf:output _:pop_centers_near_A2 ;
-            cct:expression """        1: ObjectInfo(Count);
-        2: ObjectInfo(Nom);
-        subset
-            1
-            (pi1 (select
-                eq
-                (oTopo (get_attrL 1) (get_attrL 2))
-                in
-            ))""" ],
-        [ wf:applicationOf tools:CalculateDensityonObject ;
-            wf:inputx _:pop_centers_near_A2 ;
-            wf:output _:pop_centers_near_A2_pop_dens ;
-            cct:expression """ 1: ObjectInfo(Count);        
-        join_attr
-            (get_attrL 1)
-            (apply2 ratio (get_attrR 1)  (apply1
-                (compose size deify)
-                (get_attrL 1)
-            ))""" ],
-        [ wf:applicationOf tools:CalculatePartialAmountsfromObjects ;
-            wf:input1 _:pop_centers_near_A2_pop_dens ;
-            wf:input2 _:A2_highway_buffer ;
-            wf:output _:pop_clip_geom_attr_addfield ;
-            cct:expression """        1: ObjectInfo(Ratio);
+            ) in)))""" ] ;
+                    wf:input1 _:pop_centers_near_A2_pop_dens ;
+                    wf:input2 _:A2_highway_buffer ;
+                    wf:output _:pop_clip_geom_attr_addfield ;
+                    cct:expression """        1: ObjectInfo(Ratio);
         2: Field(Bool);
         arealinterpol
             (getamounts 1)
@@ -143,13 +139,11 @@ tools:wfMnT_population a wf:Workflow ;
                 (fcover 2 (nest true))
                 (get_attrL 1)
             ) in)))""" ],
-        _:n9 ;
-    wf:source _:A2_highway,
-        _:admin_areas,
-        _:pop_centers ;
-    rdfs:comment "What is the number of people within 1000 meters of the A2 highway in the Netherlands?" .
-
-[] wf:applicationOf tools:wfMnT_population ;
+                _:n9 ;
+            wf:source _:A2_highway,
+                _:admin_areas,
+                _:pop_centers ;
+            rdfs:comment "What is the number of people within 1000 meters of the A2 highway in the Netherlands?" ] ;
     wf:inputx _:A2_highway,
         _:admin_areas,
         _:pop_centers ;

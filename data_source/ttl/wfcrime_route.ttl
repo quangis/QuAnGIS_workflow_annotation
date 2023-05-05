@@ -6,51 +6,48 @@
 @prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
 @prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
 
-tools:CreateAndBuildNetwork a wf:Workflow ;
-    wf:edge _:n2,
-        _:n8 ;
-    wf:source _:roads ;
-    dct:subject "nbuild (1: ObjectInfo(Ratio))" .
-
-tools:RouteAnalysis a wf:Workflow ;
-    wf:edge _:n10,
-        _:n12,
-        _:n13,
-        _:n16 ;
-    wf:source _:home,
-        _:network,
-        _:work_sport_store_locations ;
-    dct:subject """1: Network(Ratio);
+[] wf:applicationOf [ a wf:Workflow ;
+            rdfs:label "wfcrime_route" ;
+            wf:edge _:n10,
+                _:n12,
+                _:n13,
+                _:n16,
+                _:n2,
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "CreateAndBuildNetwork" ;
+                            wf:edge _:n2,
+                                _:n8 ;
+                            wf:source _:roads ;
+                            dct:subject "nbuild (1: ObjectInfo(Ratio))" ] ;
+                    wf:inputx _:roads ;
+                    wf:output _:network ;
+                    cct:expression "nbuild (1: ObjectInfo(Ratio))" ],
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "RouteAnalysis" ;
+                            wf:edge _:n10,
+                                _:n12,
+                                _:n13,
+                                _:n16 ;
+                            wf:source _:home,
+                                _:network,
+                                _:work_sport_store_locations ;
+                            dct:subject """1: Network(Ratio);
 2: ObjectInfo(Nom);
 3: ObjectInfo(Nom);        
-           generateobjectsfromrel (nRoutes (get_attrL 2) (get_attrL 3) 1)""" .
-
-tools:wfcrime_route a wf:Workflow ;
-    wf:edge _:n10,
-        _:n12,
-        _:n13,
-        _:n16,
-        _:n2,
-        [ wf:applicationOf tools:CreateAndBuildNetwork ;
-            wf:inputx _:roads ;
-            wf:output _:network ;
-            cct:expression "nbuild (1: ObjectInfo(Ratio))" ],
-        [ wf:applicationOf tools:RouteAnalysis ;
-            wf:input1 _:network ;
-            wf:input2 _:home ;
-            wf:input3 _:work_sport_store_locations ;
-            wf:output _:route_analysis_layer_solved ;
-            cct:expression """1: Network(Ratio);
+           generateobjectsfromrel (nRoutes (get_attrL 2) (get_attrL 3) 1)""" ] ;
+                    wf:input1 _:network ;
+                    wf:input2 _:home ;
+                    wf:input3 _:work_sport_store_locations ;
+                    wf:output _:route_analysis_layer_solved ;
+                    cct:expression """1: Network(Ratio);
 2: ObjectInfo(Nom);
 3: ObjectInfo(Nom);        
            generateobjectsfromrel (nRoutes (get_attrL 2) (get_attrL 3) 1)""" ],
-        _:n8 ;
-    wf:source _:home,
-        _:roads,
-        _:work_sport_store_locations ;
-    rdfs:comment "What is the shortest path from my home through my workplace, a gym and a supermarket in Amsterdam?" .
-
-[] wf:applicationOf tools:wfcrime_route ;
+                _:n8 ;
+            wf:source _:home,
+                _:roads,
+                _:work_sport_store_locations ;
+            rdfs:comment "What is the shortest path from my home through my workplace, a gym and a supermarket in Amsterdam?" ] ;
     wf:inputx _:home,
         _:roads,
         _:work_sport_store_locations ;
@@ -63,14 +60,14 @@ _:n10 wf:applicationOf tools:MakeRouteAnalysisLayer ;
     rdfs:comment "Create a route analysis layer" .
 
 _:n12 wf:applicationOf tools:AddLocations ;
-    wf:inputx _:home,
-        _:route_analysis_layer ;
+    wf:input1 _:route_analysis_layer ;
+    wf:input2 _:home ;
     wf:output _:route_analysis_layer_home ;
     rdfs:comment "Add a home location to the route analysis layer" .
 
 _:n13 wf:applicationOf tools:AddLocations ;
-    wf:inputx _:route_analysis_layer_home,
-        _:work_sport_store_locations ;
+    wf:input1 _:route_analysis_layer_home ;
+    wf:input2 _:work_sport_store_locations ;
     wf:output _:route_analysis_layer_all ;
     rdfs:comment "Add a work, a sport, and a store location to the route analysis layer" .
 

@@ -299,7 +299,8 @@ class Action(Hub):
 
         if context is not None:
             context_label = context.graph.nodes[context.node]['label']
-            context_node = namespaces['tools'][context_label]
+            #context_node = namespaces['tools'][context_label]
+            context_node = rdf.term.BNode(context_label)
 
             # Add triple between context and action
             rdf_graph.add((context_node,
@@ -307,9 +308,18 @@ class Action(Hub):
                            rdf.term.BNode(self.node))) #namespaces['data'][self.node]))
 
         # Add triple between action and its tool
-        rdf_graph.add((rdf.term.BNode(self.node), #namespaces['data'][self.node],
-                       namespaces['wf']['applicationOf'],
-                       namespaces['tools'][self_label]))
+        if self.schemas:  # Check if an action implements a supertool (May need to be a more sophisticated check)
+            rdf_graph.add((rdf.term.BNode(self.node),  # namespaces['data'][self.node],
+                           namespaces['wf']['applicationOf'],
+                           rdf.term.BNode(self_label)))
+            # Add an rdfs:label
+            rdf_graph.add((rdf.term.BNode(self_label),  # namespaces['data'][self.node],
+                           namespaces['rdfs']['label'],
+                           rdf.Literal(self_label)))
+        else:
+            rdf_graph.add((rdf.term.BNode(self.node), #namespaces['data'][self.node],
+                           namespaces['wf']['applicationOf'],
+                           namespaces['tools'][self_label]))
 
         # Add inputs
         for input in self.inputs.items():
@@ -484,7 +494,8 @@ class Schema:
 
     def add_to_rdf(self, rdf_graph):
         action_label = self.context.graph.nodes[self.context.node]['label']
-        action_rdf_node = namespaces['tools'][action_label]
+        #action_rdf_node = namespaces['tools'][action_label]
+        action_rdf_node = rdf.term.BNode(action_label)
 
         # Workflow name
         rdf_graph.add((action_rdf_node,

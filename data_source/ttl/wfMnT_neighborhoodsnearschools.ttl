@@ -6,33 +6,29 @@
 @prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
 @prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
 
-tools:SelectNeighborhoodsByAttributeTessObjects a wf:Workflow ;
-    wf:edge _:n0,
-        _:n3 ;
-    wf:source _:neighborhoods ;
-    dct:subject "subset (1: ObjectInfo(Nom)) (-: C(Nom))" .
-
-tools:SelectNeighborhoodsByLocationDistPointObject a wf:Workflow ;
-    wf:edge _:n16,
-        _:n19 ;
-    wf:source _:neighborhoods_Utrecht,
-        _:schools_Utrecht ;
-    dct:subject """        1: ObjectInfo(Nom);
-        2: ObjectInfo(Nom);
-        subset
-            1
-            (pi1 (select
-                leq
-                (oDist (get_attrL 1) (get_attrL 2))
-                (-:Ratio)
-            ))""" .
-
-tools:SelectSchoolsByLocationPointObject a wf:Workflow ;
-    wf:edge _:n12,
-        _:n8 ;
-    wf:source _:neighborhoods_Utrecht,
-        _:schools ;
-    dct:subject """        1: ObjectInfo(Nom);
+[] wf:applicationOf [ a wf:Workflow ;
+            rdfs:label "wfMnT_neighborhoodsnearschools" ;
+            wf:edge _:n0,
+                _:n12,
+                _:n16,
+                _:n19,
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "SelectNeighborhoodsByAttributeTessObjects" ;
+                            wf:edge _:n0,
+                                _:n3 ;
+                            wf:source _:neighborhoods ;
+                            dct:subject "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ] ;
+                    wf:inputx _:neighborhoods ;
+                    wf:output _:neighborhoods_Utrecht ;
+                    cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
+                _:n3,
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "SelectSchoolsByLocationPointObject" ;
+                            wf:edge _:n12,
+                                _:n8 ;
+                            wf:source _:neighborhoods_Utrecht,
+                                _:schools ;
+                            dct:subject """        1: ObjectInfo(Nom);
         2: ObjectInfo(Nom);
         subset
             1
@@ -40,23 +36,11 @@ tools:SelectSchoolsByLocationPointObject a wf:Workflow ;
                 eq
                 (oTopo (get_attrL 1) (get_attrL 2))
                 in
-            ))""" .
-
-tools:wfMnT_neighborhoodsnearschools a wf:Workflow ;
-    wf:edge _:n0,
-        _:n12,
-        _:n16,
-        _:n19,
-        [ wf:applicationOf tools:SelectNeighborhoodsByAttributeTessObjects ;
-            wf:inputx _:neighborhoods ;
-            wf:output _:neighborhoods_Utrecht ;
-            cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
-        _:n3,
-        [ wf:applicationOf tools:SelectSchoolsByLocationPointObject ;
-            wf:input1 _:schools ;
-            wf:input2 _:neighborhoods_Utrecht ;
-            wf:output _:schools_Utrecht ;
-            cct:expression """        1: ObjectInfo(Nom);
+            ))""" ] ;
+                    wf:input1 _:schools ;
+                    wf:input2 _:neighborhoods_Utrecht ;
+                    wf:output _:schools_Utrecht ;
+                    cct:expression """        1: ObjectInfo(Nom);
         2: ObjectInfo(Nom);
         subset
             1
@@ -65,11 +49,25 @@ tools:wfMnT_neighborhoodsnearschools a wf:Workflow ;
                 (oTopo (get_attrL 1) (get_attrL 2))
                 in
             ))""" ],
-        [ wf:applicationOf tools:SelectNeighborhoodsByLocationDistPointObject ;
-            wf:input1 _:neighborhoods_Utrecht ;
-            wf:input2 _:schools_Utrecht ;
-            wf:output _:neighborhoods_Utrecht_near_schools ;
-            cct:expression """        1: ObjectInfo(Nom);
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "SelectNeighborhoodsByLocationDistPointObject" ;
+                            wf:edge _:n16,
+                                _:n19 ;
+                            wf:source _:neighborhoods_Utrecht,
+                                _:schools_Utrecht ;
+                            dct:subject """        1: ObjectInfo(Nom);
+        2: ObjectInfo(Nom);
+        subset
+            1
+            (pi1 (select
+                leq
+                (oDist (get_attrL 1) (get_attrL 2))
+                (-:Ratio)
+            ))""" ] ;
+                    wf:input1 _:neighborhoods_Utrecht ;
+                    wf:input2 _:schools_Utrecht ;
+                    wf:output _:neighborhoods_Utrecht_near_schools ;
+                    cct:expression """        1: ObjectInfo(Nom);
         2: ObjectInfo(Nom);
         subset
             1
@@ -78,12 +76,10 @@ tools:wfMnT_neighborhoodsnearschools a wf:Workflow ;
                 (oDist (get_attrL 1) (get_attrL 2))
                 (-:Ratio)
             ))""" ],
-        _:n8 ;
-    wf:source _:neighborhoods,
-        _:schools ;
-    rdfs:comment "Which neighborhoods are within 100 meters from a school in Utrecht?" .
-
-[] wf:applicationOf tools:wfMnT_neighborhoodsnearschools ;
+                _:n8 ;
+            wf:source _:neighborhoods,
+                _:schools ;
+            rdfs:comment "Which neighborhoods are within 100 meters from a school in Utrecht?" ] ;
     wf:inputx _:neighborhoods,
         _:schools ;
     wf:output _:neighborhoods_Utrecht_near_schools ;

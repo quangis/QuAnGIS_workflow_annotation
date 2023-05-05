@@ -6,26 +6,18 @@
 @prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
 @prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
 
-tools:CalculateObjectVectorDensity a wf:Workflow ;
-    wf:edge _:n6,
-        _:n8,
-        _:n9 ;
-    wf:source _:BRdRaReOfInRecInter ;
-    dct:subject """    1: ObjectInfo(Count);        
-    join_attr
-        (get_attrL 1)
-        (apply2 ratio 
-            (get_attrR 1)            
-            (apply1 (compose size deify) (get_attrL 1))
-        )""" ;
-    rdfs:comment "Calculate object density" .
-
-tools:GenerateIntersections a wf:Workflow ;
-    wf:edge _:n1,
-        _:n22,
-        _:n24 ;
-    wf:source _:streets ;
-    dct:subject """    1: ObjectInfo(Nom);        
+[] wf:applicationOf [ a wf:Workflow ;
+            rdfs:label "wfwalk_intersectiondensity" ;
+            wf:edge _:n1,
+                _:n22,
+                _:n24,
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "GenerateIntersections" ;
+                            wf:edge _:n1,
+                                _:n22,
+                                _:n24 ;
+                            wf:source _:streets ;
+                            dct:subject """    1: ObjectInfo(Nom);        
     join_attr     
     (nIntersections((get_attrL 1), (get_attrL 1)))
     (apply nominalize 
@@ -33,17 +25,11 @@ tools:GenerateIntersections a wf:Workflow ;
             (nIntersections((get_attrL 1), (get_attrL 1)))   
         )
     )""" ;
-    rdfs:comment "Generate intersections from line objects by intersecting lines (with minimal cardinality)" .
-
-tools:wfwalk_intersectiondensity a wf:Workflow ;
-    wf:edge _:n1,
-        _:n22,
-        _:n24,
-        [ wf:applicationOf tools:GenerateIntersections ;
-            wf:inputx _:streets ;
-            wf:output _:true_intersection ;
-            rdfs:comment "Generate intersections from line objects by intersecting lines (with minimal cardinality)" ;
-            cct:expression """    1: ObjectInfo(Nom);        
+                            rdfs:comment "Generate intersections from line objects by intersecting lines (with minimal cardinality)" ] ;
+                    wf:inputx _:streets ;
+                    wf:output _:true_intersection ;
+                    rdfs:comment "Generate intersections from line objects by intersecting lines (with minimal cardinality)" ;
+                    cct:expression """    1: ObjectInfo(Nom);        
     join_attr     
     (nIntersections((get_attrL 1), (get_attrL 1)))
     (apply nominalize 
@@ -51,24 +37,37 @@ tools:wfwalk_intersectiondensity a wf:Workflow ;
             (nIntersections((get_attrL 1), (get_attrL 1)))   
         )
     )""" ],
-        [ wf:applicationOf tools:CalculateObjectVectorDensity ;
-            wf:inputx _:BRdRaReOfInRecInter ;
-            wf:output _:BRdRaReOfInRecInter4 ;
-            rdfs:comment "Calculate object density" ;
-            cct:expression """    1: ObjectInfo(Count);        
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "CalculateObjectVectorDensity" ;
+                            wf:edge _:n6,
+                                _:n8,
+                                _:n9 ;
+                            wf:source _:BRdRaReOfInRecInter ;
+                            dct:subject """    1: ObjectInfo(Count);        
+    join_attr
+        (get_attrL 1)
+        (apply2 ratio 
+            (get_attrR 1)            
+            (apply1 (compose size deify) (get_attrL 1))
+        )""" ;
+                            rdfs:comment "Calculate object density" ] ;
+                    wf:inputx _:BRdRaReOfInRecInter ;
+                    wf:output _:BRdRaReOfInRecInter4 ;
+                    rdfs:comment "Calculate object density" ;
+                    cct:expression """    1: ObjectInfo(Count);        
     join_attr
         (get_attrL 1)
         (apply2 ratio 
             (get_attrR 1)            
             (apply1 (compose size deify) (get_attrL 1))
         )""" ],
-        [ wf:applicationOf tools:SummarizeWithin ;
-            wf:input1 _:true_intersection ;
-            wf:input2 _:buurten ;
-            wf:output _:BRdRaReOfInRecInter ;
-            rdfs:comment "Count the number of street intersections in each neighborhood",
-                "Counts the number of features from one feature to another based on the spatial relation" ;
-            cct:expression """        1: ObjectInfo(Nom);
+                [ wf:applicationOf tools:SummarizeWithin ;
+                    wf:input1 _:true_intersection ;
+                    wf:input2 _:buurten ;
+                    wf:output _:BRdRaReOfInRecInter ;
+                    rdfs:comment "Count the number of street intersections in each neighborhood",
+                        "Counts the number of features from one feature to another based on the spatial relation" ;
+                    cct:expression """        1: ObjectInfo(Nom);
         2: ObjectInfo(Nom);
         join_attr
             (get_attrL 2)
@@ -76,14 +75,12 @@ tools:wfwalk_intersectiondensity a wf:Workflow ;
                 (ocont (get_attrL 1))
                 (get_attrL 2)
             )""" ],
-        _:n6,
-        _:n8,
-        _:n9 ;
-    wf:source _:buurten,
-        _:streets ;
-    rdfs:comment "What is the density of street intersections for each neighbourhood in Amsterdam?" .
-
-[] wf:applicationOf tools:wfwalk_intersectiondensity ;
+                _:n6,
+                _:n8,
+                _:n9 ;
+            wf:source _:buurten,
+                _:streets ;
+            rdfs:comment "What is the density of street intersections for each neighbourhood in Amsterdam?" ] ;
     wf:inputx _:buurten,
         _:streets ;
     wf:output _:BRdRaReOfInRecInter4 ;

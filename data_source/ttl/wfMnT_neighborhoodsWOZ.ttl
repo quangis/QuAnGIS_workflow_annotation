@@ -6,54 +6,50 @@
 @prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
 @prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
 
-tools:JoinObjectRatios a wf:Workflow ;
-    wf:edge _:n10,
-        _:n13 ;
-    wf:source _:WOZ_pos,
-        _:neighborhoods_Utrecht_near_schools ;
-    dct:subject """1:ObjectInfo(Nom);
+[] wf:applicationOf [ a wf:Workflow ;
+            rdfs:label "wfMnT_neighborhoodsWOZ" ;
+            wf:edge _:n10,
+                _:n13,
+                _:n16,
+                _:n19,
+                _:n2,
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "SelectWOZByRatioObjects" ;
+                            wf:edge _:n2,
+                                _:n6 ;
+                            wf:source _:WOZ ;
+                            dct:subject "select (compose2 notj leq) (1: ObjectInfo(Ratio)) (-: Ratio)" ] ;
+                    wf:inputx _:WOZ ;
+                    wf:output _:WOZ_pos ;
+                    cct:expression "select (compose2 notj leq) (1: ObjectInfo(Ratio)) (-: Ratio)" ],
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "JoinObjectRatios" ;
+                            wf:edge _:n10,
+                                _:n13 ;
+                            wf:source _:WOZ_pos,
+                                _:neighborhoods_Utrecht_near_schools ;
+                            dct:subject """1:ObjectInfo(Nom);
     2:ObjectInfo(Ratio);
-    join_attr (get_attrL 1) (get_attrR 2)""" .
-
-tools:SelectNeighborhoodsByRatioObjects a wf:Workflow ;
-    wf:edge _:n16,
-        _:n19 ;
-    wf:source _:neighborhoods_Utrecht_WOZ ;
-    dct:subject "select (compose2 notj leq) (1: ObjectInfo(Ratio)) (-: Ratio)" .
-
-tools:SelectWOZByRatioObjects a wf:Workflow ;
-    wf:edge _:n2,
-        _:n6 ;
-    wf:source _:WOZ ;
-    dct:subject "select (compose2 notj leq) (1: ObjectInfo(Ratio)) (-: Ratio)" .
-
-tools:wfMnT_neighborhoodsWOZ a wf:Workflow ;
-    wf:edge _:n10,
-        _:n13,
-        _:n16,
-        _:n19,
-        _:n2,
-        [ wf:applicationOf tools:SelectWOZByRatioObjects ;
-            wf:inputx _:WOZ ;
-            wf:output _:WOZ_pos ;
-            cct:expression "select (compose2 notj leq) (1: ObjectInfo(Ratio)) (-: Ratio)" ],
-        [ wf:applicationOf tools:JoinObjectRatios ;
-            wf:input1 _:neighborhoods_Utrecht_near_schools ;
-            wf:input2 _:WOZ_pos ;
-            wf:output _:neighborhoods_Utrecht_WOZ ;
-            cct:expression """1:ObjectInfo(Nom);
+    join_attr (get_attrL 1) (get_attrR 2)""" ] ;
+                    wf:input1 _:neighborhoods_Utrecht_near_schools ;
+                    wf:input2 _:WOZ_pos ;
+                    wf:output _:neighborhoods_Utrecht_WOZ ;
+                    cct:expression """1:ObjectInfo(Nom);
     2:ObjectInfo(Ratio);
     join_attr (get_attrL 1) (get_attrR 2)""" ],
-        [ wf:applicationOf tools:SelectNeighborhoodsByRatioObjects ;
-            wf:inputx _:neighborhoods_Utrecht_WOZ ;
-            wf:output _:suitable_neighborhoods ;
-            cct:expression "select (compose2 notj leq) (1: ObjectInfo(Ratio)) (-: Ratio)" ],
-        _:n6 ;
-    wf:source _:WOZ,
-        _:neighborhoods_Utrecht_near_schools ;
-    rdfs:comment "Which neighborhoods have an averaged WOZ value of less than 200 in Utrecht?" .
-
-[] wf:applicationOf tools:wfMnT_neighborhoodsWOZ ;
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "SelectNeighborhoodsByRatioObjects" ;
+                            wf:edge _:n16,
+                                _:n19 ;
+                            wf:source _:neighborhoods_Utrecht_WOZ ;
+                            dct:subject "select (compose2 notj leq) (1: ObjectInfo(Ratio)) (-: Ratio)" ] ;
+                    wf:inputx _:neighborhoods_Utrecht_WOZ ;
+                    wf:output _:suitable_neighborhoods ;
+                    cct:expression "select (compose2 notj leq) (1: ObjectInfo(Ratio)) (-: Ratio)" ],
+                _:n6 ;
+            wf:source _:WOZ,
+                _:neighborhoods_Utrecht_near_schools ;
+            rdfs:comment "Which neighborhoods have an averaged WOZ value of less than 200 in Utrecht?" ] ;
     wf:inputx _:WOZ,
         _:neighborhoods_Utrecht_near_schools ;
     wf:output _:suitable_neighborhoods ;

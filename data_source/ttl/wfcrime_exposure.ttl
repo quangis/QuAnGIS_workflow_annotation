@@ -6,85 +6,81 @@
 @prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
 @prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
 
-tools:ComputeCountDensityonObject a wf:Workflow ;
-    wf:edge _:n10,
-        _:n12,
-        _:n13,
-        _:n14,
-        _:n28,
-        _:n29 ;
-    wf:source _:buurt_crime ;
-    dct:subject """ 1: ObjectInfo(Count);        
+[] wf:applicationOf [ a wf:Workflow ;
+            rdfs:label "wfcrime_exposure" ;
+            wf:edge _:n0,
+                _:n10,
+                _:n12,
+                _:n13,
+                _:n14,
+                _:n16,
+                _:n19,
+                _:n28,
+                _:n29,
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "JoinCountAttribute" ;
+                            wf:edge _:n0,
+                                _:n7 ;
+                            wf:source _:buurt,
+                                _:crimes ;
+                            dct:subject """1: R2(Obj, Count);
+2: ObjectExtent; 
+join_attr 2 1""" ] ;
+                    wf:input1 _:crimes ;
+                    wf:input2 _:buurt ;
+                    wf:output _:buurt_crime ;
+                    cct:expression """1: R2(Obj, Count);
+2: ObjectExtent; 
+join_attr 2 1""" ],
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "ComputeCountDensityonObject" ;
+                            wf:edge _:n10,
+                                _:n12,
+                                _:n13,
+                                _:n14,
+                                _:n28,
+                                _:n29 ;
+                            wf:source _:buurt_crime ;
+                            dct:subject """ 1: ObjectInfo(Count);        
         join_attr
             (get_attrL 1)
             (apply2 ratio (get_attrR 1)  (apply1
                 (compose size deify)
                 (get_attrL 1)
-            ))""" .
-
-tools:InterpolateDensityonObjects2LineObject a wf:Workflow ;
-    wf:edge _:n16,
-        _:n19 ;
-    wf:source _:buurt_crime_density,
-        _:routes ;
-    dct:subject """1: ObjectInfo(Ratio);
-2: ObjectInfo(Nom);
-arealinterpol
-(getamounts 1)
-(pi2 (get_attrL 2))""" .
-
-tools:JoinCountAttribute a wf:Workflow ;
-    wf:edge _:n0,
-        _:n7 ;
-    wf:source _:buurt,
-        _:crimes ;
-    dct:subject """1: R2(Obj, Count);
-2: ObjectExtent; 
-join_attr 2 1""" .
-
-tools:wfcrime_exposure a wf:Workflow ;
-    wf:edge _:n0,
-        _:n10,
-        _:n12,
-        _:n13,
-        _:n14,
-        _:n16,
-        _:n19,
-        _:n28,
-        _:n29,
-        [ wf:applicationOf tools:JoinCountAttribute ;
-            wf:input1 _:crimes ;
-            wf:input2 _:buurt ;
-            wf:output _:buurt_crime ;
-            cct:expression """1: R2(Obj, Count);
-2: ObjectExtent; 
-join_attr 2 1""" ],
-        [ wf:applicationOf tools:ComputeCountDensityonObject ;
-            wf:inputx _:buurt_crime ;
-            wf:output _:buurt_crime_density ;
-            cct:expression """ 1: ObjectInfo(Count);        
+            ))""" ] ;
+                    wf:inputx _:buurt_crime ;
+                    wf:output _:buurt_crime_density ;
+                    cct:expression """ 1: ObjectInfo(Count);        
         join_attr
             (get_attrL 1)
             (apply2 ratio (get_attrR 1)  (apply1
                 (compose size deify)
                 (get_attrL 1)
             ))""" ],
-        [ wf:applicationOf tools:InterpolateDensityonObjects2LineObject ;
-            wf:input1 _:buurt_crime_density ;
-            wf:input2 _:routes ;
-            wf:output _:buurt_crime_density_avg ;
-            cct:expression """1: ObjectInfo(Ratio);
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "InterpolateDensityonObjects2LineObject" ;
+                            wf:edge _:n16,
+                                _:n19 ;
+                            wf:source _:buurt_crime_density,
+                                _:routes ;
+                            dct:subject """1: ObjectInfo(Ratio);
+2: ObjectInfo(Nom);
+arealinterpol
+(getamounts 1)
+(pi2 (get_attrL 2))""" ] ;
+                    wf:input1 _:buurt_crime_density ;
+                    wf:input2 _:routes ;
+                    wf:output _:buurt_crime_density_avg ;
+                    cct:expression """1: ObjectInfo(Ratio);
 2: ObjectInfo(Nom);
 arealinterpol
 (getamounts 1)
 (pi2 (get_attrL 2))""" ],
-        _:n7 ;
-    wf:source _:buurt,
-        _:crimes,
-        _:routes ;
-    rdfs:comment "What is the crime density along the shortest path from my home to my workplace in Amsterdam?" .
-
-[] wf:applicationOf tools:wfcrime_exposure ;
+                _:n7 ;
+            wf:source _:buurt,
+                _:crimes,
+                _:routes ;
+            rdfs:comment "What is the crime density along the shortest path from my home to my workplace in Amsterdam?" ] ;
     wf:inputx _:buurt,
         _:crimes,
         _:routes ;

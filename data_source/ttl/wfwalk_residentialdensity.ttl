@@ -6,43 +6,22 @@
 @prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
 @prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
 
-tools:CalculateObjectVectorAmountRatio a wf:Workflow ;
-    wf:edge _:n21,
-        _:n22 ;
-    wf:source _:buurten_HH,
-        _:buurten_HH_RA ;
-    dct:subject """        1: ObjectInfo(Count);
-        2: ObjectInfo(Ratio);
-        join_attr
-            (get_attrL 1)
-            (apply2 ratio (get_attrR 1) (get_attrR 2))""" .
-
-tools:LoadCountAmounts a wf:Workflow ;
-    wf:edge _:n0,
-        _:n11,
-        _:n13,
-        _:n6 ;
-    wf:source _:Amsterdam_buurt,
-        _:households ;
-    dct:subject """        1: R2(Obj, Count);
-        2: ObjectInfo(_);
-        join_attr (get_attrL 2) 1""" .
-
-tools:wfwalk_residentialdensity a wf:Workflow ;
-    wf:edge _:n0,
-        _:n11,
-        _:n13,
-        [ wf:applicationOf tools:SelectLayerByAttribute ;
-            wf:inputx _:Amsterdam_land ;
-            wf:output _:residential_area ;
-            rdfs:comment "Select residential area in Amsterdam" ;
-            cct:expression "revert (select eq (invert (1: Field(Nom)): Coverages(Nom)) (-: Nom))" ],
-        [ wf:applicationOf tools:SummarizeWithin ;
-            wf:input1 _:residential_area ;
-            wf:input2 _:buurten ;
-            wf:output _:buurten_HH_RA ;
-            rdfs:comment "Sum residential area size in each neighbourhood" ;
-            cct:expression """    1: Field(Nom);
+[] wf:applicationOf [ a wf:Workflow ;
+            rdfs:label "wfwalk_residentialdensity" ;
+            wf:edge _:n0,
+                _:n11,
+                _:n13,
+                [ wf:applicationOf tools:SelectLayerByAttribute ;
+                    wf:inputx _:Amsterdam_land ;
+                    wf:output _:residential_area ;
+                    rdfs:comment "Select residential area in Amsterdam" ;
+                    cct:expression "revert (select eq (invert (1: Field(Nom)): Coverages(Nom)) (-: Nom))" ],
+                [ wf:applicationOf tools:SummarizeWithin ;
+                    wf:input1 _:residential_area ;
+                    wf:input2 _:buurten ;
+                    wf:output _:buurten_HH_RA ;
+                    rdfs:comment "Sum residential area size in each neighbourhood" ;
+                    cct:expression """    1: Field(Nom);
     2: ObjectInfo(Nom);
     join_attr
             (get_attrL 2)
@@ -53,31 +32,49 @@ tools:wfwalk_residentialdensity a wf:Workflow ;
                     (get_attrL 2)
                 )
             )""" ],
-        _:n21,
-        _:n22,
-        [ wf:applicationOf tools:LoadCountAmounts ;
-            wf:input1 _:households ;
-            wf:input2 _:Amsterdam_buurt ;
-            wf:output _:buurten_HH ;
-            cct:expression """        1: R2(Obj, Count);
+                _:n21,
+                _:n22,
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "LoadCountAmounts" ;
+                            wf:edge _:n0,
+                                _:n11,
+                                _:n13,
+                                _:n6 ;
+                            wf:source _:Amsterdam_buurt,
+                                _:households ;
+                            dct:subject """        1: R2(Obj, Count);
+        2: ObjectInfo(_);
+        join_attr (get_attrL 2) 1""" ] ;
+                    wf:input1 _:households ;
+                    wf:input2 _:Amsterdam_buurt ;
+                    wf:output _:buurten_HH ;
+                    cct:expression """        1: R2(Obj, Count);
         2: ObjectInfo(_);
         join_attr (get_attrL 2) 1""" ],
-        [ wf:applicationOf tools:CalculateObjectVectorAmountRatio ;
-            wf:input1 _:buurten_HH ;
-            wf:input2 _:buurten_HH_RA ;
-            wf:output _:buurten_res_dens ;
-            cct:expression """        1: ObjectInfo(Count);
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "CalculateObjectVectorAmountRatio" ;
+                            wf:edge _:n21,
+                                _:n22 ;
+                            wf:source _:buurten_HH,
+                                _:buurten_HH_RA ;
+                            dct:subject """        1: ObjectInfo(Count);
+        2: ObjectInfo(Ratio);
+        join_attr
+            (get_attrL 1)
+            (apply2 ratio (get_attrR 1) (get_attrR 2))""" ] ;
+                    wf:input1 _:buurten_HH ;
+                    wf:input2 _:buurten_HH_RA ;
+                    wf:output _:buurten_res_dens ;
+                    cct:expression """        1: ObjectInfo(Count);
         2: ObjectInfo(Ratio);
         join_attr
             (get_attrL 1)
             (apply2 ratio (get_attrR 1) (get_attrR 2))""" ],
-        _:n6 ;
-    wf:source _:Amsterdam_buurt,
-        _:Amsterdam_land,
-        _:households ;
-    rdfs:comment "What is the proportion of area covered by residential landuse for each neighbourhood in Amsterdam?" .
-
-[] wf:applicationOf tools:wfwalk_residentialdensity ;
+                _:n6 ;
+            wf:source _:Amsterdam_buurt,
+                _:Amsterdam_land,
+                _:households ;
+            rdfs:comment "What is the proportion of area covered by residential landuse for each neighbourhood in Amsterdam?" ] ;
     wf:inputx _:Amsterdam_buurt,
         _:Amsterdam_land,
         _:households ;

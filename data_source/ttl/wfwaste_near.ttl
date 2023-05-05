@@ -6,29 +6,21 @@
 @prefix tools: <https://github.com/quangis/cct/blob/master/tools/tools.ttl#> .
 @prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
 
-tools:ConvertDist2TravelTimeonObjects a wf:Workflow ;
-    wf:edge _:n11,
-        _:n13 ;
-    wf:source _:residential_dwellings_dist ;
-    dct:subject """    1: ObjectInfo(Ratio);
-    join_attr
-        (get_attrL 1)
-        (apply1 (product (-:Ratio)) (get_attrR 1))""" .
-
-tools:wfwaste_near a wf:Workflow ;
-    wf:edge [ wf:applicationOf tools:SelectLayerByAttribute ;
-            wf:inputx _:verblijfsobject ;
-            wf:output _:residential_dwellings ;
-            rdfs:comment "Selecting residential dwellings" ;
-            cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
-        _:n11,
-        _:n13,
-        [ wf:applicationOf tools:SelectLayerByLocation ;
-            wf:input1 _:residential_dwellings ;
-            wf:input2 _:Amsterdam ;
-            wf:output _:residential_dwellings_amsterdam ;
-            rdfs:comment "Select swellings in th Amsterdam city center" ;
-            cct:expression """        1: ObjectInfo(Nom);
+[] wf:applicationOf [ a wf:Workflow ;
+            rdfs:label "wfwaste_near" ;
+            wf:edge [ wf:applicationOf tools:SelectLayerByAttribute ;
+                    wf:inputx _:verblijfsobject ;
+                    wf:output _:residential_dwellings ;
+                    rdfs:comment "Selecting residential dwellings" ;
+                    cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
+                _:n11,
+                _:n13,
+                [ wf:applicationOf tools:SelectLayerByLocation ;
+                    wf:input1 _:residential_dwellings ;
+                    wf:input2 _:Amsterdam ;
+                    wf:output _:residential_dwellings_amsterdam ;
+                    rdfs:comment "Select swellings in th Amsterdam city center" ;
+                    cct:expression """        1: ObjectInfo(Nom);
         2: ObjectInfo(Nom);
         subset
             1
@@ -37,25 +29,33 @@ tools:wfwaste_near a wf:Workflow ;
                 (oTopo (get_attrL 1) (get_attrL 2))
                 in
             ))""" ],
-        [ rdfs:label "Amsterdam city Neighborhoods" ;
-            wf:applicationOf tools:SelectLayerByAttribute ;
-            wf:inputx _:gebiedsindeling ;
-            wf:output _:Amsterdam ;
-            rdfs:comment "Select amsterdam centrum" ;
-            cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
-        [ wf:applicationOf tools:ConvertDist2TravelTimeonObjects ;
-            wf:inputx _:residential_dwellings_dist ;
-            wf:output _:residentialDwellingsDuration2 ;
-            cct:expression """    1: ObjectInfo(Ratio);
+                [ rdfs:label "Amsterdam city Neighborhoods" ;
+                    wf:applicationOf tools:SelectLayerByAttribute ;
+                    wf:inputx _:gebiedsindeling ;
+                    wf:output _:Amsterdam ;
+                    rdfs:comment "Select amsterdam centrum" ;
+                    cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "ConvertDist2TravelTimeonObjects" ;
+                            wf:edge _:n11,
+                                _:n13 ;
+                            wf:source _:residential_dwellings_dist ;
+                            dct:subject """    1: ObjectInfo(Ratio);
+    join_attr
+        (get_attrL 1)
+        (apply1 (product (-:Ratio)) (get_attrR 1))""" ] ;
+                    wf:inputx _:residential_dwellings_dist ;
+                    wf:output _:residentialDwellingsDuration2 ;
+                    cct:expression """    1: ObjectInfo(Ratio);
     join_attr
         (get_attrL 1)
         (apply1 (product (-:Ratio)) (get_attrR 1))""" ],
-        [ wf:applicationOf tools:SpatialJoin ;
-            wf:input1 _:residentialDwellingsDuration2 ;
-            wf:input2 _:Amsterdam ;
-            wf:output _:SumofDurationinDistrict ;
-            rdfs:comment "Sum up walking times over all dwellings in the amsterdam city center" ;
-            cct:expression """        1: ObjectInfo(Ratio);
+                [ wf:applicationOf tools:SpatialJoin ;
+                    wf:input1 _:residentialDwellingsDuration2 ;
+                    wf:input2 _:Amsterdam ;
+                    wf:output _:SumofDurationinDistrict ;
+                    rdfs:comment "Sum up walking times over all dwellings in the amsterdam city center" ;
+                    cct:expression """        1: ObjectInfo(Ratio);
         2: ObjectInfo(Nom);
         join_attr
             (get_attrL 2)
@@ -66,22 +66,20 @@ tools:wfwaste_near a wf:Workflow ;
                 ) in)
                 (getamounts 1)
             )))""" ],
-        [ wf:applicationOf tools:GenerateNearTable ;
-            wf:input1 _:residential_dwellings_amsterdam ;
-            wf:input2 _:afvalcontainers ;
-            wf:output _:residential_dwellings_dist ;
-            rdfs:comment "Generate distance to the closest waste container" ;
-            cct:expression """1: ObjectInfo(Nom);
+                [ wf:applicationOf tools:GenerateNearTable ;
+                    wf:input1 _:residential_dwellings_amsterdam ;
+                    wf:input2 _:afvalcontainers ;
+                    wf:output _:residential_dwellings_dist ;
+                    rdfs:comment "Generate distance to the closest waste container" ;
+                    cct:expression """1: ObjectInfo(Nom);
         2: ObjectInfo(Nom);
         join_attr
             (get_attrL 1)
             (groupbyL min (oDist (get_attrL 1) (get_attrL 2)))""" ] ;
-    wf:source _:afvalcontainers,
-        _:gebiedsindeling,
-        _:verblijfsobject ;
-    rdfs:comment "What is the total walking time from each household to the nearest waste disposal place in the Amsterdam city center?" .
-
-[] wf:applicationOf tools:wfwaste_near ;
+            wf:source _:afvalcontainers,
+                _:gebiedsindeling,
+                _:verblijfsobject ;
+            rdfs:comment "What is the total walking time from each household to the nearest waste disposal place in the Amsterdam city center?" ] ;
     wf:inputx _:afvalcontainers,
         _:gebiedsindeling,
         _:verblijfsobject ;
