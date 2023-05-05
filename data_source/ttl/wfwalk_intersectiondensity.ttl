@@ -40,7 +40,7 @@ tools:wfwalk_intersectiondensity a wf:Workflow ;
         _:n22,
         _:n24,
         [ wf:applicationOf tools:GenerateIntersections ;
-            wf:input1 _:streets ;
+            wf:inputx _:streets ;
             wf:output _:true_intersection ;
             rdfs:comment "Generate intersections from line objects by intersecting lines (with minimal cardinality)" ;
             cct:expression """    1: ObjectInfo(Nom);        
@@ -52,7 +52,7 @@ tools:wfwalk_intersectiondensity a wf:Workflow ;
         )
     )""" ],
         [ wf:applicationOf tools:CalculateObjectVectorDensity ;
-            wf:input1 _:BRdRaReOfInRecInter ;
+            wf:inputx _:BRdRaReOfInRecInter ;
             wf:output _:BRdRaReOfInRecInter4 ;
             rdfs:comment "Calculate object density" ;
             cct:expression """    1: ObjectInfo(Count);        
@@ -84,8 +84,8 @@ tools:wfwalk_intersectiondensity a wf:Workflow ;
     rdfs:comment "What is the density of street intersections for each neighbourhood in Amsterdam?" .
 
 [] wf:applicationOf tools:wfwalk_intersectiondensity ;
-    wf:input1 _:streets ;
-    wf:input2 _:buurten ;
+    wf:inputx _:buurten,
+        _:streets ;
     wf:output _:BRdRaReOfInRecInter4 ;
     rdfs:comment "What is the density of street intersections for each neighbourhood in Amsterdam?" .
 
@@ -103,30 +103,30 @@ _:intersections a ccd:NominalA,
         ccd:PointA .
 
 _:n1 wf:applicationOf tools:FeatureVerticesToPoints ;
-    wf:input1 _:streets ;
+    wf:inputx _:streets ;
     wf:output _:endpoints .
 
 _:n22 wf:applicationOf tools:CollectEvents ;
-    wf:input1 _:endpoints ;
+    wf:inputx _:endpoints ;
     wf:output _:intersections .
 
 _:n24 wf:applicationOf tools:SelectLayerByAttribute ;
-    wf:input1 _:intersections ;
+    wf:inputx _:intersections ;
     wf:output _:true_intersection ;
     rdfs:comment "Select only true intersections (with 3 or more streets (Edge count > 2))" .
 
 _:n6 wf:applicationOf tools:AddGeometryAttributes ;
-    wf:input1 _:BRdRaReOfInRecInter ;
+    wf:inputx _:BRdRaReOfInRecInter ;
     wf:output _:BRdRaReOfInRecInter2 ;
     rdfs:comment "Calculate the area of each neighborhood" .
 
 _:n8 wf:applicationOf tools:AddField ;
-    wf:input1 _:BRdRaReOfInRecInter2 ;
+    wf:inputx _:BRdRaReOfInRecInter2 ;
     wf:output _:BRdRaReOfInRecInter3 ;
     rdfs:comment "Add a field for intersection density per neighborhood" .
 
 _:n9 wf:applicationOf tools:CalculateField ;
-    wf:input1 _:BRdRaReOfInRecInter3 ;
+    wf:inputx _:BRdRaReOfInRecInter3 ;
     wf:output _:BRdRaReOfInRecInter4 ;
     rdfs:comment "Calculate intersection density per neighborhood" .
 

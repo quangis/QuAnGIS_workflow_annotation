@@ -36,19 +36,19 @@ tools:wfwaste_odour a wf:Workflow ;
         _:n12,
         [ rdfs:label "Amsterdam city Neighborhoods" ;
             wf:applicationOf tools:SelectLayerByAttribute ;
-            wf:input1 _:gebiedsindeling ;
+            wf:inputx _:gebiedsindeling ;
             wf:output _:Amsterdam_centrum ;
             rdfs:comment "Select amsterdam centrum" ;
             cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
         [ wf:applicationOf tools:addObjectCapacity ;
-            wf:input1 _:old_containers ;
+            wf:inputx _:old_containers ;
             wf:output _:old_containers3 ;
             rdfs:comment "Add a capacity to each waste container" ;
             cct:expression """    1: ObjectInfo(Nom);
     join_attr((get_attrL 1), (-: R2(Obj,Ratio)))""" ],
         _:n3,
         [ wf:applicationOf tools:KernelDensity ;
-            wf:input1 _:old_containers3 ;
+            wf:inputx _:old_containers3 ;
             wf:output _:old_container_density ;
             rdfs:comment "Computes a capacitated kernel density (distance weighted sum of attributes)" ;
             cct:expression """    1: ObjectInfo(Ratio);
@@ -74,31 +74,31 @@ tools:wfwaste_odour a wf:Workflow ;
     rdfs:comment "What is the sum of the kernel density of waste disposal places in the Amsterdam city center?" .
 
 [] wf:applicationOf tools:wfwaste_odour ;
-    wf:input1 _:old_containers ;
-    wf:input2 _:gebiedsindeling ;
+    wf:inputx _:gebiedsindeling,
+        _:old_containers ;
     wf:output _:old_zonal_stats3 ;
     rdfs:comment "What is the sum of the kernel density of waste disposal places in the Amsterdam city center?" .
 
 _:n0 wf:applicationOf tools:AddField ;
-    wf:input1 _:old_containers ;
+    wf:inputx _:old_containers ;
     wf:output _:old_containers2 .
 
 _:n10 wf:applicationOf tools:AlterField ;
-    wf:input1 _:old_zonal_stats ;
+    wf:inputx _:old_zonal_stats ;
     wf:output _:old_zonal_stats2 .
 
 _:n12 wf:applicationOf tools:JoinField ;
-    wf:input1 _:Amsterdam_centrum ;
-    wf:input2 _:old_zonal_stats2 ;
+    wf:inputx _:Amsterdam_centrum,
+        _:old_zonal_stats2 ;
     wf:output _:old_zonal_stats3 .
 
 _:n3 wf:applicationOf tools:CalculateField ;
-    wf:input1 _:old_containers2 ;
+    wf:inputx _:old_containers2 ;
     wf:output _:old_containers3 .
 
 _:n5 wf:applicationOf tools:ZonalStatisticsAsTable ;
-    wf:input1 _:old_container_density ;
-    wf:input2 _:Amsterdam_centrum ;
+    wf:inputx _:Amsterdam_centrum,
+        _:old_container_density ;
     wf:output _:old_zonal_stats .
 
 _:old_containers2 a ccd:NominalA,

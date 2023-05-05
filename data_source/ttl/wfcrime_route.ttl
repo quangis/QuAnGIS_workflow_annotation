@@ -32,7 +32,7 @@ tools:wfcrime_route a wf:Workflow ;
         _:n16,
         _:n2,
         [ wf:applicationOf tools:CreateAndBuildNetwork ;
-            wf:input1 _:roads ;
+            wf:inputx _:roads ;
             wf:output _:network ;
             cct:expression "nbuild (1: ObjectInfo(Ratio))" ],
         [ wf:applicationOf tools:RouteAnalysis ;
@@ -51,41 +51,41 @@ tools:wfcrime_route a wf:Workflow ;
     rdfs:comment "What is the shortest path from my home through my workplace, a gym and a supermarket in Amsterdam?" .
 
 [] wf:applicationOf tools:wfcrime_route ;
-    wf:input1 _:roads ;
-    wf:input2 _:home ;
-    wf:input3 _:work_sport_store_locations ;
+    wf:inputx _:home,
+        _:roads,
+        _:work_sport_store_locations ;
     wf:output _:route_analysis_layer_solved ;
     rdfs:comment "What is the shortest path from my home through my workplace, a gym and a supermarket in Amsterdam?" .
 
 _:n10 wf:applicationOf tools:MakeRouteAnalysisLayer ;
-    wf:input1 _:network ;
+    wf:inputx _:network ;
     wf:output _:route_analysis_layer ;
     rdfs:comment "Create a route analysis layer" .
 
 _:n12 wf:applicationOf tools:AddLocations ;
-    wf:input1 _:home ;
-    wf:input2 _:route_analysis_layer ;
+    wf:inputx _:home,
+        _:route_analysis_layer ;
     wf:output _:route_analysis_layer_home ;
     rdfs:comment "Add a home location to the route analysis layer" .
 
 _:n13 wf:applicationOf tools:AddLocations ;
-    wf:input1 _:work_sport_store_locations ;
-    wf:input2 _:route_analysis_layer_home ;
+    wf:inputx _:route_analysis_layer_home,
+        _:work_sport_store_locations ;
     wf:output _:route_analysis_layer_all ;
     rdfs:comment "Add a work, a sport, and a store location to the route analysis layer" .
 
 _:n16 wf:applicationOf tools:Solve ;
-    wf:input1 _:route_analysis_layer_all ;
+    wf:inputx _:route_analysis_layer_all ;
     wf:output _:route_analysis_layer_solved ;
     rdfs:comment "Execute the route analysis" .
 
 _:n2 wf:applicationOf tools:CreateNetworkDataset ;
-    wf:input1 _:roads ;
+    wf:inputx _:roads ;
     wf:output _:network_dataset ;
     rdfs:comment "Create a network dataset layer" .
 
 _:n8 wf:applicationOf tools:BuildNetwork ;
-    wf:input1 _:network_dataset ;
+    wf:inputx _:network_dataset ;
     wf:output _:network ;
     rdfs:comment "Build a representation of the Amsterdam road network" .
 

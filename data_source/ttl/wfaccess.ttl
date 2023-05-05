@@ -43,8 +43,8 @@ tools:SelectLayerByAttributeTessObjects a wf:Workflow ;
 tools:wfaccess a wf:Workflow ;
     wf:edge _:n0,
         [ wf:applicationOf tools:Clip ;
-            wf:input1 _:chochomoku ;
-            wf:input2 _:rural ;
+            wf:inputx _:chochomoku,
+                _:rural ;
             wf:output _:rural_clip ;
             cct:expression """        1: ObjectInfo(Count);
         2: ObjectInfo(Nom);
@@ -55,11 +55,11 @@ tools:wfaccess a wf:Workflow ;
                 in
             ))""" ],
         [ wf:applicationOf tools:SummaryStatistics ;
-            wf:input1 _:rural_clip ;
+            wf:inputx _:rural_clip ;
             wf:output _:rural_clip_popsum ;
             cct:expression "contentsum (getamounts (1: ObjectInfo(Ratio)))" ],
         [ wf:applicationOf tools:Buffer ;
-            wf:input1 _:roads ;
+            wf:inputx _:roads ;
             wf:output _:roads_buffer ;
             rdfs:comment "2km buffer" ;
             cct:expression "extrapol (get_attrL (1: ObjectInfo(Nom)))" ],
@@ -68,7 +68,7 @@ tools:wfaccess a wf:Workflow ;
         _:n21,
         _:n22,
         [ wf:applicationOf tools:SummaryStatistics ;
-            wf:input1 _:rural_2km_pop_est ;
+            wf:inputx _:rural_2km_pop_est ;
             wf:output _:rural_2km_pop_sum ;
             cct:expression "contentsum (1: Amounts(Ratio))" ],
         _:n29,
@@ -78,7 +78,7 @@ tools:wfaccess a wf:Workflow ;
         _:n36,
         _:n40,
         [ wf:applicationOf tools:SelectLayerByAttributeTessObjects ;
-            wf:input1 _:urbanization ;
+            wf:inputx _:urbanization ;
             wf:output _:rural ;
             cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
         [ wf:applicationOf tools:CalculatePartialAmountsfromObjects ;
@@ -106,65 +106,65 @@ tools:wfaccess a wf:Workflow ;
     dbo:abstract "In this lesson, you'll act as an analyst in Japan's National Statistical Office. To promote sustainable development in the nation's rural areas, you'll estimate access to all-season roads. First, you'll add population and road data and limit your study area to rural regions. Then, you'll create a 2-kilometer buffer around all-season roads and calculate the percentage of the rural population within that buffer." .
 
 [] wf:applicationOf tools:wfaccess ;
-    wf:input1 _:urbanization ;
-    wf:input2 _:chochomoku ;
-    wf:input3 _:roads ;
+    wf:inputx _:chochomoku,
+        _:roads,
+        _:urbanization ;
     wf:output _:rural_pop_estimate ;
     rdfs:comment "What is the percentage of the rural population within 2 km of all-season roads in Shikoku, Japan?" .
 
 _:n0 wf:applicationOf tools:SelectLayerByAttribute ;
-    wf:input1 _:urbanization ;
+    wf:inputx _:urbanization ;
     wf:output _:urbanization_select ;
     rdfs:comment "Add a field for area sizes" .
 
 _:n17 wf:applicationOf tools:Clip ;
-    wf:input1 _:rural_clip ;
-    wf:input2 _:roads_buffer ;
+    wf:inputx _:roads_buffer,
+        _:rural_clip ;
     wf:output _:rural_2km ;
     rdfs:comment "clip rural areas with the roads buffer and estimate the total population that is within the buffer of 2km" .
 
 _:n18 wf:applicationOf tools:AddFields ;
-    wf:input1 _:rural_2km ;
+    wf:inputx _:rural_2km ;
     wf:output _:rural_2km_addfields ;
     rdfs:comment "Add fields for area proportion and population proportion" .
 
 _:n21 wf:applicationOf tools:CalculateField ;
-    wf:input1 _:rural_2km_addfields ;
+    wf:inputx _:rural_2km_addfields ;
     wf:output _:rural_2km_area_perc ;
     rdfs:comment "Calculate proportion of area in buffer" .
 
 _:n22 wf:applicationOf tools:CalculateField ;
-    wf:input1 _:rural_2km_area_perc ;
+    wf:inputx _:rural_2km_area_perc ;
     wf:output _:rural_2km_pop_est ;
     rdfs:comment "Calculate proportion of population in buffer" .
 
 _:n29 wf:applicationOf tools:AddField ;
-    wf:input1 _:rural_2km_pop_sum ;
+    wf:inputx _:rural_2km_pop_sum ;
     wf:output _:rural_2km_pop_sum_addfield .
 
 _:n32 wf:applicationOf tools:CalculateField ;
-    wf:input1 _:rural_2km_pop_sum_addfield ;
+    wf:inputx _:rural_2km_pop_sum_addfield ;
     wf:output _:rural_2km_pop_sum_joinID .
 
 _:n34 wf:applicationOf tools:AddFields ;
-    wf:input1 _:rural_clip_popsum ;
+    wf:inputx _:rural_clip_popsum ;
     wf:output _:rural_clip_popsum_addfields .
 
 _:n35 wf:applicationOf tools:CalculateField ;
-    wf:input1 _:rural_clip_popsum_addfields ;
+    wf:inputx _:rural_clip_popsum_addfields ;
     wf:output _:rural_clip_popsum_addfields_calculatefield .
 
 _:n36 wf:applicationOf tools:JoinField ;
-    wf:input1 _:rural_clip_popsum_addfields_calculatefield ;
-    wf:input2 _:rural_2km_pop_sum_joinID ;
+    wf:inputx _:rural_2km_pop_sum_joinID,
+        _:rural_clip_popsum_addfields_calculatefield ;
     wf:output _:rural_clip_popsum_2km_join .
 
 _:n40 wf:applicationOf tools:CalculateField ;
-    wf:input1 _:rural_clip_popsum_2km_join ;
+    wf:inputx _:rural_clip_popsum_2km_join ;
     wf:output _:rural_pop_estimate .
 
 _:n9 wf:applicationOf tools:FeatureClassToFeatureClass ;
-    wf:input1 _:urbanization_select ;
+    wf:inputx _:urbanization_select ;
     wf:output _:rural .
 
 _:rural_2km a ccd:AmountQ,

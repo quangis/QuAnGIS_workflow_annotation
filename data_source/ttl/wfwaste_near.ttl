@@ -17,7 +17,7 @@ tools:ConvertDist2TravelTimeonObjects a wf:Workflow ;
 
 tools:wfwaste_near a wf:Workflow ;
     wf:edge [ wf:applicationOf tools:SelectLayerByAttribute ;
-            wf:input1 _:verblijfsobject ;
+            wf:inputx _:verblijfsobject ;
             wf:output _:residential_dwellings ;
             rdfs:comment "Selecting residential dwellings" ;
             cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
@@ -39,12 +39,12 @@ tools:wfwaste_near a wf:Workflow ;
             ))""" ],
         [ rdfs:label "Amsterdam city Neighborhoods" ;
             wf:applicationOf tools:SelectLayerByAttribute ;
-            wf:input1 _:gebiedsindeling ;
+            wf:inputx _:gebiedsindeling ;
             wf:output _:Amsterdam ;
             rdfs:comment "Select amsterdam centrum" ;
             cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
         [ wf:applicationOf tools:ConvertDist2TravelTimeonObjects ;
-            wf:input1 _:residential_dwellings_dist ;
+            wf:inputx _:residential_dwellings_dist ;
             wf:output _:residentialDwellingsDuration2 ;
             cct:expression """    1: ObjectInfo(Ratio);
     join_attr
@@ -82,18 +82,18 @@ tools:wfwaste_near a wf:Workflow ;
     rdfs:comment "What is the total walking time from each household to the nearest waste disposal place in the Amsterdam city center?" .
 
 [] wf:applicationOf tools:wfwaste_near ;
-    wf:input1 _:verblijfsobject ;
-    wf:input2 _:gebiedsindeling ;
-    wf:input3 _:afvalcontainers ;
+    wf:inputx _:afvalcontainers,
+        _:gebiedsindeling,
+        _:verblijfsobject ;
     wf:output _:SumofDurationinDistrict ;
     rdfs:comment "What is the total walking time from each household to the nearest waste disposal place in the Amsterdam city center?" .
 
 _:n11 wf:applicationOf tools:AddField ;
-    wf:input1 _:residential_dwellings_dist ;
+    wf:inputx _:residential_dwellings_dist ;
     wf:output _:residentialDwellingsDuration .
 
 _:n13 wf:applicationOf tools:CalculateField ;
-    wf:input1 _:residentialDwellingsDuration ;
+    wf:inputx _:residentialDwellingsDuration ;
     wf:output _:residentialDwellingsDuration2 .
 
 _:residentialDwellingsDuration rdfs:label "Dwellings Amsterdam (Time_Prep)" ;

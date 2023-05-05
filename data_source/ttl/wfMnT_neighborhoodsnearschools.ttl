@@ -48,7 +48,7 @@ tools:wfMnT_neighborhoodsnearschools a wf:Workflow ;
         _:n16,
         _:n19,
         [ wf:applicationOf tools:SelectNeighborhoodsByAttributeTessObjects ;
-            wf:input1 _:neighborhoods ;
+            wf:inputx _:neighborhoods ;
             wf:output _:neighborhoods_Utrecht ;
             cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
         _:n3,
@@ -84,40 +84,40 @@ tools:wfMnT_neighborhoodsnearschools a wf:Workflow ;
     rdfs:comment "Which neighborhoods are within 100 meters from a school in Utrecht?" .
 
 [] wf:applicationOf tools:wfMnT_neighborhoodsnearschools ;
-    wf:input1 _:neighborhoods ;
-    wf:input2 _:schools ;
+    wf:inputx _:neighborhoods,
+        _:schools ;
     wf:output _:neighborhoods_Utrecht_near_schools ;
     rdfs:comment "Which neighborhoods are within 100 meters from a school in Utrecht?" .
 
 _:n0 wf:applicationOf tools:SelectLayerByAttribute ;
-    wf:input1 _:neighborhoods ;
+    wf:inputx _:neighborhoods ;
     wf:output _:neighborhoods_select ;
     rdfs:comment "Select neighborhoods in the Utrecht municipality" .
 
 _:n12 wf:applicationOf tools:ExportFeatures ;
-    wf:input1 _:schools_select ;
+    wf:inputx _:schools_select ;
     wf:output _:schools_Utrecht ;
     rdfs:comment "Extract selected schools (in Utrecht municipality) to new layer file" .
 
 _:n16 wf:applicationOf tools:SelectLayerByLocation ;
-    wf:input1 _:neighborhoods_Utrecht ;
-    wf:input2 _:schools_Utrecht ;
+    wf:inputx _:neighborhoods_Utrecht,
+        _:schools_Utrecht ;
     wf:output _:neighborhoods_Utrecht_select ;
     rdfs:comment "Select Utrecht neighborhoods that are within 100 meters of a school" .
 
 _:n19 wf:applicationOf tools:ExportFeatures ;
-    wf:input1 _:neighborhoods_Utrecht_select ;
+    wf:inputx _:neighborhoods_Utrecht_select ;
     wf:output _:neighborhoods_Utrecht_near_schools ;
     rdfs:comment "Extract selected Utrecht neighborhoods (that are within 100 meters of a school)" .
 
 _:n3 wf:applicationOf tools:ExportFeatures ;
-    wf:input1 _:neighborhoods_select ;
+    wf:inputx _:neighborhoods_select ;
     wf:output _:neighborhoods_Utrecht ;
     rdfs:comment "Extract selected neighborhoods (in Utrecht municipality) to new layer file" .
 
 _:n8 wf:applicationOf tools:SelectLayerByLocation ;
-    wf:input1 _:schools ;
-    wf:input2 _:neighborhoods_Utrecht ;
+    wf:inputx _:neighborhoods_Utrecht,
+        _:schools ;
     wf:output _:schools_select ;
     rdfs:comment "Select schools that are within the Utrecht municipality" .
 

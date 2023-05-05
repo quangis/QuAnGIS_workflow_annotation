@@ -87,11 +87,11 @@ tools:wfMnT_population a wf:Workflow ;
         _:n45,
         _:n47,
         [ wf:applicationOf tools:BufferDissolve ;
-            wf:input1 _:A2_highway ;
+            wf:inputx _:A2_highway ;
             wf:output _:A2_highway_buffer ;
             cct:expression "extrapol (get_attrL (1: ObjectInfo(Nom)))" ],
         [ wf:applicationOf tools:ExportFeatures ;
-            wf:input1 _:admin_areas ;
+            wf:inputx _:admin_areas ;
             wf:output _:provinces ;
             rdfs:comment "Extract provinces from administrative areas of NL" ;
             cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
@@ -122,7 +122,7 @@ tools:wfMnT_population a wf:Workflow ;
                 in
             ))""" ],
         [ wf:applicationOf tools:CalculateDensityonObject ;
-            wf:input1 _:pop_centers_near_A2 ;
+            wf:inputx _:pop_centers_near_A2 ;
             wf:output _:pop_centers_near_A2_pop_dens ;
             cct:expression """ 1: ObjectInfo(Count);        
         join_attr
@@ -150,9 +150,9 @@ tools:wfMnT_population a wf:Workflow ;
     rdfs:comment "What is the number of people within 1000 meters of the A2 highway in the Netherlands?" .
 
 [] wf:applicationOf tools:wfMnT_population ;
-    wf:input1 _:admin_areas ;
-    wf:input2 _:A2_highway ;
-    wf:input3 _:pop_centers ;
+    wf:inputx _:A2_highway,
+        _:admin_areas,
+        _:pop_centers ;
     wf:output _:pop_clip_geom_attr_addfield ;
     rdfs:comment "What is the number of people within 1000 meters of the A2 highway in the Netherlands?" .
 
@@ -161,75 +161,75 @@ _:A2_highway_buffers a ccd:BooleanA,
         ccd:PlainVectorRegionA .
 
 _:n11 wf:applicationOf tools:ExportFeatures ;
-    wf:input1 _:provinces_select ;
+    wf:inputx _:provinces_select ;
     wf:output _:provinces_near_A2 ;
     rdfs:comment "Extract provinces within 1000 meters of the A2 highway" .
 
 _:n14 wf:applicationOf tools:SelectLayerByLocation ;
-    wf:input1 _:pop_centers ;
-    wf:input2 _:provinces_near_A2 ;
+    wf:inputx _:pop_centers,
+        _:provinces_near_A2 ;
     wf:output _:pop_centers_select ;
     rdfs:comment "Select population centers in provinces near the A2 highway" .
 
 _:n18 wf:applicationOf tools:ExportFeatures ;
-    wf:input1 _:pop_centers_select ;
+    wf:inputx _:pop_centers_select ;
     wf:output _:pop_centers_near_A2 ;
     rdfs:comment "Export selected population centers near the A2 highway to new layer" .
 
 _:n20 wf:applicationOf tools:AddField ;
-    wf:input1 _:pop_centers_near_A2 ;
+    wf:inputx _:pop_centers_near_A2 ;
     wf:output _:pop_centers_near_A2_addfield ;
     rdfs:comment "Add field for population density" .
 
 _:n24 wf:applicationOf tools:AddField ;
-    wf:input1 _:pop_centers_near_A2_addfield ;
+    wf:inputx _:pop_centers_near_A2_addfield ;
     wf:output _:pop_centers_near_A2_addfield_addfield ;
     rdfs:comment "Add field for area size" .
 
 _:n27 wf:applicationOf tools:CalculateGeometryAttributes ;
-    wf:input1 _:pop_centers_near_A2_addfield_addfield ;
+    wf:inputx _:pop_centers_near_A2_addfield_addfield ;
     wf:output _:pop_centers_near_A2_geom_attr ;
     rdfs:comment "Calculate the area size of each population center" .
 
 _:n31 wf:applicationOf tools:CalculateField ;
-    wf:input1 _:pop_centers_near_A2_geom_attr ;
+    wf:inputx _:pop_centers_near_A2_geom_attr ;
     wf:output _:pop_centers_near_A2_pop_dens ;
     rdfs:comment "Calculate the population density of each population center" .
 
 _:n33 wf:applicationOf tools:Clip ;
-    wf:input1 _:pop_centers_near_A2_pop_dens ;
-    wf:input2 _:A2_highway_buffer ;
+    wf:inputx _:A2_highway_buffer,
+        _:pop_centers_near_A2_pop_dens ;
     wf:output _:pop_clip ;
     rdfs:comment "Clip the population centers using the A2_buffer" .
 
 _:n34 wf:applicationOf tools:Buffer ;
-    wf:input1 _:A2_highway ;
+    wf:inputx _:A2_highway ;
     wf:output _:A2_highway_buffers ;
     rdfs:comment "Generate a buffer of 1000 meters around each A2 highway line segment" .
 
 _:n37 wf:applicationOf tools:Dissolve ;
-    wf:input1 _:A2_highway_buffers ;
+    wf:inputx _:A2_highway_buffers ;
     wf:output _:A2_highway_buffer ;
     rdfs:comment "Dissolve the 1000 meter buffers around the A2 highway line segments" .
 
 _:n43 wf:applicationOf tools:CalculateGeometryAttributes ;
-    wf:input1 _:pop_clip ;
+    wf:inputx _:pop_clip ;
     wf:output _:pop_clip_geom_attr ;
     rdfs:comment "Calculate the area size of each clip-segment of the population centers" .
 
 _:n45 wf:applicationOf tools:AddField ;
-    wf:input1 _:pop_clip_geom_attr ;
+    wf:inputx _:pop_clip_geom_attr ;
     wf:output _:pop_clip_geom_attr_addfield ;
     rdfs:comment "Add a field for storing a population estimation" .
 
 _:n47 wf:applicationOf tools:CalculateField ;
-    wf:input1 _:pop_clip_geom_attr_addfield ;
+    wf:inputx _:pop_clip_geom_attr_addfield ;
     wf:output _:pop_clip_geom_attr_addfield ;
     rdfs:comment "Calculate the estimated populatoin count for each cut segment of the population centers" .
 
 _:n9 wf:applicationOf tools:SelectLayerByLocation ;
-    wf:input1 _:A2_highway ;
-    wf:input2 _:provinces ;
+    wf:inputx _:A2_highway,
+        _:provinces ;
     wf:output _:provinces_select ;
     rdfs:comment "Select provinces within 1000 meters of the A2 highway" .
 

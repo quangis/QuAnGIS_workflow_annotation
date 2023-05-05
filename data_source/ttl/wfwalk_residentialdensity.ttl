@@ -33,7 +33,7 @@ tools:wfwalk_residentialdensity a wf:Workflow ;
         _:n11,
         _:n13,
         [ wf:applicationOf tools:SelectLayerByAttribute ;
-            wf:input1 _:Amsterdam_land ;
+            wf:inputx _:Amsterdam_land ;
             wf:output _:residential_area ;
             rdfs:comment "Select residential area in Amsterdam" ;
             cct:expression "revert (select eq (invert (1: Field(Nom)): Coverages(Nom)) (-: Nom))" ],
@@ -78,9 +78,9 @@ tools:wfwalk_residentialdensity a wf:Workflow ;
     rdfs:comment "What is the proportion of area covered by residential landuse for each neighbourhood in Amsterdam?" .
 
 [] wf:applicationOf tools:wfwalk_residentialdensity ;
-    wf:input1 _:Amsterdam_buurt ;
-    wf:input2 _:Amsterdam_land ;
-    wf:input3 _:households ;
+    wf:inputx _:Amsterdam_buurt,
+        _:Amsterdam_land,
+        _:households ;
     wf:output _:buurten_res_dens ;
     rdfs:comment "What is the proportion of area covered by residential landuse for each neighbourhood in Amsterdam?" .
 
@@ -96,34 +96,34 @@ _:buurten_HH_Temp2 a ccd:CountA,
         ccd:VectorTessellationA .
 
 _:n0 wf:applicationOf tools:CopyFeatures ;
-    wf:input1 _:Amsterdam_buurt ;
+    wf:inputx _:Amsterdam_buurt ;
     wf:output _:buurten ;
     rdfs:comment "Copy vector polygons representing buurten of Amsterdam to local file" .
 
 _:n11 wf:applicationOf tools:AddField ;
-    wf:input1 _:buurten_HH_Temp ;
+    wf:inputx _:buurten_HH_Temp ;
     wf:output _:buurten_HH_Temp2 ;
     rdfs:comment "Add field for household count data to an attribute in the buurten attribute table" .
 
 _:n13 wf:applicationOf tools:CalculateField ;
-    wf:input1 _:buurten_HH_Temp2 ;
+    wf:inputx _:buurten_HH_Temp2 ;
     wf:output _:buurten_HH ;
     rdfs:comment "Copy household count data to an attribute in the buurten attribute table" .
 
 _:n21 wf:applicationOf tools:AddField ;
-    wf:input1 _:buurten_HH_RA ;
+    wf:inputx _:buurten_HH_RA ;
     wf:output _:buurten_HH_RA2 ;
     rdfs:comment "Add a residential density attribute" .
 
 _:n22 wf:applicationOf tools:CalculateField ;
-    wf:input1 _:buurten_HH ;
-    wf:input2 _:buurten_HH_RA2 ;
+    wf:inputx _:buurten_HH,
+        _:buurten_HH_RA2 ;
     wf:output _:buurten_res_dens ;
     rdfs:comment "Calculate residential density" .
 
 _:n6 wf:applicationOf tools:JoinField ;
-    wf:input1 _:households ;
-    wf:input2 _:buurten ;
+    wf:inputx _:buurten,
+        _:households ;
     wf:output _:buurten_HH_Temp ;
     rdfs:comment "Join household count data to the buurten attribute table" .
 

@@ -115,7 +115,7 @@ tools:wfwalk_landusemix a wf:Workflow ;
         _:n24,
         _:n25,
         [ wf:applicationOf tools:SelectLayerByAttribute ;
-            wf:input1 _:Amsterdam_land ;
+            wf:inputx _:Amsterdam_land ;
             wf:output _:retail_area ;
             rdfs:comment "Select retail area in Amsterdam" ;
             cct:expression "revert (select eq (invert (1: Field(Nom)): Coverages(Nom)) (-: Nom))" ],
@@ -159,17 +159,17 @@ tools:wfwalk_landusemix a wf:Workflow ;
             )
         )""" ],
         [ wf:applicationOf tools:SelectLayerByAttribute ;
-            wf:input1 _:Amsterdam_land ;
+            wf:inputx _:Amsterdam_land ;
             wf:output _:office_area ;
             rdfs:comment "Select office area in Amsterdam" ;
             cct:expression "revert (select eq (invert (1: Field(Nom)): Coverages(Nom)) (-: Nom))" ],
         [ wf:applicationOf tools:SelectLayerByAttribute ;
-            wf:input1 _:Amsterdam_land ;
+            wf:inputx _:Amsterdam_land ;
             wf:output _:institution_area ;
             rdfs:comment "Select institution area in Amsterdam" ;
             cct:expression "revert (select eq (invert (1: Field(Nom)): Coverages(Nom)) (-: Nom))" ],
         [ wf:applicationOf tools:SelectLayerByAttribute ;
-            wf:input1 _:Amsterdam_land ;
+            wf:inputx _:Amsterdam_land ;
             wf:output _:recreational_area ;
             rdfs:comment "Select recreational area in Amsterdam" ;
             cct:expression "revert (select eq (invert (1: Field(Nom)): Coverages(Nom)) (-: Nom))" ] ;
@@ -178,8 +178,8 @@ tools:wfwalk_landusemix a wf:Workflow ;
     rdfs:comment "What is the diversity of land use for each neighborhood in Amsterdam?" .
 
 [] wf:applicationOf tools:wfwalk_landusemix ;
-    wf:input1 _:Amsterdam_buurt ;
-    wf:input2 _:Amsterdam_land ;
+    wf:inputx _:Amsterdam_buurt,
+        _:Amsterdam_land ;
     wf:output _:BRdRaReOfInRec3 ;
     rdfs:comment "What is the diversity of land use for each neighborhood in Amsterdam?" .
 
@@ -191,15 +191,15 @@ _:institution_area a ccd:FieldQ,
         ccd:PlainVectorRegionA .
 
 _:n24 wf:applicationOf tools:AddField ;
-    wf:input1 _:BRdRaReOfInRec ;
+    wf:inputx _:BRdRaReOfInRec ;
     wf:output _:BRdRaReOfInRec2 ;
     rdfs:comment "Add a land use mix attribute" .
 
 _:n25 wf:applicationOf tools:CalculateField ;
-    wf:input1 _:BRdRaRe ;
-    wf:input2 _:BRdRaReOf ;
-    wf:input3 _:BRdRaReOfIn ;
-    wf:input4 _:BRdRaReOfInRec2 ;
+    wf:inputx _:BRdRaRe,
+        _:BRdRaReOf,
+        _:BRdRaReOfIn,
+        _:BRdRaReOfInRec2 ;
     wf:output _:BRdRaReOfInRec3 ;
     rdfs:comment "Calculate a land use mix attribute" .
 

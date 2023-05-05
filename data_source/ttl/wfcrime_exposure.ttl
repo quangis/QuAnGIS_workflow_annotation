@@ -60,7 +60,7 @@ tools:wfcrime_exposure a wf:Workflow ;
 2: ObjectExtent; 
 join_attr 2 1""" ],
         [ wf:applicationOf tools:ComputeCountDensityonObject ;
-            wf:input1 _:buurt_crime ;
+            wf:inputx _:buurt_crime ;
             wf:output _:buurt_crime_density ;
             cct:expression """ 1: ObjectInfo(Count);        
         join_attr
@@ -85,9 +85,9 @@ arealinterpol
     rdfs:comment "What is the crime density along the shortest path from my home to my workplace in Amsterdam?" .
 
 [] wf:applicationOf tools:wfcrime_exposure ;
-    wf:input1 _:buurt ;
-    wf:input2 _:crimes ;
-    wf:input3 _:routes ;
+    wf:inputx _:buurt,
+        _:crimes,
+        _:routes ;
     wf:output _:buurt_crime_density_avg ;
     rdfs:comment "What is the crime density along the shortest path from my home to my workplace in Amsterdam?" .
 
@@ -117,22 +117,22 @@ _:n0 wf:applicationOf tools:JoinField ;
     rdfs:comment "Join crime data to vector polygons representing buurten of Amsterdam " .
 
 _:n10 wf:applicationOf tools:AddField ;
-    wf:input1 _:buurt_crime ;
+    wf:inputx _:buurt_crime ;
     wf:output _:buurt_crime_addfield ;
     rdfs:comment "Add a field for area sizes" .
 
 _:n12 wf:applicationOf tools:CalculateGeometryAttributes ;
-    wf:input1 _:buurt_crime_addfield ;
+    wf:inputx _:buurt_crime_addfield ;
     wf:output _:buurt_crime_geom ;
     rdfs:comment "Calculate area sizes for the Amsterdam neighborhoods" .
 
 _:n13 wf:applicationOf tools:AddField ;
-    wf:input1 _:buurt_crime_geom ;
+    wf:inputx _:buurt_crime_geom ;
     wf:output _:buurt_crime_geom_addfield ;
     rdfs:comment "Add a field for copying the crime counts in Amsterdam neighborhoods" .
 
 _:n14 wf:applicationOf tools:CalculateField ;
-    wf:input1 _:buurt_crime_geom_addfield ;
+    wf:inputx _:buurt_crime_geom_addfield ;
     wf:output _:buurt_crime_count ;
     rdfs:comment "Copy the crime counts in Amsterdam neighborhoods to new field" .
 
@@ -143,22 +143,22 @@ _:n16 wf:applicationOf tools:Intersect ;
     rdfs:comment "Intersect neighborhoods with crime density values with routes in Amsterdam" .
 
 _:n19 wf:applicationOf tools:SummaryStatistics ;
-    wf:input1 _:buurt_crime_density ;
+    wf:inputx _:buurt_crime_density ;
     wf:output _:buurt_crime_density_avg ;
     rdfs:comment "Get the average crime density along the route" .
 
 _:n28 wf:applicationOf tools:AddField ;
-    wf:input1 _:buurt_crime_count ;
+    wf:inputx _:buurt_crime_count ;
     wf:output _:buurt_crime_count_addfield ;
     rdfs:comment "Add a field for crime density" .
 
 _:n29 wf:applicationOf tools:CalculateField ;
-    wf:input1 _:buurt_crime_count_addfield ;
+    wf:inputx _:buurt_crime_count_addfield ;
     wf:output _:buurt_crime_density ;
     rdfs:comment "Calculate crime density" .
 
 _:n7 wf:applicationOf tools:CopyFeatures ;
-    wf:input1 _:buurt_crime_join ;
+    wf:inputx _:buurt_crime_join ;
     wf:output _:buurt_crime ;
     rdfs:comment "Copy the join to a new layer" .
 

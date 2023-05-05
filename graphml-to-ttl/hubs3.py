@@ -234,7 +234,10 @@ class Action(Hub):
                 other = edge[0]
                 other_shape = self.graph.nodes[other]['shape_type']
                 if other_shape == 'parallelogram':
-                    store_item(other, self.inputs, edge_label, increment_key=True)
+                    if edge_label:
+                        store_item(other, self.inputs, edge_label + '_manual')
+                    else:
+                        store_item(other, self.inputs, edge_label, increment_key=True)
                 elif other_shape == 'fatarrow':
                     store_item(other, self.comments, edge_label)
                 elif other_shape == 'octagon':
@@ -310,9 +313,14 @@ class Action(Hub):
 
         # Add inputs
         for input in self.inputs.items():
+            predicate = namespaces['wf']['inputx']
+            if isinstance(input[0], str):
+                if '_manual' in input[0]:
+                    predicate = namespaces['wf']['input' + input[0].replace('_manual', '')]
+
             input_label = self.graph.nodes[input[1]]['label']
             rdf_graph.add((rdf.term.BNode(self.node), #namespaces['data'][self.node],
-                           namespaces['wf']['input' + str(int(input[0]))],
+                           predicate,
                            rdf.term.BNode(input_label))) #namespaces['data'][input_label]))
 
         # Add outputs

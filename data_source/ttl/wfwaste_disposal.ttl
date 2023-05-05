@@ -39,7 +39,7 @@ tools:wfwaste_disposal a wf:Workflow ;
         _:n11,
         _:n2,
         [ wf:applicationOf tools:CreateNetwork ;
-            wf:input1 _:waterways ;
+            wf:inputx _:waterways ;
             wf:output _:waterways3 ;
             rdfs:comment "Builds ratio network from line objects" ;
             cct:expression """    1: ObjectInfo(Nom);
@@ -69,36 +69,36 @@ tools:wfwaste_disposal a wf:Workflow ;
     rdfs:comment "What is the travel time along waterways from the AEB incineration plant through every waste disposal place in Amsterdam?" .
 
 [] wf:applicationOf tools:wfwaste_disposal ;
-    wf:input1 _:waterways ;
-    wf:input2 _:afvalcontainers ;
-    wf:input3 _:AEBfacility ;
+    wf:inputx _:AEBfacility,
+        _:afvalcontainers,
+        _:waterways ;
     wf:output _:routes ;
     rdfs:comment "What is the travel time along waterways from the AEB incineration plant through every waste disposal place in Amsterdam?" .
 
 _:n0 wf:applicationOf tools:CreateNetworkDataset ;
-    wf:input1 _:waterways ;
+    wf:inputx _:waterways ;
     wf:output _:waterways2 .
 
 _:n11 wf:applicationOf tools:Solve ;
-    wf:input1 _:waterways6 ;
+    wf:inputx _:waterways6 ;
     wf:output _:routes .
 
 _:n2 wf:applicationOf tools:BuildNetwork ;
-    wf:input1 _:waterways2 ;
+    wf:inputx _:waterways2 ;
     wf:output _:waterways3 .
 
 _:n4 wf:applicationOf tools:MakeRouteAnalysisLayer ;
-    wf:input1 _:waterways3 ;
+    wf:inputx _:waterways3 ;
     wf:output _:waterways4 .
 
 _:n7 wf:applicationOf tools:AddLocations ;
-    wf:input1 _:waterways4 ;
-    wf:input2 _:afvalcontainers ;
+    wf:inputx _:afvalcontainers,
+        _:waterways4 ;
     wf:output _:waterways5 .
 
 _:n9 wf:applicationOf tools:AddLocations ;
-    wf:input1 _:waterways5 ;
-    wf:input2 _:AEBfacility ;
+    wf:inputx _:AEBfacility,
+        _:waterways5 ;
     wf:output _:waterways6 .
 
 _:waterways2 a ccd:LineA,
