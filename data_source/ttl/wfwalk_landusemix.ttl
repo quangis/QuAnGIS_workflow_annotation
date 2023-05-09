@@ -194,10 +194,10 @@ _:n24 wf:applicationOf tools:AddField ;
     rdfs:comment "Add a land use mix attribute" .
 
 _:n25 wf:applicationOf tools:CalculateField ;
-    wf:inputx _:BRdRaRe,
-        _:BRdRaReOf,
-        _:BRdRaReOfIn,
-        _:BRdRaReOfInRec2 ;
+    wf:input1 _:BRdRaRe ;
+    wf:input2 _:BRdRaReOf ;
+    wf:input3 _:BRdRaReOfIn ;
+    wf:input4 _:BRdRaReOfInRec2 ;
     wf:output _:BRdRaReOfInRec3 ;
     rdfs:comment "Calculate a land use mix attribute" .
 

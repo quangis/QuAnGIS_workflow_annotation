@@ -160,8 +160,8 @@ _:n11 wf:applicationOf tools:ExportFeatures ;
     rdfs:comment "Extract provinces within 1000 meters of the A2 highway" .
 
 _:n14 wf:applicationOf tools:SelectLayerByLocation ;
-    wf:inputx _:pop_centers,
-        _:provinces_near_A2 ;
+    wf:input1 _:pop_centers ;
+    wf:input2 _:provinces_near_A2 ;
     wf:output _:pop_centers_select ;
     rdfs:comment "Select population centers in provinces near the A2 highway" .
 
@@ -191,8 +191,8 @@ _:n31 wf:applicationOf tools:CalculateField ;
     rdfs:comment "Calculate the population density of each population center" .
 
 _:n33 wf:applicationOf tools:Clip ;
-    wf:inputx _:A2_highway_buffer,
-        _:pop_centers_near_A2_pop_dens ;
+    wf:input1 _:pop_centers_near_A2_pop_dens ;
+    wf:input2 _:A2_highway_buffer ;
     wf:output _:pop_clip ;
     rdfs:comment "Clip the population centers using the A2_buffer" .
 
@@ -222,8 +222,8 @@ _:n47 wf:applicationOf tools:CalculateField ;
     rdfs:comment "Calculate the estimated populatoin count for each cut segment of the population centers" .
 
 _:n9 wf:applicationOf tools:SelectLayerByLocation ;
-    wf:inputx _:A2_highway,
-        _:provinces ;
+    wf:input1 _:provinces ;
+    wf:input2 _:A2_highway ;
     wf:output _:provinces_select ;
     rdfs:comment "Select provinces within 1000 meters of the A2 highway" .
 

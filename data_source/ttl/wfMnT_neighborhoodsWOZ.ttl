@@ -59,8 +59,8 @@ _:WOZ_select a ccd:ObjectQ,
         ccd:RatioA .
 
 _:n10 wf:applicationOf tools:AddJoin ;
-    wf:inputx _:WOZ_pos,
-        _:neighborhoods_Utrecht_near_schools ;
+    wf:input1 _:neighborhoods_Utrecht_near_schools ;
+    wf:input2 _:WOZ_pos ;
     wf:output _:neighborhoods_Utrecht_near_schools_WOZ_pos_join ;
     rdfs:comment "Join the data of WOZ to the attribute table of the neighborhoods in Utrecht near schools based on neighborhood names" .
 

@@ -113,14 +113,14 @@ _:n21 wf:applicationOf tools:AddField ;
     rdfs:comment "Add a residential density attribute" .
 
 _:n22 wf:applicationOf tools:CalculateField ;
-    wf:inputx _:buurten_HH,
-        _:buurten_HH_RA2 ;
+    wf:input1 _:buurten_HH ;
+    wf:input2 _:buurten_HH_RA2 ;
     wf:output _:buurten_res_dens ;
     rdfs:comment "Calculate residential density" .
 
 _:n6 wf:applicationOf tools:JoinField ;
-    wf:inputx _:buurten,
-        _:households ;
+    wf:input1 _:households ;
+    wf:input2 _:buurten ;
     wf:output _:buurten_HH_Temp ;
     rdfs:comment "Join household count data to the buurten attribute table" .
 
