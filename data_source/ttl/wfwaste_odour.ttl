@@ -116,6 +116,10 @@ _:old_containers3 a ccd:ERA,
         ccd:ObjectQ,
         ccd:PointA .
 
+_:old_zonal_stats3 a ccd:ERA,
+        ccd:ObjectQ,
+        ccd:PlainVectorRegionA .
+
 _:old_container_density a ccd:FieldQ,
         ccd:RasterA,
         ccd:RatioA .

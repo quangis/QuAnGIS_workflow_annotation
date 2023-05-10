@@ -25,6 +25,20 @@ ccd_test_cache = {}  # Stores nodes that already had their signatures tested
 
 
 # # # Auxiliary functions # # #
+def check_graph(g):
+    def check_artefacts(g):
+        artefact_nodes = [node for node in g.nodes if g.nodes[node]['shape_type'] == 'parallelogram']
+        for idx1, a1 in enumerate(artefact_nodes):
+            for idx2, a2 in enumerate(artefact_nodes):
+                if idx1 != idx2 and g.nodes[a1]['label'] == g.nodes[a2]['label']:
+                    if g.nodes[a2]['label'][-1].isdigit():
+                        g.nodes[a2]['label'] = g.nodes[a2]['label'][:-1] + str(int(g.nodes[a2]['label'][-1]) + 1)
+                    else:
+                        g.nodes[a2]['label'] += '2'
+                    check_artefacts(g)
+    check_artefacts(g)
+
+
 # Clears Hub._instances, cct_test_cache, ccd_test_cache
 def clear_all_caches():
     Hub.clear_cache()
@@ -258,6 +272,7 @@ class Action(Hub):
 
                 # Get all nodes down the branch
                 parallels = dfs(graph.edges, edge[0], reverse=True, limit=set(self.inputs.values()))
+                parallels = parallels.union(self.outputs.values())
 
                 # Filter out actions and input/outputs
                 shape_types = ['parallelogram', 'roundrectangle']

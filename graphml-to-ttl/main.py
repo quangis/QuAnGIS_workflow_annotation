@@ -12,6 +12,7 @@ def main():
         if file.endswith('.graphml'):
             g = nx.read_graphml(input_folder + file)
             add_context_edges(g)
+            check_graph(g)
             print(file.replace('.graphml', ''))
             wf_node = [x for x, y in g.nodes(data=True) if y['label'] == file.replace('.graphml', '')][0]
             wf = Action(wf_node, g)

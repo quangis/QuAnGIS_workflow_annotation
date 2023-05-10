@@ -113,7 +113,7 @@
                 (get_attrL 1)
             ))""" ],
                 [ wf:applicationOf [ a wf:Workflow ;
-                            rdfs:label "CalculatePartialAmountsfromObjects" ;
+                            rdfs:label "DerivePartsOfPopCenters" ;
                             wf:edge _:n33,
                                 _:n43,
                                 _:n45,
@@ -130,7 +130,7 @@
             ) in)))""" ] ;
                     wf:input1 _:pop_centers_near_A2_pop_dens ;
                     wf:input2 _:A2_highway_buffer ;
-                    wf:output _:pop_clip_geom_attr_addfield ;
+                    wf:output _:pop_clip_geom_attr_addfield2 ;
                     cct:expression """        1: ObjectInfo(Ratio);
         2: Field(Bool);
         arealinterpol
@@ -147,7 +147,7 @@
     wf:inputx _:A2_highway,
         _:admin_areas,
         _:pop_centers ;
-    wf:output _:pop_clip_geom_attr_addfield ;
+    wf:output _:pop_clip_geom_attr_addfield2 ;
     rdfs:comment "What is the number of people within 1000 meters of the A2 highway in the Netherlands?" .
 
 _:A2_highway_buffers a ccd:BooleanA,
@@ -218,7 +218,7 @@ _:n45 wf:applicationOf tools:AddField ;
 
 _:n47 wf:applicationOf tools:CalculateField ;
     wf:inputx _:pop_clip_geom_attr_addfield ;
-    wf:output _:pop_clip_geom_attr_addfield ;
+    wf:output _:pop_clip_geom_attr_addfield2 ;
     rdfs:comment "Calculate the estimated populatoin count for each cut segment of the population centers" .
 
 _:n9 wf:applicationOf tools:SelectLayerByLocation ;
@@ -251,6 +251,10 @@ _:pop_clip_geom_attr a ccd:AmountQ,
         ccd:PlainVectorRegionA,
         ccd:RatioA .
 
+_:pop_clip_geom_attr_addfield a ccd:AmountQ,
+        ccd:PlainVectorRegionA,
+        ccd:RatioA .
+
 _:provinces_select a ccd:NominalA,
         ccd:ObjectQ,
         ccd:PlainVectorRegionA .
@@ -259,6 +263,10 @@ _:admin_areas a ccd:NominalA,
         ccd:ObjectQ,
         ccd:VectorTessellationA ;
     rdfs:comment "The administrative areas of the Netherlands at municipal, provincial, and national levels as vector polygons" .
+
+_:pop_clip_geom_attr_addfield2 a ccd:AmountQ,
+        ccd:PlainVectorRegionA,
+        ccd:RatioA .
 
 _:provinces a ccd:NominalA,
         ccd:ObjectQ,
@@ -278,10 +286,6 @@ _:pop_centers_near_A2 a ccd:CountA,
         ccd:PlainVectorRegionA .
 
 _:pop_centers_near_A2_pop_dens a ccd:ObjectQ,
-        ccd:PlainVectorRegionA,
-        ccd:RatioA .
-
-_:pop_clip_geom_attr_addfield a ccd:AmountQ,
         ccd:PlainVectorRegionA,
         ccd:RatioA .
 

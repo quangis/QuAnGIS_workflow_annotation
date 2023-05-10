@@ -69,6 +69,10 @@ _:supermarket a ccd:NominalA,
         ccd:ObjectQ,
         ccd:PointA .
 
+_:work_sport_store_locations a ccd:NominalA,
+        ccd:ObjectQ,
+        ccd:PointA .
+
 _:function_mix a ccd:NominalA,
         ccd:ObjectQ,
         ccd:PlainVectorRegionA ;

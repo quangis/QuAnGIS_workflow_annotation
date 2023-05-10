@@ -98,6 +98,10 @@ _:route_analysis_layer_all a ccd:LineA,
 _:route_analysis_layer_home a ccd:LineA,
         ccd:NetworkQ .
 
+_:route_analysis_layer_solved a ccd:LineA,
+        ccd:NominalA,
+        ccd:ObjectQ .
+
 _:home a ccd:ObjectQ,
         ccd:PointA ;
     rdfs:comment "Point location of a home address" .

@@ -97,6 +97,10 @@ _:neighborhoods_Utrecht_near_schools_WOZ_pos_join a ccd:ObjectQ,
         ccd:PlainVectorRegionA,
         ccd:RatioA .
 
+_:suitable_neighborhoods a ccd:ObjectQ,
+        ccd:PlainVectorRegionA,
+        ccd:RatioA .
+
 _:WOZ a ccd:ObjectQ,
         ccd:RatioA ;
     rdfs:comment "Table with average WOZ data per neigborhood" .

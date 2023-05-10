@@ -127,6 +127,10 @@ _:n9 wf:applicationOf tools:CalculateField ;
     wf:output _:BRdRaReOfInRecInter4 ;
     rdfs:comment "Calculate intersection density per neighborhood" .
 
+_:BRdRaReOfInRecInter4 a ccd:ObjectQ,
+        ccd:RatioA,
+        ccd:VectorTessellationA .
+
 _:buurten a ccd:NominalA,
         ccd:ObjectQ,
         ccd:VectorTessellationA ;

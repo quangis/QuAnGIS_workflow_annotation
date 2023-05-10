@@ -185,6 +185,10 @@ _:n8 wf:applicationOf tools:SelectLayerByAttribute ;
     wf:inputx _:Amsterdam_buildings ;
     wf:output _:function_mix .
 
+_:summary_centrum a ccd:ObjectQ,
+        ccd:PlainVectorRegionA,
+        ccd:RatioA .
+
 _:supermarkets_centrum_select a ccd:ObjectQ,
         ccd:PointA .
 

@@ -97,6 +97,10 @@ _:buurt_crime_count a ccd:CountA,
 _:buurt_crime_count_addfield a ccd:ObjectQ,
         ccd:VectorTessellationA .
 
+_:buurt_crime_density2 a ccd:IRA,
+        ccd:LineA,
+        ccd:ObjectQ .
+
 _:buurt_crime_geom a ccd:ObjectQ,
         ccd:VectorTessellationA .
 
@@ -135,11 +139,11 @@ _:n14 wf:applicationOf tools:CalculateField ;
 _:n16 wf:applicationOf tools:Intersect ;
     wf:input1 _:buurt_crime_density ;
     wf:input2 _:routes ;
-    wf:output _:buurt_crime_density ;
+    wf:output _:buurt_crime_density2 ;
     rdfs:comment "Intersect neighborhoods with crime density values with routes in Amsterdam" .
 
 _:n19 wf:applicationOf tools:SummaryStatistics ;
-    wf:inputx _:buurt_crime_density ;
+    wf:inputx _:buurt_crime_density2 ;
     wf:output _:buurt_crime_density_avg ;
     rdfs:comment "Get the average crime density along the route" .
 
@@ -158,11 +162,19 @@ _:n7 wf:applicationOf tools:CopyFeatures ;
     wf:output _:buurt_crime ;
     rdfs:comment "Copy the join to a new layer" .
 
+_:buurt_crime_density_avg a ccd:IRA,
+        ccd:LineA,
+        ccd:ObjectQ .
+
 _:buurt a ccd:ObjectQ,
         ccd:VectorTessellationA ;
     rdfs:comment "Vector polygons representing neighborhoods in Amsterdam" .
 
 _:buurt_crime a ccd:CountA,
+        ccd:ObjectQ,
+        ccd:VectorTessellationA .
+
+_:buurt_crime_density a ccd:IRA,
         ccd:ObjectQ,
         ccd:VectorTessellationA .
 
@@ -174,9 +186,4 @@ _:routes a ccd:LineA,
         ccd:NominalA,
         ccd:ObjectQ ;
     rdfs:comment "A custom-generated route through Amsterdam" .
-
-_:buurt_crime_density a ccd:IRA,
-        ccd:LineA,
-        ccd:ObjectQ,
-        ccd:VectorTessellationA .
 

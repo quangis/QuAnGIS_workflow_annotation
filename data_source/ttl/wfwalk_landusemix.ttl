@@ -213,6 +213,10 @@ _:retail_area a ccd:FieldQ,
         ccd:NominalA,
         ccd:PlainVectorRegionA .
 
+_:BRdRaReOfInRec3 a ccd:ObjectQ,
+        ccd:RatioA,
+        ccd:VectorTessellationA .
+
 _:BRdRaRe a ccd:ObjectQ,
         ccd:RatioA,
         ccd:VectorTessellationA .

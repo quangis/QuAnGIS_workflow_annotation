@@ -137,6 +137,10 @@ _:buurten a ccd:NominalA,
         ccd:ObjectQ,
         ccd:VectorTessellationA .
 
+_:buurten_res_dens a ccd:ObjectQ,
+        ccd:RatioA,
+        ccd:VectorTessellationA .
+
 _:buurten_HH_RA a ccd:ObjectQ,
         ccd:RatioA,
         ccd:VectorTessellationA .

@@ -113,6 +113,9 @@ _:waterways6 a ccd:LineA,
         ccd:NetworkQ,
         ccd:RatioA .
 
+_:routes a ccd:LineA,
+        ccd:NetworkQ .
+
 _:AEBfacility a ccd:NominalA,
         ccd:ObjectQ,
         ccd:PointA ;

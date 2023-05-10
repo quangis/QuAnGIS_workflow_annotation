@@ -86,6 +86,10 @@
     wf:output _:SumofDurationinDistrict ;
     rdfs:comment "What is the total walking time from each household to the nearest waste disposal place in the Amsterdam city center?" .
 
+_:SumofDurationinDistrict a ccd:ObjectQ,
+        ccd:PlainVectorRegionA,
+        ccd:RatioA .
+
 _:n11 wf:applicationOf tools:AddField ;
     wf:inputx _:residential_dwellings_dist ;
     wf:output _:residentialDwellingsDuration .

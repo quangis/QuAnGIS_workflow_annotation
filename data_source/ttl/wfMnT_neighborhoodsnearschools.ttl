@@ -125,6 +125,10 @@ _:schools_select a ccd:NominalA,
         ccd:ObjectQ,
         ccd:PointA .
 
+_:neighborhoods_Utrecht_near_schools a ccd:NominalA,
+        ccd:ObjectQ,
+        ccd:PlainVectorRegionA .
+
 _:neighborhoods a ccd:NominalA,
         ccd:ObjectQ,
         ccd:VectorTessellationA ;

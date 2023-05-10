@@ -206,6 +206,10 @@ _:rural_2km_pop_est a ccd:AmountQ,
         ccd:CountA,
         ccd:PlainVectorRegionA .
 
+_:rural_pop_estimate a ccd:AmountQ,
+        ccd:IRA,
+        ccd:PlainVectorRegionA .
+
 _:roads_buffer a ccd:BooleanA,
         ccd:FieldQ,
         ccd:PlainVectorRegionA .
