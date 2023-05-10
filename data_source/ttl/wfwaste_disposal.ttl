@@ -89,13 +89,13 @@ _:n4 wf:applicationOf tools:MakeRouteAnalysisLayer ;
     wf:output _:waterways4 .
 
 _:n7 wf:applicationOf tools:AddLocations ;
-    wf:inputx _:afvalcontainers,
-        _:waterways4 ;
+    wf:input1 _:waterways4 ;
+    wf:input2 _:afvalcontainers ;
     wf:output _:waterways5 .
 
 _:n9 wf:applicationOf tools:AddLocations ;
-    wf:inputx _:AEBfacility,
-        _:waterways5 ;
+    wf:input1 _:waterways5 ;
+    wf:input2 _:AEBfacility ;
     wf:output _:waterways6 .
 
 _:waterways2 a ccd:LineA,

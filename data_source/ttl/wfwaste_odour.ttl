@@ -94,8 +94,8 @@ _:n3 wf:applicationOf tools:CalculateField ;
     wf:output _:old_containers3 .
 
 _:n5 wf:applicationOf tools:ZonalStatisticsAsTable ;
-    wf:inputx _:Amsterdam_centrum,
-        _:old_container_density ;
+    wf:input1 _:old_container_density ;
+    wf:input2 _:Amsterdam_centrum ;
     wf:output _:old_zonal_stats .
 
 _:old_containers2 a ccd:NominalA,

@@ -13,20 +13,10 @@
                 _:n16,
                 _:n18,
                 _:n20,
-                [ wf:applicationOf tools:MakeClosestFacilityAnalysisLayer ;
-                    wf:inputx _:roads ;
-                    wf:output _:NL_network_centrum ],
-                [ wf:applicationOf tools:AddLocations ;
-                    wf:inputx _:NL_network_centrum,
-                        _:supermarkets_centrum ;
-                    wf:output _:NL_network_centrum_supermarkets ],
-                [ wf:applicationOf tools:AddLocations ;
-                    wf:inputx _:NL_network_centrum_supermarkets,
-                        _:households_centrum ;
-                    wf:output _:NL_network_centrum_supermarkets_households ],
-                [ wf:applicationOf tools:Solve ;
-                    wf:inputx _:NL_network_centrum_supermarkets_households ;
-                    wf:output _:NL_network_centrum_supermarkets_households_solved ],
+                _:n22,
+                _:n24,
+                _:n26,
+                _:n28,
                 [ wf:applicationOf tools:SummaryStatistics ;
                     wf:inputx _:NL_network_centrum_supermarkets_households_solved ;
                     wf:output _:summary_centrum ;
@@ -59,8 +49,8 @@
                 in
             ))""" ],
                 [ wf:applicationOf _:SelectLayerByLocationPointObjects ;
-                    wf:inputx _:Amsterdam_centrum,
-                        _:supermarkets ;
+                    wf:input1 _:supermarkets ;
+                    wf:input2 _:Amsterdam_centrum ;
                     wf:output _:supermarkets_centrum ;
                     cct:expression """        1: ObjectInfo(Nom);
         2: ObjectInfo(Nom);
@@ -71,8 +61,24 @@
                 (oTopo (get_attrL 1) (get_attrL 2))
                 in
             ))""" ],
-                [ wf:applicationOf tools:ClostestFacilityAnalysis ;
-                    wf:inputx _:roads ;
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "ClostestFacilityAnalysis" ;
+                            wf:edge _:n22,
+                                _:n24,
+                                _:n26,
+                                _:n28 ;
+                            wf:source _:households_centrum,
+                                _:roads,
+                                _:supermarkets_centrum ;
+                            dct:subject """        1: Network(Ratio);
+        2: ObjectInfo(Nom);
+        3: ObjectInfo(Nom);
+        join_attr
+            (get_attrL 2)
+            (groupbyL min (nDist (get_attrL 2) (get_attrL 3) 1))""" ] ;
+                    wf:input1 _:roads ;
+                    wf:input2 _:supermarkets_centrum ;
+                    wf:input3 _:households_centrum ;
                     wf:output _:NL_network_centrum_supermarkets_households_solved ;
                     cct:expression """        1: Network(Ratio);
         2: ObjectInfo(Nom);
@@ -140,8 +146,8 @@ _:n10 wf:applicationOf tools:FeatureToPoint ;
     wf:output _:households .
 
 _:n14 wf:applicationOf tools:SelectLayerByLocation ;
-    wf:inputx _:Amsterdam_centrum,
-        _:supermarkets ;
+    wf:input1 _:supermarkets ;
+    wf:input2 _:Amsterdam_centrum ;
     wf:output _:supermarkets_centrum_select .
 
 _:n16 wf:applicationOf tools:CopyFeatures ;
@@ -149,13 +155,31 @@ _:n16 wf:applicationOf tools:CopyFeatures ;
     wf:output _:supermarkets_centrum .
 
 _:n18 wf:applicationOf tools:SelectLayerByLocation ;
-    wf:inputx _:Amsterdam_centrum,
-        _:households ;
+    wf:input1 _:households ;
+    wf:input2 _:Amsterdam_centrum ;
     wf:output _:households_centrum_select .
 
 _:n20 wf:applicationOf tools:CopyFeatures ;
     wf:inputx _:households_centrum_select ;
     wf:output _:households_centrum .
+
+_:n22 wf:applicationOf tools:MakeClosestFacilityAnalysisLayer ;
+    wf:inputx _:roads ;
+    wf:output _:NL_network_centrum .
+
+_:n24 wf:applicationOf tools:AddLocations ;
+    wf:input1 _:NL_network_centrum ;
+    wf:input2 _:supermarkets_centrum ;
+    wf:output _:NL_network_centrum_supermarkets .
+
+_:n26 wf:applicationOf tools:AddLocations ;
+    wf:input1 _:NL_network_centrum_supermarkets ;
+    wf:input2 _:households_centrum ;
+    wf:output _:NL_network_centrum_supermarkets_households .
+
+_:n28 wf:applicationOf tools:Solve ;
+    wf:inputx _:NL_network_centrum_supermarkets_households ;
+    wf:output _:NL_network_centrum_supermarkets_households_solved .
 
 _:n8 wf:applicationOf tools:SelectLayerByAttribute ;
     wf:inputx _:Amsterdam_buildings ;
@@ -172,16 +196,6 @@ _:NL_network_centrum_supermarkets_households_solved a ccd:ObjectQ,
         ccd:PointA,
         ccd:RatioA .
 
-_:households_centrum a ccd:ObjectQ,
-        ccd:PointA .
-
-_:supermarkets_centrum a ccd:ObjectQ,
-        ccd:PointA .
-
-_:roads a ccd:LineA,
-        ccd:ObjectQ ;
-    rdfs:comment "Line dataset representing roads in the Netherlands" .
-
 _:Amsterdam_buildings a ccd:ObjectQ,
         ccd:VectorTessellationA ;
     rdfs:comment "Vector polygon data of buildings with their functions as attributes" .
@@ -189,9 +203,19 @@ _:Amsterdam_buildings a ccd:ObjectQ,
 _:households a ccd:ObjectQ,
         ccd:PointA .
 
+_:households_centrum a ccd:ObjectQ,
+        ccd:PointA .
+
+_:roads a ccd:LineA,
+        ccd:ObjectQ ;
+    rdfs:comment "Line dataset representing roads in the Netherlands" .
+
 _:supermarkets a ccd:ObjectQ,
         ccd:PointA ;
     rdfs:comment "Point locations representing supermarkets" .
+
+_:supermarkets_centrum a ccd:ObjectQ,
+        ccd:PointA .
 
 _:Amsterdam_centrum a ccd:ObjectQ,
         ccd:PlainVectorRegionA .

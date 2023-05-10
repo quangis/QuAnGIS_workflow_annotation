@@ -64,8 +64,8 @@
                 (oDist (get_attrL 1) (get_attrL 2))
                 (-:Ratio)
             ))""" ] ;
-                    wf:input1 _:neighborhoods_Utrecht ;
-                    wf:input2 _:schools_Utrecht ;
+                    wf:input1 _:schools_Utrecht ;
+                    wf:input2 _:neighborhoods_Utrecht ;
                     wf:output _:neighborhoods_Utrecht_near_schools ;
                     cct:expression """        1: ObjectInfo(Nom);
         2: ObjectInfo(Nom);
@@ -96,8 +96,8 @@ _:n12 wf:applicationOf tools:ExportFeatures ;
     rdfs:comment "Extract selected schools (in Utrecht municipality) to new layer file" .
 
 _:n16 wf:applicationOf tools:SelectLayerByLocation ;
-    wf:inputx _:neighborhoods_Utrecht,
-        _:schools_Utrecht ;
+    wf:input1 _:schools_Utrecht ;
+    wf:input2 _:neighborhoods_Utrecht ;
     wf:output _:neighborhoods_Utrecht_select ;
     rdfs:comment "Select Utrecht neighborhoods that are within 100 meters of a school" .
 
@@ -112,8 +112,8 @@ _:n3 wf:applicationOf tools:ExportFeatures ;
     rdfs:comment "Extract selected neighborhoods (in Utrecht municipality) to new layer file" .
 
 _:n8 wf:applicationOf tools:SelectLayerByLocation ;
-    wf:inputx _:neighborhoods_Utrecht,
-        _:schools ;
+    wf:input1 _:schools ;
+    wf:input2 _:neighborhoods_Utrecht ;
     wf:output _:schools_select ;
     rdfs:comment "Select schools that are within the Utrecht municipality" .
 
