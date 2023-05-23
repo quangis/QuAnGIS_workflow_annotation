@@ -64,26 +64,72 @@ join_attr 2 1""" ],
                             wf:source _:buurt_crime_density,
                                 _:routes ;
                             dct:subject """1: ObjectInfo(Ratio);
-2: ObjectInfo(Nom);
-arealinterpol
-(getamounts 1)
-(pi2 (get_attrL 2))""" ] ;
+    2: ObjectInfo(Nom);
+    join_attr
+    (get_attrL 2)
+    (join (get_attrL 2)
+    (arealinterpol
+    (getamounts 1)
+    (pi2 (get_attrL 2))))""" ] ;
                     wf:input1 _:buurt_crime_density ;
                     wf:input2 _:routes ;
                     wf:output _:buurt_crime_density_avg ;
                     cct:expression """1: ObjectInfo(Ratio);
+    2: ObjectInfo(Nom);
+    join_attr
+    (get_attrL 2)
+    (join (get_attrL 2)
+    (arealinterpol
+    (getamounts 1)
+    (pi2 (get_attrL 2))))""" ],
+                _:n62,
+                _:n68,
+                _:n7,
+                _:n70,
+                _:n72,
+                _:n73,
+                _:n76,
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "CreateAndBuildNetwork" ;
+                            wf:edge _:n62,
+                                _:n68 ;
+                            wf:source _:roads ;
+                            dct:subject "nbuild (1: ObjectInfo(Ratio))" ] ;
+                    wf:inputx _:roads ;
+                    wf:output _:network ;
+                    cct:expression "nbuild (1: ObjectInfo(Ratio))" ],
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "RouteAnalysis" ;
+                            wf:edge _:n70,
+                                _:n72,
+                                _:n73,
+                                _:n76 ;
+                            wf:source _:home,
+                                _:network,
+                                _:work_sport_store_locations ;
+                            dct:subject """1: Network(Ratio);
 2: ObjectInfo(Nom);
-arealinterpol
-(getamounts 1)
-(pi2 (get_attrL 2))""" ],
-                _:n7 ;
+3: ObjectInfo(Nom);        
+           generateobjectsfromrel (nRoutes (get_attrL 2) (get_attrL 3) 1)""" ] ;
+                    wf:input1 _:network ;
+                    wf:input2 _:home ;
+                    wf:input3 _:work_sport_store_locations ;
+                    wf:output _:routes ;
+                    cct:expression """1: Network(Ratio);
+2: ObjectInfo(Nom);
+3: ObjectInfo(Nom);        
+           generateobjectsfromrel (nRoutes (get_attrL 2) (get_attrL 3) 1)""" ] ;
             wf:source _:buurt,
                 _:crimes,
-                _:routes ;
+                _:home,
+                _:roads,
+                _:work_sport_store_locations ;
             rdfs:comment "What is the crime density along the shortest path from my home to my workplace in Amsterdam?" ] ;
     wf:inputx _:buurt,
         _:crimes,
-        _:routes ;
+        _:home,
+        _:roads,
+        _:work_sport_store_locations ;
     wf:output _:buurt_crime_density_avg ;
     rdfs:comment "What is the crime density along the shortest path from my home to my workplace in Amsterdam?" .
 
@@ -157,10 +203,54 @@ _:n29 wf:applicationOf tools:CalculateField ;
     wf:output _:buurt_crime_density ;
     rdfs:comment "Calculate crime density" .
 
+_:n62 wf:applicationOf tools:CreateNetworkDataset ;
+    wf:inputx _:roads ;
+    wf:output _:network_dataset ;
+    rdfs:comment "Create a network dataset layer" .
+
+_:n68 wf:applicationOf tools:BuildNetwork ;
+    wf:inputx _:network_dataset ;
+    wf:output _:network ;
+    rdfs:comment "Build a representation of the Amsterdam road network" .
+
 _:n7 wf:applicationOf tools:CopyFeatures ;
     wf:inputx _:buurt_crime_join ;
     wf:output _:buurt_crime ;
     rdfs:comment "Copy the join to a new layer" .
+
+_:n70 wf:applicationOf tools:MakeRouteAnalysisLayer ;
+    wf:inputx _:network ;
+    wf:output _:route_analysis_layer ;
+    rdfs:comment "Create a route analysis layer" .
+
+_:n72 wf:applicationOf tools:AddLocations ;
+    wf:input1 _:route_analysis_layer ;
+    wf:input2 _:home ;
+    wf:output _:route_analysis_layer_home ;
+    rdfs:comment "Add a home location to the route analysis layer" .
+
+_:n73 wf:applicationOf tools:AddLocations ;
+    wf:input1 _:route_analysis_layer_home ;
+    wf:input2 _:work_sport_store_locations ;
+    wf:output _:route_analysis_layer_all ;
+    rdfs:comment "Add a work, a sport, and a store location to the route analysis layer" .
+
+_:n76 wf:applicationOf tools:Solve ;
+    wf:inputx _:route_analysis_layer_all ;
+    wf:output _:routes ;
+    rdfs:comment "Execute the route analysis" .
+
+_:network_dataset a ccd:LineA,
+        ccd:NetworkQ .
+
+_:route_analysis_layer a ccd:LineA,
+        ccd:NetworkQ .
+
+_:route_analysis_layer_all a ccd:LineA,
+        ccd:NetworkQ .
+
+_:route_analysis_layer_home a ccd:LineA,
+        ccd:NetworkQ .
 
 _:buurt_crime_density_avg a ccd:IRA,
         ccd:LineA,
@@ -182,8 +272,25 @@ _:crimes a ccd:CountA,
         ccd:ObjectQ ;
     rdfs:comment "Table with counts of crime for each neighborhood in Amsterdam" .
 
+_:home a ccd:ObjectQ,
+        ccd:PointA ;
+    rdfs:comment "Point location of a home address" .
+
+_:network a ccd:LineA,
+        ccd:NetworkQ,
+        ccd:RatioA .
+
+_:roads a ccd:LineA,
+        ccd:ObjectQ,
+        ccd:RatioA ;
+    rdfs:comment "A line dataset representing roads in Amsterdam" .
+
 _:routes a ccd:LineA,
         ccd:NominalA,
         ccd:ObjectQ ;
     rdfs:comment "A custom-generated route through Amsterdam" .
+
+_:work_sport_store_locations a ccd:ObjectQ,
+        ccd:PointA ;
+    rdfs:comment "Points representing work, sport and store locations" .
 
