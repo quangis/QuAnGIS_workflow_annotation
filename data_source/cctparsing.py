@@ -6,6 +6,10 @@ def test(complex_string):
 
 expressions=[
     """
+    apply2 ratio (1: Amounts(Ratio)) (2: Amounts(Ratio))
+    """
+    ,
+    """
     1: ObjectInfo(Ratio);
     2: ObjectInfo(Nom);
     join_attr
