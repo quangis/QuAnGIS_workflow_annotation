@@ -3,7 +3,7 @@
 @prefix cct: <https://github.com/quangis/cct#> .
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix tools: <https://quangis.github.io/tool#> .
+@prefix tools: <https://quangis.github.io/tool/arcgis#> .
 @prefix wf: <http://geographicknowledge.de/vocab/Workflow.rdf#> .
 
 [] wf:applicationOf [ a wf:Workflow ;
@@ -35,7 +35,21 @@
                     wf:output _:households ;
                     rdfs:comment "Select region objects and convert to points" ;
                     cct:expression "subset (1: ObjectInfo(Nom)) (-: C(Nom))" ],
-                [ wf:applicationOf _:SelectLayerByLocationPointObjects ;
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "SelectLayerByLocationPointObjects2" ;
+                            wf:edge _:n18,
+                                _:n20 ;
+                            wf:source _:Amsterdam_centrum,
+                                _:households ;
+                            dct:subject """        1: ObjectInfo(Nom);
+        2: ObjectInfo(Nom);
+        subset
+            1
+            (pi1 (select
+                eq
+                (oTopo (get_attrL 1) (get_attrL 2))
+                in
+            ))""" ] ;
                     wf:input1 _:households ;
                     wf:input2 _:Amsterdam_centrum ;
                     wf:output _:households_centrum ;
@@ -48,7 +62,21 @@
                 (oTopo (get_attrL 1) (get_attrL 2))
                 in
             ))""" ],
-                [ wf:applicationOf _:SelectLayerByLocationPointObjects ;
+                [ wf:applicationOf [ a wf:Workflow ;
+                            rdfs:label "SelectLayerByLocationPointObjects1" ;
+                            wf:edge _:n14,
+                                _:n16 ;
+                            wf:source _:Amsterdam_centrum,
+                                _:supermarkets ;
+                            dct:subject """        1: ObjectInfo(Nom);
+        2: ObjectInfo(Nom);
+        subset
+            1
+            (pi1 (select
+                eq
+                (oTopo (get_attrL 1) (get_attrL 2))
+                in
+            ))""" ] ;
                     wf:input1 _:supermarkets ;
                     wf:input2 _:Amsterdam_centrum ;
                     wf:output _:supermarkets_centrum ;
@@ -115,25 +143,6 @@ _:NL_network_centrum_supermarkets a ccd:LineA,
 _:NL_network_centrum_supermarkets_households a ccd:LineA,
         ccd:NetworkQ,
         ccd:RatioA .
-
-_:SelectLayerByLocationPointObjects a wf:Workflow ;
-    rdfs:label "SelectLayerByLocationPointObjects" ;
-    wf:edge _:n14,
-        _:n16,
-        _:n18,
-        _:n20 ;
-    wf:source _:Amsterdam_centrum,
-        _:households,
-        _:supermarkets ;
-    dct:subject """        1: ObjectInfo(Nom);
-        2: ObjectInfo(Nom);
-        subset
-            1
-            (pi1 (select
-                eq
-                (oTopo (get_attrL 1) (get_attrL 2))
-                in
-            ))""" .
 
 _:function_mix a ccd:ObjectQ,
         ccd:VectorTessellationA .
