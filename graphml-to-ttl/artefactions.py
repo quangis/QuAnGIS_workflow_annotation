@@ -14,7 +14,7 @@ namespaces = {
     'dbo': rdf.Namespace('https://dbpedia.org/ontology/'),
     'dct': rdf.Namespace('http://purl.org/dc/terms/'),
     'wf': rdf.Namespace('http://geographicknowledge.de/vocab/Workflow.rdf#'),
-    'tools': rdf.Namespace('https://quangis.github.io/tool#'),
+    'tools': rdf.Namespace('https://quangis.github.io/tool/arcgis#'),
     'repo': rdf.Namespace('https://example.com/#'),
     'data': rdf.Namespace('https://github.com/quangis/cct/blob/master/tools/data.ttl#'),
     'ccd': rdf.Namespace('http://geographicknowledge.de/vocab/CoreConceptData.rdf#'),

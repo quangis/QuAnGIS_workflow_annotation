@@ -1,5 +1,5 @@
 import networkx as nx
-from hubs3 import *
+from artefactions import *
 import os
 
 
