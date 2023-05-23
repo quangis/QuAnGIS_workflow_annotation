@@ -237,10 +237,10 @@
     <node id="n20">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="30.0" width="122.052734375" x="958.9736328125" y="-1555.0"/>
+          <y:Geometry height="30.0" width="132.041015625" x="958.9736328125" y="-1555.0"/>
           <y:Fill color="#FFFF99" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="112.052734375" x="5.0" xml:space="preserve" y="5.6494140625">buurt_crime_density<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="118.7265625" x="6.6572265625" xml:space="preserve" y="5.6494140625">buurt_crime_density2<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
           <y:Shape type="parallelogram"/>
         </y:ShapeNode>
       </data>
@@ -641,14 +641,17 @@ join_attr 2 1<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel
     <node id="n56">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="110.0" width="153.8295779512298" x="233.0852110243851" y="-1425.0"/>
+          <y:Geometry height="126.08527349228598" width="153.8295779512298" x="233.0852110243851" y="-1441.085273492286"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="77.505859375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="111.37890625" x="21.225335850614897" xml:space="preserve" y="16.2470703125">1: ObjectInfo(Ratio);
-2: ObjectInfo(Nom);
-arealinterpol
-(getamounts 1)
-(pi2 (get_attrL 2))<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="121.609375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="122.037109375" x="15.896234288114897" xml:space="preserve" y="2.237949246142989">1: ObjectInfo(Ratio);
+    2: ObjectInfo(Nom);
+    join_attr
+    (get_attrL 2)
+    (join (get_attrL 2)
+    (arealinterpol
+    (getamounts 1)
+    (pi2 (get_attrL 2))))<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
           <y:Shape type="octagon"/>
         </y:ShapeNode>
       </data>
@@ -933,7 +936,7 @@ arealinterpol
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="-15.0" tx="28.337890625" ty="15.0">
-            <y:Point x="1020.0" y="-1580.0"/>
+            <y:Point x="1024.994140625" y="-1580.0"/>
             <y:Point x="888.337890625" y="-1580.0"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
@@ -1369,7 +1372,7 @@ arealinterpol
     <edge id="e52" source="n56" target="n57">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="-55.0" tx="-32.233072916666664" ty="13.231871109819394">
+          <y:Path sx="0.0" sy="-63.04263674614302" tx="-32.233072916666664" ty="13.231871109819394">
             <y:Point x="310.0" y="-1450.0"/>
             <y:Point x="427.7669270833333" y="-1450.0"/>
           </y:Path>

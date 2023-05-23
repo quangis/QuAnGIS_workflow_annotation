@@ -6,6 +6,17 @@ def test(complex_string):
 
 expressions=[
     """
+    1: ObjectInfo(Ratio);
+    2: ObjectInfo(Nom);
+    join_attr
+    (get_attrL 2)
+    (join (get_attrL 2)
+    (arealinterpol
+    (getamounts 1)
+    (pi2 (get_attrL 2))))
+    """
+    ,
+    """
     1: ObjectInfo(Ratio);     
     join_attr  
     (nest2 (objectfromobjects (pi1 1))  (merge (pi1 (getamounts 1))))
