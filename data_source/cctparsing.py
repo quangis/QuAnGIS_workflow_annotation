@@ -6,6 +6,32 @@ def test(complex_string):
 
 expressions=[
     """
+    1: Network(Ratio);
+2: ObjectInfo(Nom);
+3: ObjectInfo(Nom);        
+           nRoutes (get_attrL 2) (get_attrL 3) 1
+    """,
+    """
+            1: ObjectInfo(Nom);
+        2: ObjectInfo(Nom);
+        subset
+            1
+            (pi1 (select
+                leq
+                (oDist (get_attrL 1) (get_attrL 2))
+                (-:Ratio)
+            ))
+    """,
+    """
+    1:Ratio;
+    2:R2(Obj, Reg);
+    3:Reg;
+     apply1(
+        leq(1),
+        groupbyL(min, loDist(deify(3), 2)))
+    """
+    ,
+    """
     apply2 ratio (1: Amounts(Ratio)) (2: Amounts(Ratio))
     """
     ,
