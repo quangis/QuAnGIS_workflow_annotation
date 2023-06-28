@@ -6,6 +6,20 @@ def test(complex_string):
 
 expressions=[
     """
+        1: Field(Nom);
+    2: ObjectInfo(Nom);
+    join_attr
+            (get_attrL 2)
+            (apply1 
+                (compose size pi1) 
+                (apply1 
+                    (compose (subset (1)) deify) 
+                    (get_attrL 2)
+                )
+            )
+    """
+    ,
+    """
     1: Network(Ratio);
 2: ObjectInfo(Nom);
 3: ObjectInfo(Nom);        
