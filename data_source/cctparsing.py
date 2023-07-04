@@ -6,6 +6,11 @@ def test(complex_string):
 
 expressions=[
     """
+        1: R2(Obj, Count);
+        2: ObjectInfo(_);
+        join_attr (get_attrL 2) 1
+    """,
+    """
         1: Field(Nom);
     2: ObjectInfo(Nom);
     join_attr
