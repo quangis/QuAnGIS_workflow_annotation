@@ -5,6 +5,12 @@ def test(complex_string):
     return cct.parse(complex_string, *(tf.Source() for _ in range(10)))
 
 expressions=[
+"""    1: ObjectInfo(Ratio);     
+    join_attr      
+    (nest2 (objectfromobjects (pi1 1))  (merge (pi1 (getamounts 1))))
+    (nest2 (objectfromobjects (pi1 1)) (avg (getamounts 1))) 
+    """
+    ,
     """
         1: R2(Obj, Count);
         2: ObjectInfo(_);
